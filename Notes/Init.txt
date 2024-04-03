@@ -1,0 +1,15 @@
+V1_AutoSave.py
+
+Is able to check what flp were modified today, export those to an output folder.
+
+Input
+User needs to specify 
+-what FLP they are running "FLP.64.exe"
+-FLP Input folder
+-Output folder
+-Connect google drive to output folder
+
+---
+Features
+Auto export all songs in a folder
+Add multiple folders for FLP Input
