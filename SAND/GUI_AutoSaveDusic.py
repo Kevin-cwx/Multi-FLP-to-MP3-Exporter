@@ -46,7 +46,7 @@ output_folder_button = tk.Button(
 output_folder_button.pack(anchor="w", pady=(10, 0), padx=10)
 
 folder_label = tk.Label(root, text="This is where your music will be exported to:\nExample: C:/Documents/Music/FLP Songs",
-                        anchor="w", justify=tk.LEFT, font=("Arial", My_Font_Size), wraplength=default_width - 20)
+                        anchor="w", justify=tk.LEFT, font=("Arial", My_Font_Size), wraplength=default_width - 20, highlightthickness=1, takefocus=True)
 folder_label.pack(fill="x", padx=10)
 
 parent_flp_button = tk.Button(root, text="Parent FLP Project Folder",
@@ -54,7 +54,7 @@ parent_flp_button = tk.Button(root, text="Parent FLP Project Folder",
 parent_flp_button.pack(anchor="w", pady=(50, 0), padx=10)
 
 parent_folder_label = tk.Label(root, text="This is the top directory where all your FLP projects are located:\nExample: C:/Users/UserName/Documents/Image-Line/FL Studio/Projects/FL 20 - projects",
-                               anchor="w", justify=tk.LEFT, font=("Arial", My_Font_Size), wraplength=default_width - 20)
+                               anchor="w", justify=tk.LEFT, font=("Arial", My_Font_Size), wraplength=default_width - 20, highlightthickness=1, takefocus=True)
 parent_folder_label.pack(fill="x", padx=10)
 
 continue_button = tk.Button(
