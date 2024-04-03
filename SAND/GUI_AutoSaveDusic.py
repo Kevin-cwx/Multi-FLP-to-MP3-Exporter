@@ -5,30 +5,33 @@ My_Font_Size = 16
 
 
 def choose_folder():
-    global folder_path
-    folder_path = filedialog.askdirectory()
-    if folder_path:
-        print(f"Selected folder: {folder_path}")
+    global Dir_Output_Folder
+    Dir_Output_Folder = filedialog.askdirectory()
+    if Dir_Output_Folder:
+        print(f"Dir_Output_Folder: {Dir_Output_Folder}")
         folder_label.config(
-            text=f"This is where your music will be exported to:\n{folder_path}")
+            text=f"This is where your music will be exported to:\n{Dir_Output_Folder}")
 
 
 def choose_parent_folder():
-    global parent_folder_path
-    parent_folder_path = filedialog.askdirectory()
-    if parent_folder_path:
-        print(f"Selected parent folder: {parent_folder_path}")
+    global Dir_Parent_FLP_Folder
+    Dir_Parent_FLP_Folder = filedialog.askdirectory()
+    if Dir_Parent_FLP_Folder:
+        print(f"Dir Parent FLP Folder: {Dir_Parent_FLP_Folder}")
         parent_folder_label.config(
-            text=f"This is the top directory where all your FLP projects are located:\n{parent_folder_path}")
+            text=f"This is the top directory where all your FLP projects are located:\n{Dir_Parent_FLP_Folder}")
 
 
 def continue_button_click():
     # Add your continuation logic here
-    print("Continue button clicked!")
+    print("Continue button clicked")
+    with open("Init_Data.txt", "w") as file:
+        file.write(f"Dir_Output_Folder = {Dir_Output_Folder}\n")
+        file.write(f"parent_folder_path = {Dir_Parent_FLP_Folder}")
 
 
 root = tk.Tk()
-root.title("File Chooser")
+root.title("AutoSaveDusic Settings")
 
 # Get the screen width
 screen_width = root.winfo_screenwidth()

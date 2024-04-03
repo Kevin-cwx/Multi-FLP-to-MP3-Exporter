@@ -25,8 +25,11 @@ Output_Folder_Path = r"C:\Users\Kfoen\Music\DropHere"
 Processor_Type = "FL64.exe"
 
 # Closes FLStudio before code run
-os.system("TASKKILL /F /IM ",Processor_Type)
-
+try:
+    os.system("TASKKILL /F /IM ",Processor_Type)
+except:
+    print("Except ran")
+    
 # Gathers paths of all files within the specified directories
 def get_file_paths(directory_paths):
     file_paths = []
