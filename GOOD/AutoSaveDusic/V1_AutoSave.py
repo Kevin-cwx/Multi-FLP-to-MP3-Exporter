@@ -7,7 +7,13 @@ import pyautogui
 import pygetwindow as gw
 
 # Exports songs modified today to OneDrive Folder
+"""
+Dir where all FLP is store 
+Dir output folder
+FL Studio Path
+Processor Type
 
+"""
 Root_Folder_K2 = r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 20 - projects\K2"'\\'
 
 List_Parent_FLP_Folder = [
