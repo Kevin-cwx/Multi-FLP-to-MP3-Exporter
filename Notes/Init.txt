@@ -13,3 +13,7 @@ User needs to specify
 Features
 Auto export all songs in a folder
 Add multiple folders for FLP Input
+
+---
+PIM2 (overwritten at 7h58)_5
+Backup flp are not exported but then think of logic to handle A.flp and also A2.flp
