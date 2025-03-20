@@ -6,6 +6,8 @@
 ⬜ !ZIP doesnt actually have to be saved, only the wav or MP3 info needs to be saved. Thus delete ZIP after info is saved
 ⬜ Save MP3 and wav info to DT for project
 ⬜ Add error cather to replace if file has same name
+
+Does not work, also need to find a better way to do this that is not GUI dependent
 """
 
 import pyautogui

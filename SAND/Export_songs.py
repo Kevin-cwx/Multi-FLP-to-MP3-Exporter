@@ -6,12 +6,13 @@ import datetime
 import subprocess
 
 List_Parent_FLP_Folder = [
-    r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 20 - projects\K2\2023",
-    r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 20 - projects\K2\2022"
+    r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 21 - projects\2024\CONSUME AFTER DARK"
+    #r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 20 - projects\K2\2023",
+    #r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 20 - projects\K2\2022"
 ]
 
 Single_flp_Project_Path = r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 20 - projects\K2\New Kev\black butterfly.flp"
-FL_Studio_Path = r"C:\Program Files\Image-Line\FL Studio 20"
+FL_Studio_Path = r"C:\Program Files\Image-Line\FL Studio 21"
 Output_Folder_Path = r"C:\Users\Kfoen\Music\DropHere"
 Processor_Type = "FL64.exe"
 
