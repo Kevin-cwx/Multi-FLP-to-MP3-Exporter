@@ -5,19 +5,16 @@ import tkinter as tk
 from tkinter import ttk
 
 # === CONFIG ===
+USE_DARK_MODE = False  # Toggle between dark mode and light mode
 Root_Folder_K2 = r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 21 - projects"
 Output_Folder_Path = r"C:\Users\Kfoen\Documents\Docs KF\FL SONGS MP3\Python_Audio_Output\A"
 FL_Studio_Path = r"C:\Program Files\Image-Line\FL Studio 21"
 Processor_Type = "FL64.exe"
 
-# === EXPORT FUNCTION ===
-
 
 def export_flp_to_mp3(file_path):
     Export_FLP_to_MP3 = f'cd "{FL_Studio_Path}" & {Processor_Type} /R /Emp3 "{file_path}" /O"{Output_Folder_Path}"'
     subprocess.call(Export_FLP_to_MP3, shell=True)
-
-# === UI CLASS ===
 
 
 class FLPExporterUI:
@@ -25,80 +22,115 @@ class FLPExporterUI:
         self.root = root
         self.root.title("FLP Exporter")
         self.root.geometry("600x500")
-        self.root.resizable(False, False)  # Prevent window resizing
+        self.root.resizable(False, False)
+
+        # === THEME ===
+        if USE_DARK_MODE:
+            self.bg_color = "#2C2F34"
+            self.fg_color = "white"
+            self.listbox_bg = "#3D3F46"
+            self.listbox_fg = "white"
+            self.button_bg = "#4A4A4A"
+            self.button_fg = "white"
+            self.selected_tag_bg = "#FEB335"
+            self.selected_tag_fg = "black"
+        else:
+            self.bg_color = "SystemButtonFace"
+            self.fg_color = "black"
+            self.listbox_bg = "white"
+            self.listbox_fg = "black"
+            self.button_bg = None
+            self.button_fg = None
+            self.selected_tag_bg = "#FEB335"
+            self.selected_tag_fg = "black"
+
+        root.configure(bg=self.bg_color)
 
         style = ttk.Style()
         style.theme_use('classic')
-        style.configure("Treeview", rowheight=22)
-        style.map("Treeview")
+        style.configure("Treeview",
+                        rowheight=22,
+                        background=self.bg_color if USE_DARK_MODE else "white",
+                        foreground=self.fg_color if USE_DARK_MODE else "black",
+                        fieldbackground=self.bg_color if USE_DARK_MODE else "white")
+        style.map("Treeview",
+                  background=[
+                      ('selected', '#3D3F46' if USE_DARK_MODE else '#D9D9D9')],
+                  foreground=[
+                      ('selected', 'white' if USE_DARK_MODE else 'black')]
+                  )
+
 
         self.selected_files = set()
         self.path_map = {}
 
-        # Split layout: left tree, right selected
         self.paned = tk.PanedWindow(
-            root, orient=tk.HORIZONTAL, sashrelief=tk.RAISED)
+            root, orient=tk.HORIZONTAL, sashrelief=tk.RAISED, bg=self.bg_color)
         self.paned.pack(fill=tk.BOTH, expand=True)
 
-        # === LEFT SIDE (Tree) ===
-        self.left_frame = tk.Frame(self.paned)
+        # === LEFT SIDE ===
+        self.left_frame = tk.Frame(self.paned, bg=self.bg_color)
         self.paned.add(self.left_frame, minsize=400)
 
-        # Projects label at the top
-        self.tree_label = tk.Label(
-            self.left_frame, text="Projects", font=("Arial", 10, "bold"))
+        self.tree_label = tk.Label(self.left_frame, text="Projects", font=("Arial", 10, "bold"),
+                                   bg=self.bg_color, fg=self.fg_color)
         self.tree_label.pack(pady=(10, 0))
 
-        # Instruction label immediately below "Projects"
         self.instruction_label = tk.Label(
-            self.left_frame, text="Double click to select / unselect projects", font=("Arial", 10), anchor="w")
-        # Adjusted padding for closeness
+            self.left_frame, text="Double click to select / unselect projects", font=("Arial", 10),
+            anchor="w", bg=self.bg_color, fg=self.fg_color
+        )
         self.instruction_label.pack(pady=(1, 1), padx=1)
 
-        # Create a frame to contain both the Treeview and the Scrollbar
-        tree_frame = tk.Frame(self.left_frame)
+        tree_frame = tk.Frame(self.left_frame, bg=self.bg_color)
         tree_frame.pack(fill=tk.BOTH, expand=True, padx=5, pady=(5, 10))
 
-        # Treeview for projects
         self.tree = ttk.Treeview(tree_frame, selectmode="extended")
         self.tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
-        # Scrollbar for the Treeview
         scrollbar = tk.Scrollbar(
             tree_frame, orient="vertical", command=self.tree.yview)
         scrollbar.pack(side=tk.RIGHT, fill="y")
-
-        # Configure the Treeview to use the scrollbar
         self.tree.config(yscrollcommand=scrollbar.set)
 
         self.tree.bind("<Double-1>", self.on_tree_double_click)
-        self.tree.tag_configure("selected", background="#FEB335")
+        self.tree.tag_configure(
+            "selected", background=self.selected_tag_bg, foreground=self.selected_tag_fg)
 
-        # === RIGHT SIDE (Cart) ===
-        self.right_frame = tk.Frame(self.paned)
+        # === RIGHT SIDE ===
+        self.right_frame = tk.Frame(self.paned, bg=self.bg_color)
         self.paned.add(self.right_frame, minsize=300)
 
         self.cart_label = tk.Label(
-            self.right_frame, text="Selected Projects", font=("Arial", 10, "bold"))
+            self.right_frame, text="Selected Projects", font=("Arial", 10, "bold"),
+            bg=self.bg_color, fg=self.fg_color
+        )
         self.cart_label.pack(pady=(10, 0))
 
         self.tree.tag_configure("selected_projects", background="red")
 
         self.cart_listbox = tk.Listbox(
-            self.right_frame, height=20, selectmode=tk.SINGLE)
+            self.right_frame, height=20, selectmode=tk.SINGLE,
+            bg=self.listbox_bg, fg=self.listbox_fg
+        )
         self.cart_listbox.pack(fill=tk.BOTH, expand=True,
                                padx=10, pady=(5, 10))
 
         self.export_button = tk.Button(
-            self.right_frame, text="Export Selected to MP3", command=self.export_selected)
+            self.right_frame, text="Export Selected to MP3", command=self.export_selected,
+            bg=self.button_bg, fg=self.button_fg
+        )
         self.export_button.pack(pady=5)
 
         self.clear_button = tk.Button(
-            self.right_frame, text="Clear All", command=self.clear_selection)
+            self.right_frame, text="Clear All", command=self.clear_selection,
+            bg=self.button_bg, fg=self.button_fg
+        )
         self.clear_button.pack(pady=(0, 10))
 
         self.status_label = tk.Label(
-            self.right_frame, text="", font=("Segoe UI", 9), fg="green")
+            self.right_frame, text="", font=("Segoe UI", 9), fg="green", bg=self.bg_color
+        )
         self.status_label.pack(pady=(0, 10))
 
         self.populate_tree(Root_Folder_K2)
