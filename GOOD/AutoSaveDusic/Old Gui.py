@@ -1,8 +1,10 @@
+# Old Gui
 import os
 import re
 import subprocess
 import tkinter as tk
 from tkinter import ttk
+
 
 # === CONFIG ===
 USE_DARK_MODE = False  # Toggle between dark mode and light mode
@@ -60,7 +62,6 @@ class FLPExporterUI:
                       ('selected', 'white' if USE_DARK_MODE else 'black')]
                   )
 
-
         self.selected_files = set()
         self.path_map = {}
 
@@ -87,6 +88,10 @@ class FLPExporterUI:
 
         self.tree = ttk.Treeview(tree_frame, selectmode="extended")
         self.tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+        self.tree.bind("<MouseWheel>", self.on_mousewheel)  # Windows
+        self.tree.bind("<Button-4>", self.on_mousewheel)   # Linux scroll up
+        self.tree.bind("<Button-5>", self.on_mousewheel)   # Linux scroll down
 
         scrollbar = tk.Scrollbar(
             tree_frame, orient="vertical", command=self.tree.yview)
@@ -205,6 +210,11 @@ class FLPExporterUI:
         self.selected_files.clear()
         self.cart_listbox.delete(0, tk.END)
         self.status_label.config(text="Selection cleared.", fg="gray")
+
+    # Future feature, change value 3, to accomodate for lots of files in folder
+    def on_mousewheel(self, event):
+        delta = -1 if event.delta > 0 else 1
+        self.tree.yview_scroll(3 * delta, "units")
 
 
 # === START APP ===
