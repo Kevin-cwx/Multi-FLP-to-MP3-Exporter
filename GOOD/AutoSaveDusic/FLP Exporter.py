@@ -25,6 +25,7 @@ class FLPExporterUI:
         self.root = root
         self.root.title("FLP Exporter")
         self.root.geometry("600x500")
+        self.root.resizable(False, False)  # Prevent window resizing
 
         style = ttk.Style()
         style.theme_use('classic')
@@ -50,13 +51,26 @@ class FLPExporterUI:
 
         # Instruction label immediately below "Projects"
         self.instruction_label = tk.Label(
-            self.left_frame, text="Double click to select / unselect project", font=("Arial", 10), anchor="w")
+            self.left_frame, text="Double click to select / unselect projects", font=("Arial", 10), anchor="w")
         # Adjusted padding for closeness
         self.instruction_label.pack(pady=(1, 1), padx=1)
 
+        # Create a frame to contain both the Treeview and the Scrollbar
+        tree_frame = tk.Frame(self.left_frame)
+        tree_frame.pack(fill=tk.BOTH, expand=True, padx=5, pady=(5, 10))
+
         # Treeview for projects
-        self.tree = ttk.Treeview(self.left_frame, selectmode="extended")
-        self.tree.pack(fill=tk.BOTH, expand=True, padx=10, pady=(5, 10))
+        self.tree = ttk.Treeview(tree_frame, selectmode="extended")
+        self.tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+        # Scrollbar for the Treeview
+        scrollbar = tk.Scrollbar(
+            tree_frame, orient="vertical", command=self.tree.yview)
+        scrollbar.pack(side=tk.RIGHT, fill="y")
+
+        # Configure the Treeview to use the scrollbar
+        self.tree.config(yscrollcommand=scrollbar.set)
+
         self.tree.bind("<Double-1>", self.on_tree_double_click)
         self.tree.tag_configure("selected", background="#FEB335")
 
@@ -68,8 +82,7 @@ class FLPExporterUI:
             self.right_frame, text="Selected Projects", font=("Arial", 10, "bold"))
         self.cart_label.pack(pady=(10, 0))
 
-        self.tree.tag_configure("selected_projects", background="lightblue")
-
+        self.tree.tag_configure("selected_projects", background="red")
 
         self.cart_listbox = tk.Listbox(
             self.right_frame, height=20, selectmode=tk.SINGLE)
