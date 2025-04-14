@@ -24,7 +24,7 @@ class FLPExporterUI:
     def __init__(self, root):
         self.root = root
         self.root.title("FLP Exporter")
-        self.root.geometry("900x600")
+        self.root.geometry("600x500")
 
         style = ttk.Style()
         style.theme_use('classic')
@@ -43,14 +43,22 @@ class FLPExporterUI:
         self.left_frame = tk.Frame(self.paned)
         self.paned.add(self.left_frame, minsize=400)
 
+        # Projects label at the top
         self.tree_label = tk.Label(
             self.left_frame, text="Projects", font=("Arial", 10, "bold"))
         self.tree_label.pack(pady=(10, 0))
 
+        # Instruction label immediately below "Projects"
+        self.instruction_label = tk.Label(
+            self.left_frame, text="Double click to select / unselect project", font=("Arial", 10), anchor="w")
+        # Adjusted padding for closeness
+        self.instruction_label.pack(pady=(1, 1), padx=1)
+
+        # Treeview for projects
         self.tree = ttk.Treeview(self.left_frame, selectmode="extended")
         self.tree.pack(fill=tk.BOTH, expand=True, padx=10, pady=(5, 10))
         self.tree.bind("<Double-1>", self.on_tree_double_click)
-        self.tree.tag_configure("selected", background="#ffd9a0")
+        self.tree.tag_configure("selected", background="#FEB335")
 
         # === RIGHT SIDE (Cart) ===
         self.right_frame = tk.Frame(self.paned)
@@ -59,6 +67,9 @@ class FLPExporterUI:
         self.cart_label = tk.Label(
             self.right_frame, text="Selected Projects", font=("Arial", 10, "bold"))
         self.cart_label.pack(pady=(10, 0))
+
+        self.tree.tag_configure("selected_projects", background="lightblue")
+
 
         self.cart_listbox = tk.Listbox(
             self.right_frame, height=20, selectmode=tk.SINGLE)
@@ -88,8 +99,8 @@ class FLPExporterUI:
 
             if os.path.isdir(full_path):
                 contains_flp = any(
-                    os.path.isfile(os.path.join(full_path, f)
-                                   ) and f.lower().endswith(".flp")
+                    os.path.isfile(os.path.join(full_path, f))
+                    and f.lower().endswith(".flp")
                     for f in os.listdir(full_path)
                 )
                 if contains_flp:
