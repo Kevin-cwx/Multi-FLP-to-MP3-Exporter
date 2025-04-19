@@ -25,13 +25,13 @@ class FLPExporterUI:
     def __init__(self, root):
         self.root = root
         self.root.title("FLP Exporter")
-        self.root.geometry("500x600+30+20")
+        self.root.geometry("600x600+30+20")
         self.root.resizable(False, False)
 
         # === Heading ===
         self.heading = ttk.Label(self.root, text="🎵 FLP to MP3 Exporter", font=(
             "Segoe UI", 16, "bold"), bootstyle="info")
-        self.heading.pack(pady=(0, 5))
+        self.heading.pack(pady=(0, 0))
 
         self.selected_files = set()
         self.path_map = {}
@@ -70,7 +70,7 @@ class FLPExporterUI:
 
         self.tree.bind("<Double-1>", self.on_tree_double_click)
         self.tree.tag_configure(
-            "selected", background="#FEB335", foreground="black")
+            "selected", background="#ADD8E6", foreground="black")
 
         # === RIGHT SIDE ===
         self.right_frame = ttk.Frame(content_frame)
@@ -81,7 +81,7 @@ class FLPExporterUI:
         self.cart_label.pack(pady=(0, 0))
 
         self.cart_listbox = Listbox(
-            self.right_frame, height=20, selectmode=tk.SINGLE,
+            self.right_frame, height=20, width=20, selectmode=tk.SINGLE,
             bg="white", fg="black", font=("Segoe UI", 10)
         )
         self.cart_listbox.pack(fill=tk.BOTH, expand=True,
