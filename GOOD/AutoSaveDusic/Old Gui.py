@@ -9,6 +9,9 @@ from tkinter import ttk
 # === CONFIG ===
 USE_DARK_MODE = False  # Toggle between dark mode and light mode
 Root_Folder_K2 = r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 21 - projects"
+Root_Folder_K2 = r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 20 - projects"
+#Root_Folder_K2 = r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 12 - projects"
+
 Output_Folder_Path = r"C:\Users\Kfoen\Documents\Docs KF\FL SONGS MP3\Python_Audio_Output\A"
 FL_Studio_Path = r"C:\Program Files\Image-Line\FL Studio 21"
 Processor_Type = "FL64.exe"

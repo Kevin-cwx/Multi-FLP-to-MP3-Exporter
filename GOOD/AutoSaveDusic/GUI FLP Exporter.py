@@ -26,24 +26,25 @@ class FLPExporterUI:
     def __init__(self, root):
         self.root = root
         self.root.title("FLP Exporter")
-        # MODIFIED: Slightly larger modern window
-        self.root.geometry("800x600")
+        # Window size + position (X=300, Y=100)
+        self.root.geometry("500x600+30+20")
         self.root.resizable(False, False)
 
         # === NEW: Heading ===
-        self.heading = ttk.Label(self.root, text="🎵 FL Studio Project Exporter", font=(
+        self.heading = ttk.Label(self.root, text="🎵 FLP to MP3 Exporter", font=(
             "Segoe UI", 16, "bold"), bootstyle="info")
         self.heading.pack(pady=(10, 5))
 
         self.selected_files = set()
         self.path_map = {}
+        self.last_selected_item = None  # Track the last selected item for shift-click
 
-        self.paned = ttk.PanedWindow(root, orient=ttk.HORIZONTAL) 
-        self.paned.pack(fill=tk.BOTH, expand=True, padx=10, pady=5)
+        content_frame = ttk.Frame(self.root)
+        content_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=5)
 
         # === LEFT SIDE ===
-        self.left_frame = ttk.Frame(self.paned)
-        self.paned.add(self.left_frame, weight=3)
+        self.left_frame = ttk.Frame(content_frame)
+        self.left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
         self.tree_label = ttk.Label(
             self.left_frame, text="Projects", font=("Segoe UI", 11, "bold"))
@@ -74,8 +75,8 @@ class FLPExporterUI:
             "selected", background="#FEB335", foreground="black")  # MODERN HIGHLIGHT
 
         # === RIGHT SIDE ===
-        self.right_frame = ttk.Frame(self.paned)
-        self.paned.add(self.right_frame, weight=2)
+        self.right_frame = ttk.Frame(content_frame)
+        self.right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
 
         self.cart_label = ttk.Label(
             self.right_frame, text="Selected Projects", font=("Segoe UI", 11, "bold"))
@@ -96,13 +97,36 @@ class FLPExporterUI:
         self.clear_button = ttk.Button(
             self.right_frame, text="Clear All", command=self.clear_selection, bootstyle="secondary"
         )
-        self.clear_button.pack(pady=(0, 10), padx=20, fill=X)
+        self.clear_button.pack(pady=(0, 5), padx=20, fill=X)
 
         self.status_label = ttk.Label(
             self.right_frame, text="", font=("Segoe UI", 9), bootstyle="success")
         self.status_label.pack(pady=(0, 10))
 
         self.populate_tree(Root_Folder_K2)
+
+        # Bind Enter key to toggle selection
+        self.root.bind("<Return>", self.on_enter_key)
+
+    def on_enter_key(self, event):
+        # Get the item under the mouse cursor or focus
+        item_id = self.tree.focus()  # Get the currently selected item in the treeview
+
+        if not item_id or item_id not in self.path_map:
+            return  # If no item is focused or it is not a valid path, do nothing
+
+        file_path = self.path_map[item_id]
+
+        # Toggle selection
+        if file_path in self.selected_files:
+            self.selected_files.remove(file_path)
+            self.tree.item(item_id, tags=())  # Remove highlight
+        else:
+            self.selected_files.add(file_path)
+            # Highlight as selected
+            self.tree.item(item_id, tags=("selected",))
+
+        self.refresh_cart()  # Update the list of selected projects
 
     def populate_tree(self, parent_path, parent_node=""):
         entries = sorted(os.listdir(parent_path))
@@ -165,7 +189,7 @@ class FLPExporterUI:
             export_flp_to_mp3(path)
 
         self.status_label.config(
-            text=f"{total} project(s) exported to: {Output_Folder_Path}",
+            text=f"{total} project(s) exported.",
             bootstyle="success"
         )
 
