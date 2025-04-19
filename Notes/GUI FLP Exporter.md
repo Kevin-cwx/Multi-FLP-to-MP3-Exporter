@@ -14,6 +14,8 @@ Other
 - Set Processor_Type
 -  Launch at system startup
 
+If settings is empty (first time users), prompt user to run FL Studio, run code to get FL_Studio_Path and processes type, prompt user input fields for other values and store in json file
+Save values for next run
 
 ---
-Continued working on new
+Continued working in new UI

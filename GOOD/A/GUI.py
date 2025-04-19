@@ -112,17 +112,16 @@ class FLPExporterUI:
         self.root.bind("<Return>", self.on_enter_key)
 
     def on_enter_key(self, event):
-        item_id = self.tree.focus()
-        if not item_id or item_id not in self.path_map:
-            return
-
-        file_path = self.path_map[item_id]
-        if file_path in self.selected_files:
-            self.selected_files.remove(file_path)
-            self.tree.item(item_id, tags=())
-        else:
-            self.selected_files.add(file_path)
-            self.tree.item(item_id, tags=("selected",))
+        selected_items = self.tree.selection()
+        for item_id in selected_items:
+            if item_id in self.path_map:
+                file_path = self.path_map[item_id]
+                if file_path in self.selected_files:
+                    self.selected_files.remove(file_path)
+                    self.tree.item(item_id, tags=())
+                else:
+                    self.selected_files.add(file_path)
+                    self.tree.item(item_id, tags=("selected",))
 
         self.refresh_cart()
 
@@ -163,10 +162,42 @@ class FLPExporterUI:
             self.selected_files.remove(file_path)
             self.tree.item(item_id, tags=())
         else:
-            self.selected_files.add(file_path)
-            self.tree.item(item_id, tags=("selected",))
+            if event.state & 0x0001:  # Shift key
+                self.select_range(item_id)
+            elif event.state & 0x0004:  # Control key
+                self.toggle_select(item_id)
+            else:
+                self.selected_files.add(file_path)
+                self.tree.item(item_id, tags=("selected",))
 
         self.refresh_cart()
+
+    def select_range(self, new_item_id):
+        if self.last_selected_item is None:
+            self.selected_files.add(self.path_map[new_item_id])
+            self.tree.item(new_item_id, tags=("selected",))
+            self.last_selected_item = new_item_id
+            return
+
+        start_idx = self.tree.index(self.last_selected_item)
+        end_idx = self.tree.index(new_item_id)
+        for idx in range(min(start_idx, end_idx), max(start_idx, end_idx) + 1):
+            item_id = self.tree.get_children()[idx]
+            if item_id in self.path_map:
+                self.selected_files.add(self.path_map[item_id])
+                self.tree.item(item_id, tags=("selected",))
+        self.last_selected_item = new_item_id
+
+
+    def toggle_select(self, item_id):
+        file_path = self.path_map[item_id]
+        if file_path in self.selected_files:
+            self.selected_files.remove(file_path)
+            self.tree.item(item_id, tags=())
+        else:
+            self.selected_files.add(file_path)
+            self.tree.item(item_id, tags=("selected",))
+        self.last_selected_item = item_id
 
     def on_cart_double_click(self, event):  # NEW: Remove from selection
         selection = self.cart_listbox.curselection()
