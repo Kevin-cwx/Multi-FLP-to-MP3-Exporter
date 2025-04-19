@@ -8,7 +8,6 @@ from ttkbootstrap import Style
 from tkinter import Listbox  # Listbox still from tkinter
 import tkinter as tk  # ✅ Fixes all 'tk' constants
 
-
 # === CONFIG ===
 USE_DARK_MODE = False  # Toggle between dark mode and light mode
 Root_Folder_K2 = r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 21 - projects"
@@ -26,18 +25,17 @@ class FLPExporterUI:
     def __init__(self, root):
         self.root = root
         self.root.title("FLP Exporter")
-        # Window size + position (X=300, Y=100)
         self.root.geometry("500x600+30+20")
         self.root.resizable(False, False)
 
-        # === NEW: Heading ===
+        # === Heading ===
         self.heading = ttk.Label(self.root, text="🎵 FLP to MP3 Exporter", font=(
             "Segoe UI", 16, "bold"), bootstyle="info")
-        self.heading.pack(pady=(10, 5))
+        self.heading.pack(pady=(0, 5))
 
         self.selected_files = set()
         self.path_map = {}
-        self.last_selected_item = None  # Track the last selected item for shift-click
+        self.last_selected_item = None
 
         content_frame = ttk.Frame(self.root)
         content_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=5)
@@ -48,7 +46,7 @@ class FLPExporterUI:
 
         self.tree_label = ttk.Label(
             self.left_frame, text="Projects", font=("Segoe UI", 11, "bold"))
-        self.tree_label.pack(pady=(5, 0))
+        self.tree_label.pack(pady=(0, 0))
 
         self.instruction_label = ttk.Label(
             self.left_frame, text="Double click to select / unselect projects", font=("Segoe UI", 9)
@@ -72,7 +70,7 @@ class FLPExporterUI:
 
         self.tree.bind("<Double-1>", self.on_tree_double_click)
         self.tree.tag_configure(
-            "selected", background="#FEB335", foreground="black")  # MODERN HIGHLIGHT
+            "selected", background="#FEB335", foreground="black")
 
         # === RIGHT SIDE ===
         self.right_frame = ttk.Frame(content_frame)
@@ -80,7 +78,7 @@ class FLPExporterUI:
 
         self.cart_label = ttk.Label(
             self.right_frame, text="Selected Projects", font=("Segoe UI", 11, "bold"))
-        self.cart_label.pack(pady=(5, 0))
+        self.cart_label.pack(pady=(0, 0))
 
         self.cart_listbox = Listbox(
             self.right_frame, height=20, selectmode=tk.SINGLE,
@@ -88,11 +86,18 @@ class FLPExporterUI:
         )
         self.cart_listbox.pack(fill=tk.BOTH, expand=True,
                                padx=10, pady=(5, 10))
+        # NEW: Remove on double-click
+        self.cart_listbox.bind("<Double-Button-1>", self.on_cart_double_click)
 
         self.export_button = ttk.Button(
             self.right_frame, text="Export Selected to MP3", command=self.export_selected, bootstyle="success"
         )
         self.export_button.pack(pady=5, padx=20, fill=X)
+
+        self.enter_button = ttk.Button(
+            self.right_frame, text="Select Project", command=lambda: self.on_enter_key(None), bootstyle="primary"
+        )
+        self.enter_button.pack(pady=5, padx=20, fill=X)
 
         self.clear_button = ttk.Button(
             self.right_frame, text="Clear All", command=self.clear_selection, bootstyle="secondary"
@@ -104,29 +109,22 @@ class FLPExporterUI:
         self.status_label.pack(pady=(0, 10))
 
         self.populate_tree(Root_Folder_K2)
-
-        # Bind Enter key to toggle selection
         self.root.bind("<Return>", self.on_enter_key)
 
     def on_enter_key(self, event):
-        # Get the item under the mouse cursor or focus
-        item_id = self.tree.focus()  # Get the currently selected item in the treeview
-
+        item_id = self.tree.focus()
         if not item_id or item_id not in self.path_map:
-            return  # If no item is focused or it is not a valid path, do nothing
+            return
 
         file_path = self.path_map[item_id]
-
-        # Toggle selection
         if file_path in self.selected_files:
             self.selected_files.remove(file_path)
-            self.tree.item(item_id, tags=())  # Remove highlight
+            self.tree.item(item_id, tags=())
         else:
             self.selected_files.add(file_path)
-            # Highlight as selected
             self.tree.item(item_id, tags=("selected",))
 
-        self.refresh_cart()  # Update the list of selected projects
+        self.refresh_cart()
 
     def populate_tree(self, parent_path, parent_node=""):
         entries = sorted(os.listdir(parent_path))
@@ -137,8 +135,8 @@ class FLPExporterUI:
 
             if os.path.isdir(full_path):
                 contains_flp = any(
-                    os.path.isfile(os.path.join(full_path, f))
-                    and f.lower().endswith(".flp")
+                    os.path.isfile(os.path.join(full_path, f)
+                                   ) and f.lower().endswith(".flp")
                     for f in os.listdir(full_path)
                 )
                 if contains_flp:
@@ -169,6 +167,25 @@ class FLPExporterUI:
             self.tree.item(item_id, tags=("selected",))
 
         self.refresh_cart()
+
+    def on_cart_double_click(self, event):  # NEW: Remove from selection
+        selection = self.cart_listbox.curselection()
+        if not selection:
+            return
+        index = selection[0]
+        name = self.cart_listbox.get(index)
+        file_to_remove = None
+        for path in self.selected_files:
+            if re.sub(r"\.flp$", "", os.path.basename(path), flags=re.IGNORECASE) == name:
+                file_to_remove = path
+                break
+        if file_to_remove:
+            self.selected_files.remove(file_to_remove)
+            for item_id, path in self.path_map.items():
+                if path == file_to_remove:
+                    self.tree.item(item_id, tags=())
+                    break
+            self.refresh_cart()
 
     def refresh_cart(self):
         self.cart_listbox.delete(0, tk.END)
@@ -208,7 +225,7 @@ class FLPExporterUI:
 
 # === START APP ===
 if __name__ == "__main__":
-    style = Style("darkly" if USE_DARK_MODE else "flatly")  # NEW: Modern theme
+    style = Style("darkly" if USE_DARK_MODE else "flatly")
     root = style.master
     app = FLPExporterUI(root)
     root.mainloop()
