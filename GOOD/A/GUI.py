@@ -112,23 +112,23 @@ class FLPExporterUI:
 
         # Buttons
         self.export_button = ttk.Button(
-            self.right_frame, text=" Export", image=self.download_icon, compound=tk.LEFT,
+            self.right_frame, text="Export", image=self.download_icon, compound=tk.LEFT,
             command=self.export_selected, bootstyle="success")
         self.export_button.pack(pady=5, padx=20, fill=X)
 
         self.enter_button = ttk.Button(
-            self.right_frame, text=" Select", image=self.plus_icon, compound=tk.LEFT,
-            command=lambda: self.on_enter_key(None), bootstyle="primary")
+            self.right_frame, text="Select", image=self.plus_icon, compound=tk.LEFT,
+            command=lambda: self.on_enter_key(None), bootstyle="outline-secondary")
         self.enter_button.pack(pady=5, padx=20, fill=X)
 
         self.clear_button = ttk.Button(
-            self.right_frame, text=" Clear All", image=self.clear_icon, compound=tk.LEFT,
-            command=self.clear_selection, bootstyle="secondary")
+            self.right_frame, text="Clear All", image=self.clear_icon, compound=tk.LEFT,
+            command=self.clear_selection, bootstyle="outline-secondary")
         self.clear_button.pack(pady=(0, 5), padx=20, fill=X)
 
         self.add_today_button = ttk.Button(
-            self.right_frame, text=" Recent", image=self.recent_icon, compound=tk.LEFT,
-            command=self.add_today_projects, bootstyle="info")
+            self.right_frame, text="Recent", image=self.recent_icon, compound=tk.LEFT,
+            command=self.add_today_projects, bootstyle="outline-secondary")
         self.add_today_button.pack(pady=(5, 5), padx=20, fill=X)
 
         # Message once button is clicked
@@ -299,7 +299,7 @@ class FLPExporterUI:
 
 # === START APP ===
 if __name__ == "__main__":
-    style = Style("darkly" if USE_DARK_MODE else "flatly")
+    style = Style("pulse" if USE_DARK_MODE else "flatly")
     root = style.master
     app = FLPExporterUI(root)
     root.mainloop()
