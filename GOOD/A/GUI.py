@@ -42,21 +42,6 @@ class FLPExporterUI:
         self.root.title("FLP Exporter")
         self.root.geometry("600x600+30+20")
         self.root.resizable(False, False)
-        self.root.title("FLP to MP3 Exporter")
-        transparent_icon = tk.PhotoImage(width=1, height=1)
-        #self.root.iconphoto(False, transparent_icon)
-        self.root.iconbitmap(r"C:\Users\Kfoen\Pictures\FL21 - Icon.ico")
-        Background_Color =  "#808791"
-        self.root.configure(bg=Background_Color)
-
-        # Icons
-        def load_icon(path, size=(16, 16)):
-            return ImageTk.PhotoImage(Image.open(path).resize(size, Image.LANCZOS))
-        
-        self.download_icon = load_icon("Media/Icons/download.png")
-        self.plus_icon = load_icon("Media/Icons/plus.png")
-        self.clear_icon = load_icon("Media/Icons/clear.png")
-        self.recent_icon = load_icon("Media/Icons/recent.png")
 
         self.heading = ttk.Label(self.root, text="🎵 FLP to MP3 Exporter", font=(
             "Segoe UI", 16, "bold"), bootstyle="info")
