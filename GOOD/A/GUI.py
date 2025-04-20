@@ -47,6 +47,14 @@ class FLPExporterUI:
             "Segoe UI", 16, "bold"), bootstyle="info")
         self.heading.pack(pady=(0, 0))
 
+        def load_icon(path, size=(16, 16)):
+            return ImageTk.PhotoImage(Image.open(path).resize(size, Image.LANCZOS))
+        
+        self.download_icon = load_icon("Media/Icons/download.png")
+        self.plus_icon = load_icon("Media/Icons/plus.png")
+        self.clear_icon = load_icon("Media/Icons/clear.png")
+        self.recent_icon = load_icon("Media/Icons/recent.png")
+
         self.selected_files = set()
         self.path_map = {}
         self.last_selected_item = None
