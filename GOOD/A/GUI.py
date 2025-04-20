@@ -46,7 +46,7 @@ class FLPExporterUI:
         transparent_icon = tk.PhotoImage(width=1, height=1)
         # self.root.iconphoto(False, transparent_icon)
         self.root.iconbitmap(r"C:\Users\Kfoen\Pictures\FL21 - Icon.ico")
-        Background_Color = "#808791"
+        Background_Color = "white"  # "#808791"
         self.root.configure(bg=Background_Color)
 
         self.heading = ttk.Label(self.root, text="🎵 FLP to MP3 Exporter", font=(
@@ -282,6 +282,8 @@ class FLPExporterUI:
         today = datetime.date.today()
         today_str = today.strftime("%d-%m-%Y")
         file_paths = get_file_paths(Root_Folder_K2)
+        added = 0
+
         for file_path, modified_date in file_paths.items():
             if datetime.datetime.fromtimestamp(modified_date).strftime("%d-%m-%Y") == today_str:
                 if file_path not in self.selected_files:
@@ -290,7 +292,16 @@ class FLPExporterUI:
                         if path == file_path:
                             self.tree.item(item_id, tags=("selected",))
                             break
+                    added += 1  
+
         self.refresh_cart()
+
+    # 🆕 Update the status label based on whether any files were added
+        if added == 0:
+            self.status_label.config(text="No files modified today.", bootstyle="warning")
+        else:
+            self.status_label.config(text=f"{added} recent project(s) added.", bootstyle="info")
+
 
     def on_mousewheel(self, event):
         delta = -1 if event.delta > 0 else 1
