@@ -188,7 +188,6 @@ class FLPExporterUI:
                 self.tree.item(item_id, tags=("selected",))
         self.last_selected_item = new_item_id
 
-
     def toggle_select(self, item_id):
         file_path = self.path_map[item_id]
         if file_path in self.selected_files:
@@ -238,12 +237,12 @@ class FLPExporterUI:
 
         self.status_label.config(
             text=f"{total} project(s) exported.",
-            bootstyle="success"
+            bootstyle="dark"
         )
 
     def clear_selection(self):
         for item_id in self.path_map:
-            self.tree.item(item_id, tags=())
+            self.tree.item(item_id, open=False, tags=())
         self.selected_files.clear()
         self.cart_listbox.delete(0, tk.END)
         self.status_label.config(
