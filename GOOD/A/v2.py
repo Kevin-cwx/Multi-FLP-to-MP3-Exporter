@@ -11,6 +11,9 @@ OUTPUT_FOLDER = r"C:\Users\Kfoen\Documents\Docs KF\FL SONGS MP3\Python_Audio_Out
 FL_PATH = r"C:\Program Files\Image-Line\FL Studio 21"
 PROCESSOR = "FL64.exe"
 
+# Set Dark Mode Flag
+Dark_Mode_Active = USE_DARK_MODE
+
 
 def get_file_paths(root_directory):
     file_paths = {}
@@ -36,38 +39,68 @@ class FLPExporterUI(QtWidgets.QMainWindow):
         self.setWindowTitle("🎵 FLP to MP3 Exporter")
         self.setGeometry(100, 100, 900, 600)
 
-        # Style
-        self.setStyleSheet("""
-            QWidget {
-                background-color: #2c2f33;
-                color: #ffffff;
-                font-family: Segoe UI;
-            }
-            QPushButton {
-                background-color: #7289da;
-                border: none;
-                padding: 8px;
-                border-radius: 8px;
-                text-align: left;
-            }
-            QPushButton:hover {
-                background-color: #5b6eae;
-            }
-            QTreeWidget, QListWidget {
-                background-color: #23272a;
-                border: 1px solid #99aab5;
-                border-radius: 5px;
-            }
-            QLabel {
-                font-size: 12pt;
-            }
-        """)
+        # Determine the theme (light or dark)
+        self.set_style()
 
         self.selected_files = set()
         self.path_map = {}
 
         self.init_ui()
         self.populate_tree(ROOT_FOLDER)
+
+    def set_style(self):
+        if Dark_Mode_Active:
+            self.setStyleSheet("""
+                QWidget {
+                    background-color: #2c2f33;
+                    color: #ffffff;
+                    font-family: Segoe UI;
+                }
+                QPushButton {
+                    background-color: #7289da;
+                    border: none;
+                    padding: 8px;
+                    border-radius: 8px;
+                    text-align: left;
+                }
+                QPushButton:hover {
+                    background-color: #5b6eae;
+                }
+                QTreeWidget, QListWidget {
+                    background-color: #23272a;
+                    border: 1px solid #99aab5;
+                    border-radius: 5px;
+                }
+                QLabel {
+                    font-size: 12pt;
+                }
+            """)
+        else:
+            self.setStyleSheet("""
+                QWidget {
+                    background-color: #ffffff;
+                    color: #000000;
+                    font-family: Segoe UI;
+                }
+                QPushButton {
+                    background-color: #4CAF50;
+                    border: none;
+                    padding: 8px;
+                    border-radius: 8px;
+                    text-align: left;
+                }
+                QPushButton:hover {
+                    background-color: #45a049;
+                }
+                QTreeWidget, QListWidget {
+                    background-color: #f4f4f4;
+                    border: 1px solid #b0b0b0;
+                    border-radius: 5px;
+                }
+                QLabel {
+                    font-size: 12pt;
+                }
+            """)
 
     def init_ui(self):
         container = QtWidgets.QWidget()
@@ -124,9 +157,10 @@ class FLPExporterUI(QtWidgets.QMainWindow):
 
             if os.path.isdir(full_path):
                 contains_flp = any(
-                    os.path.isfile(os.path.join(full_path, f)) and f.lower().endswith(".flp")
+                    os.path.isfile(os.path.join(full_path, f)
+                                   ) and f.lower().endswith(".flp")
                     for f in os.listdir(full_path)
-            )
+                )
                 if contains_flp:
                     node = QtWidgets.QTreeWidgetItem([entry])
                     if parent_node:
@@ -134,27 +168,32 @@ class FLPExporterUI(QtWidgets.QMainWindow):
                     else:
                         self.tree.addTopLevelItem(node)
                     self.populate_tree(full_path, node)
-            elif entry.lower().endswith(".flp"): 
+            elif entry.lower().endswith(".flp"):
                 clean_name = re.sub(r"\.flp$", "", entry, flags=re.IGNORECASE)
                 item = QtWidgets.QTreeWidgetItem([clean_name])
-                item.setData(0, QtCore.Qt.UserRole, full_path)  # ✅ store full path
+                # ✅ store full path
+                item.setData(0, QtCore.Qt.UserRole, full_path)
                 if parent_node:
                     parent_node.addChild(item)
                 else:
                     self.tree.addTopLevelItem(item)
 
-
-
     def handle_double_click_tree(self, item, _):
-        if item in self.path_map:
-            file_path = self.path_map[item]
+        # Retrieve the file path stored in the item's UserRole data
+        file_path = item.data(0, QtCore.Qt.UserRole)
+
+        if file_path and os.path.isfile(file_path) and file_path.lower().endswith(".flp"):
+            # Toggle selection logic
             if file_path in self.selected_files:
                 self.selected_files.remove(file_path)
                 item.setBackground(0, QtGui.QBrush(
-                    QtGui.QColor("transparent")))
+                    QtGui.QColor("transparent")))  # Reset background
             else:
                 self.selected_files.add(file_path)
+                # Highlight selected file
                 item.setBackground(0, QtGui.QBrush(QtGui.QColor("#7289da")))
+
+            # Update the list of selected files
             self.refresh_cart()
 
     def handle_double_click_cart(self, item):
