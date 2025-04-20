@@ -16,7 +16,6 @@ Output_Folder_Path = r"C:\Users\Kfoen\Documents\Docs KF\FL SONGS MP3\Python_Audi
 FL_Studio_Path = r"C:\Program Files\Image-Line\FL Studio 21"
 Processor_Type = "FL64.exe"
 
-
 def get_file_paths(root_directory):
     file_paths = {}
     for dirpath, dirnames, filenames in os.walk(root_directory):
@@ -41,6 +40,12 @@ class FLPExporterUI:
         self.root.title("FLP Exporter")
         self.root.geometry("600x600+30+20")
         self.root.resizable(False, False)
+        self.root.title("FLP to MP3 Exporter")
+        transparent_icon = tk.PhotoImage(width=1, height=1)
+        #self.root.iconphoto(False, transparent_icon)
+        self.root.iconbitmap(r"C:\Users\Kfoen\Pictures\FL21 - Icon.ico")
+        Background_Color =  "#808791"
+        self.root.configure(bg=Background_Color)
 
         self.heading = ttk.Label(self.root, text="🎵 FLP to MP3 Exporter", font=(
             "Segoe UI", 16, "bold"), bootstyle="info")
@@ -117,6 +122,8 @@ class FLPExporterUI:
 
         self.populate_tree(Root_Folder_K2)
         self.root.bind("<Return>", self.on_enter_key)
+
+        
 
     def on_enter_key(self, event):
         selected_items = self.tree.selection()
@@ -280,3 +287,4 @@ if __name__ == "__main__":
     root = style.master
     app = FLPExporterUI(root)
     root.mainloop()
+  

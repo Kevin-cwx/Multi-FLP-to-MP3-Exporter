@@ -14,6 +14,7 @@ Other
 - Set FL_Studio_Path ( Write function to find on own, but make editable)
 - Set Processor_Type
 -  Launch at system startup
+- Toggle, auto export all projects you worked on today
 
 If settings is empty (first time users), prompt user to run FL Studio, run code to get FL_Studio_Path and processes type, prompt user input fields for other values and store in json file
 Save values for next run
@@ -22,5 +23,7 @@ Save values for next run
 - Search input field, text should only show project in left side, and should open the folder if in sub folder
 - It clashes with the color selection
 
----
-Continued working in new UI
+
+**Styling**
+- Make dark mode
+- Change default to have a dark grey color
