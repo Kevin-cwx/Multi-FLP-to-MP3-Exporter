@@ -8,6 +8,8 @@ from ttkbootstrap import Style
 from tkinter import Listbox
 import tkinter as tk
 import datetime
+from PIL import Image, ImageTk
+
 
 # === CONFIG ===
 USE_DARK_MODE = False
@@ -15,7 +17,6 @@ Root_Folder_K2 = r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 21 
 Output_Folder_Path = r"C:\Users\Kfoen\Documents\Docs KF\FL SONGS MP3\Python_Audio_Output\A"
 FL_Studio_Path = r"C:\Program Files\Image-Line\FL Studio 21"
 Processor_Type = "FL64.exe"
-
 
 def get_file_paths(root_directory):
     file_paths = {}
@@ -41,6 +42,21 @@ class FLPExporterUI:
         self.root.title("FLP Exporter")
         self.root.geometry("600x600+30+20")
         self.root.resizable(False, False)
+        self.root.title("FLP to MP3 Exporter")
+        transparent_icon = tk.PhotoImage(width=1, height=1)
+        #self.root.iconphoto(False, transparent_icon)
+        self.root.iconbitmap(r"C:\Users\Kfoen\Pictures\FL21 - Icon.ico")
+        Background_Color =  "#808791"
+        self.root.configure(bg=Background_Color)
+
+        # Icons
+        def load_icon(path, size=(16, 16)):
+            return ImageTk.PhotoImage(Image.open(path).resize(size, Image.LANCZOS))
+        
+        self.download_icon = load_icon("Media/Icons/download.png")
+        self.plus_icon = load_icon("Media/Icons/plus.png")
+        self.clear_icon = load_icon("Media/Icons/clear.png")
+        self.recent_icon = load_icon("Media/Icons/recent.png")
 
         self.heading = ttk.Label(self.root, text="🎵 FLP to MP3 Exporter", font=(
             "Segoe UI", 16, "bold"), bootstyle="info")
@@ -95,28 +111,36 @@ class FLPExporterUI:
         self.cart_listbox.pack(fill=tk.X, padx=10, pady=(5, 10))
         self.cart_listbox.bind("<Double-Button-1>", self.on_cart_double_click)
 
+        # Buttons
         self.export_button = ttk.Button(
-            self.right_frame, text="Export Selected to MP3", command=self.export_selected, bootstyle="success")
+            self.right_frame, text=" Export", image=self.download_icon, compound=tk.LEFT,
+            command=self.export_selected, bootstyle="success")
         self.export_button.pack(pady=5, padx=20, fill=X)
 
-        self.enter_button = ttk.Button(self.right_frame, text="Select Project",
-                                       command=lambda: self.on_enter_key(None), bootstyle="primary")
+        self.enter_button = ttk.Button(
+            self.right_frame, text=" Select", image=self.plus_icon, compound=tk.LEFT,
+            command=lambda: self.on_enter_key(None), bootstyle="primary")
         self.enter_button.pack(pady=5, padx=20, fill=X)
 
         self.clear_button = ttk.Button(
-            self.right_frame, text="Clear All", command=self.clear_selection, bootstyle="secondary")
+            self.right_frame, text=" Clear All", image=self.clear_icon, compound=tk.LEFT,
+            command=self.clear_selection, bootstyle="secondary")
         self.clear_button.pack(pady=(0, 5), padx=20, fill=X)
 
         self.add_today_button = ttk.Button(
-            self.right_frame, text="Project(s) modified today", command=self.add_today_projects, bootstyle="info")
+            self.right_frame, text=" Recent", image=self.recent_icon, compound=tk.LEFT,
+            command=self.add_today_projects, bootstyle="info")
         self.add_today_button.pack(pady=(5, 5), padx=20, fill=X)
 
+        # Message once button is clicked
         self.status_label = ttk.Label(
             self.right_frame, text="", font=("Segoe UI", 9), bootstyle="success")
         self.status_label.pack(pady=(0, 10))
 
         self.populate_tree(Root_Folder_K2)
         self.root.bind("<Return>", self.on_enter_key)
+
+        
 
     def on_enter_key(self, event):
         selected_items = self.tree.selection()
@@ -280,3 +304,4 @@ if __name__ == "__main__":
     root = style.master
     app = FLPExporterUI(root)
     root.mainloop()
+  
