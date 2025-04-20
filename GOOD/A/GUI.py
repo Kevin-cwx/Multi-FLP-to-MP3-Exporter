@@ -2,18 +2,32 @@ import os
 import re
 import subprocess
 import ttkbootstrap
-import ttkbootstrap as ttk  # NEW: Use ttkbootstrap instead of tkinter
+import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
 from ttkbootstrap import Style
-from tkinter import Listbox  # Listbox still from tkinter
-import tkinter as tk  # ✅ Fixes all 'tk' constants
+from tkinter import Listbox
+import tkinter as tk
+import datetime
 
 # === CONFIG ===
-USE_DARK_MODE = False  # Toggle between dark mode and light mode
+USE_DARK_MODE = False
 Root_Folder_K2 = r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 21 - projects"
 Output_Folder_Path = r"C:\Users\Kfoen\Documents\Docs KF\FL SONGS MP3\Python_Audio_Output\A"
 FL_Studio_Path = r"C:\Program Files\Image-Line\FL Studio 21"
 Processor_Type = "FL64.exe"
+
+
+def get_file_paths(root_directory):
+    file_paths = {}
+    for dirpath, dirnames, filenames in os.walk(root_directory):
+        if "Backup" in dirpath.split(os.sep):
+            continue
+        for filename in filenames:
+            if filename.lower().endswith(".flp"):
+                file_path = os.path.join(dirpath, filename)
+                modified_date = os.path.getmtime(file_path)
+                file_paths[file_path] = modified_date
+    return file_paths
 
 
 def export_flp_to_mp3(file_path):
@@ -28,7 +42,6 @@ class FLPExporterUI:
         self.root.geometry("600x600+30+20")
         self.root.resizable(False, False)
 
-        # === Heading ===
         self.heading = ttk.Label(self.root, text="🎵 FLP to MP3 Exporter", font=(
             "Segoe UI", 16, "bold"), bootstyle="info")
         self.heading.pack(pady=(0, 0))
@@ -40,7 +53,6 @@ class FLPExporterUI:
         content_frame = ttk.Frame(self.root)
         content_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=5)
 
-        # === LEFT SIDE ===
         self.left_frame = ttk.Frame(content_frame)
         self.left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
@@ -49,8 +61,7 @@ class FLPExporterUI:
         self.tree_label.pack(pady=(0, 0))
 
         self.instruction_label = ttk.Label(
-            self.left_frame, text="Double click to select / unselect projects", font=("Segoe UI", 9)
-        )
+            self.left_frame, text="Double click to select / unselect projects", font=("Segoe UI", 9))
         self.instruction_label.pack(pady=(1, 1))
 
         tree_frame = ttk.Frame(self.left_frame)
@@ -72,37 +83,34 @@ class FLPExporterUI:
         self.tree.tag_configure(
             "selected", background="#ADD8E6", foreground="black")
 
-        # === RIGHT SIDE ===
         self.right_frame = ttk.Frame(content_frame)
-        self.right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+        self.right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=False)
 
         self.cart_label = ttk.Label(
             self.right_frame, text="Selected Projects", font=("Segoe UI", 11, "bold"))
         self.cart_label.pack(pady=(0, 0))
 
-        self.cart_listbox = Listbox(
-            self.right_frame, height=20, width=20, selectmode=tk.SINGLE,
-            bg="white", fg="black", font=("Segoe UI", 10)
-        )
+        self.cart_listbox = Listbox(self.right_frame, height=1, width=20,
+                                    selectmode=tk.SINGLE, bg="white", fg="black", font=("Segoe UI", 10))
         self.cart_listbox.pack(fill=tk.BOTH, expand=True,
                                padx=10, pady=(5, 10))
-        # NEW: Remove on double-click
         self.cart_listbox.bind("<Double-Button-1>", self.on_cart_double_click)
 
         self.export_button = ttk.Button(
-            self.right_frame, text="Export Selected to MP3", command=self.export_selected, bootstyle="success"
-        )
+            self.right_frame, text="Export Selected to MP3", command=self.export_selected, bootstyle="success")
         self.export_button.pack(pady=5, padx=20, fill=X)
 
-        self.enter_button = ttk.Button(
-            self.right_frame, text="Select Project", command=lambda: self.on_enter_key(None), bootstyle="primary"
-        )
+        self.enter_button = ttk.Button(self.right_frame, text="Select Project",
+                                       command=lambda: self.on_enter_key(None), bootstyle="primary")
         self.enter_button.pack(pady=5, padx=20, fill=X)
 
         self.clear_button = ttk.Button(
-            self.right_frame, text="Clear All", command=self.clear_selection, bootstyle="secondary"
-        )
+            self.right_frame, text="Clear All", command=self.clear_selection, bootstyle="secondary")
         self.clear_button.pack(pady=(0, 5), padx=20, fill=X)
+
+        self.add_today_button = ttk.Button(
+            self.right_frame, text="Project(s) modified today", command=self.add_today_projects, bootstyle="info")
+        self.add_today_button.pack(pady=(5, 5), padx=20, fill=X)
 
         self.status_label = ttk.Label(
             self.right_frame, text="", font=("Segoe UI", 9), bootstyle="success")
@@ -198,7 +206,7 @@ class FLPExporterUI:
             self.tree.item(item_id, tags=("selected",))
         self.last_selected_item = item_id
 
-    def on_cart_double_click(self, event):  # NEW: Remove from selection
+    def on_cart_double_click(self, event):
         selection = self.cart_listbox.curselection()
         if not selection:
             return
@@ -247,6 +255,20 @@ class FLPExporterUI:
         self.cart_listbox.delete(0, tk.END)
         self.status_label.config(
             text="Selection cleared.", bootstyle="secondary")
+
+    def add_today_projects(self):
+        today = datetime.date.today()
+        today_str = today.strftime("%d-%m-%Y")
+        file_paths = get_file_paths(Root_Folder_K2)
+        for file_path, modified_date in file_paths.items():
+            if datetime.datetime.fromtimestamp(modified_date).strftime("%d-%m-%Y") == today_str:
+                if file_path not in self.selected_files:
+                    self.selected_files.add(file_path)
+                    for item_id, path in self.path_map.items():
+                        if path == file_path:
+                            self.tree.item(item_id, tags=("selected",))
+                            break
+        self.refresh_cart()
 
     def on_mousewheel(self, event):
         delta = -1 if event.delta > 0 else 1
