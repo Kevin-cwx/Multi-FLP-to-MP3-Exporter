@@ -57,14 +57,16 @@ class FLPExporterUI(QtWidgets.QMainWindow):
                     font-family: Segoe UI;
                 }
                 QPushButton {
-                    background-color: #7289da;
-                    border: none;
+                    background-color: transparent;
+                    color: #000000;
+                    border: 2px solid #7289da;
                     padding: 8px;
                     border-radius: 8px;
                     text-align: left;
                 }
                 QPushButton:hover {
-                    background-color: #5b6eae;
+                    background-color: #7289da;
+                    color: #ffffff;
                 }
                 QTreeWidget, QListWidget {
                     background-color: #23272a;
@@ -83,14 +85,16 @@ class FLPExporterUI(QtWidgets.QMainWindow):
                     font-family: Segoe UI;
                 }
                 QPushButton {
-                    background-color: #4CAF50;
-                    border: none;
+                    background-color: transparent;
+                    color: #000000;
+                    border: 2px solid #4CAF50;
                     padding: 8px;
                     border-radius: 8px;
                     text-align: left;
                 }
                 QPushButton:hover {
-                    background-color: #45a049;
+                    background-color: #4CAF50;
+                    color: #ffffff;
                 }
                 QTreeWidget, QListWidget {
                     background-color: #f4f4f4;
@@ -113,6 +117,8 @@ class FLPExporterUI(QtWidgets.QMainWindow):
         left_layout.addWidget(QtWidgets.QLabel("Projects"))
         self.tree = QtWidgets.QTreeWidget()
         self.tree.setHeaderHidden(True)
+        self.tree.setSelectionMode(
+            QtWidgets.QAbstractItemView.MultiSelection)  # Enable multi-select
         self.tree.itemDoubleClicked.connect(self.handle_double_click_tree)
         left_layout.addWidget(self.tree)
 
@@ -141,6 +147,18 @@ class FLPExporterUI(QtWidgets.QMainWindow):
     def create_button(self, text, callback):
         btn = QtWidgets.QPushButton(text)
         btn.clicked.connect(callback)
+
+        # Assigning icons after QApplication is created
+        if text == "Export":
+            btn.setIcon(download_icon)
+        elif text == "Select":
+            btn.setIcon(plus_icon)
+        elif text == "Clear All":
+            btn.setIcon(clear_icon)
+        elif text == "Recent":
+            btn.setIcon(recent_icon)
+
+        btn.setStyleSheet("background-color: transparent; color: black;")
         return btn
 
     def populate_tree(self, parent_path, parent_node=None):
@@ -238,11 +256,10 @@ class FLPExporterUI(QtWidgets.QMainWindow):
         for idx, path in enumerate(self.selected_files, 1):
             print(f"[{idx}/{total}] Exporting {os.path.basename(path)}")
             export_flp_to_mp3(path)
-
-        self.status_label.setText(f"{total} project(s) exported.")
+        self.status_label.setText("Export complete!")
 
     def clear_selection(self):
-        for item in self.path_map:
+        for item in self.tree.selectedItems():
             item.setBackground(0, QtGui.QBrush(QtGui.QColor("transparent")))
         self.selected_files.clear()
         self.cart.clear()
@@ -263,8 +280,20 @@ class FLPExporterUI(QtWidgets.QMainWindow):
         self.refresh_cart()
 
 
+def load_icon(icon_path):
+    return QtGui.QIcon(icon_path)
+
+
 if __name__ == "__main__":
+    # Initialize the QApplication instance first
     app = QtWidgets.QApplication([])
+
+    # Load icons
+    download_icon = load_icon("Media/Icons/download.png")
+    plus_icon = load_icon("Media/Icons/plus.png")
+    clear_icon = load_icon("Media/Icons/clear.png")
+    recent_icon = load_icon("Media/Icons/recent.png")
+
     window = FLPExporterUI()
     window.show()
     app.exec_()
