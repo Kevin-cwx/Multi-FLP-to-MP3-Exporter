@@ -90,10 +90,9 @@ class FLPExporterUI:
             self.right_frame, text="Selected Projects", font=("Segoe UI", 11, "bold"))
         self.cart_label.pack(pady=(0, 0))
 
-        self.cart_listbox = Listbox(self.right_frame, height=1, width=20,
+        self.cart_listbox = Listbox(self.right_frame, height=15, width=20,
                                     selectmode=tk.SINGLE, bg="white", fg="black", font=("Segoe UI", 10))
-        self.cart_listbox.pack(fill=tk.BOTH, expand=True,
-                               padx=10, pady=(5, 10))
+        self.cart_listbox.pack(fill=tk.X, padx=10, pady=(5, 10))
         self.cart_listbox.bind("<Double-Button-1>", self.on_cart_double_click)
 
         self.export_button = ttk.Button(
