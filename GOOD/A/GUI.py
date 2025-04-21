@@ -9,6 +9,8 @@ from tkinter import Listbox
 import tkinter as tk
 import datetime
 from PIL import Image, ImageTk
+from idlelib.tooltip import Hovertip
+
 
 # === CONFIG ===
 USE_DARK_MODE = False
@@ -137,6 +139,7 @@ class FLPExporterUI:
         bootstyle="outline-secondary"
     )
         self.settings_button.pack(side=tk.RIGHT)
+        self.settings_tip = Hovertip(self.settings_button, 'Settings')
 
         self.toggle_icon = self.minus_icon
         self.toggle_button = ttk.Button(
@@ -148,6 +151,7 @@ class FLPExporterUI:
         )
 
         self.toggle_button.pack(side=tk.RIGHT, padx=(0, 10))
+        self.toggle_tip = Hovertip(self.toggle_button, 'Collapse folders')
 
         self.status_label = ttk.Label(
             self.right_frame, text="", font=("Segoe UI", 9), bootstyle="success")
@@ -167,10 +171,13 @@ class FLPExporterUI:
             self.collapse_all()
             self.toggle_icon = self.plus_icon
             self.folders_expanded = False
+            self.toggle_tip.text = 'Expand folders'
         else:
             self.expand_all()
             self.toggle_icon = self.minus_icon
             self.folders_expanded = True
+            self.toggle_tip.text = 'Collapse folders'
+
         self.toggle_button.config(image=self.toggle_icon)
 
     def expand_all(self):
