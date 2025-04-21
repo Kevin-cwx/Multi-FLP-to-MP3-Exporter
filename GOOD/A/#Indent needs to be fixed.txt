@@ -1,4 +1,4 @@
-#Indent needs to be fixed
+#Setting needs to be fixed
 import os
 import re
 import subprocess
@@ -10,6 +10,7 @@ from tkinter import Listbox
 import tkinter as tk
 import datetime
 from PIL import Image, ImageTk
+from idlelib.tooltip import Hovertip
 
 
 # === CONFIG ===
@@ -18,6 +19,7 @@ Root_Folder_K2 = r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 21 
 Output_Folder_Path = r"C:\Users\Kfoen\Documents\Docs KF\FL SONGS MP3\Python_Audio_Output\A"
 FL_Studio_Path = r"C:\Program Files\Image-Line\FL Studio 21"
 Processor_Type = "FL64.exe"
+
 
 def get_file_paths(root_directory):
     file_paths = {}
@@ -34,7 +36,6 @@ def get_file_paths(root_directory):
 
 def export_flp_to_mp3(file_path):
     Export_FLP_to_MP3 = f'cd "{FL_Studio_Path}" & {Processor_Type} /R /Emp3 "{file_path}" /O"{Output_Folder_Path}"'
-    #print(Export_FLP_to_MP3)
     subprocess.call(Export_FLP_to_MP3, shell=True)
 
 
@@ -46,24 +47,26 @@ class FLPExporterUI:
         self.root.resizable(False, False)
         self.root.title("FLP to MP3 Exporter")
         transparent_icon = tk.PhotoImage(width=1, height=1)
-        # self.root.iconphoto(False, transparent_icon)
         self.root.iconbitmap(r"C:\Users\Kfoen\Pictures\FL21 - Icon.ico")
-        Background_Color = "white"  # "#808791"
+        Background_Color = "white"
         self.root.configure(bg=Background_Color)
-        self.folders_expanded = False
+        self.folders_expanded = True
+        self.settings_open = False
+
 
         self.heading = ttk.Label(self.root, text="🎵 FLP to MP3 Exporter", font=(
             "Segoe UI", 16, "bold"), bootstyle="info")
         self.heading.pack(pady=(0, 0))
 
-    def load_icon(path, size=(16, 16)):
-        return ImageTk.PhotoImage(Image.open(path).resize(size, Image.LANCZOS))
-        
-        self.download_icon = load_icon("Media/Icons/download.png")
-        self.plus_icon = load_icon("Media/Icons/plus.png")
-        self.clear_icon = load_icon("Media/Icons/clear.png")
-        self.recent_icon = load_icon("Media/Icons/recent.png")
-        self.settings_icon = load_icon("Media/Icons/settings.png")
+        self.download_icon = self.load_icon("Media/Icons/download.png")
+        self.plus_icon = self.load_icon("Media/Icons/plus.png")
+        self.minus_icon = self.load_icon("Media/Icons/minus.png")
+        self.clear_icon = self.load_icon("Media/Icons/clear.png")
+        self.recent_icon = self.load_icon("Media/Icons/recent.png")
+        self.settings_icon = self.load_icon("Media/Icons/settings.png")
+
+        self.top_bar = ttk.Frame(self.root)
+        self.top_bar.pack(side=tk.TOP, fill=tk.X, padx=10, pady=5)
 
         self.selected_files = set()
         self.path_map = {}
@@ -101,7 +104,6 @@ class FLPExporterUI:
         self.tree.bind("<Double-1>", self.on_tree_double_click)
         self.tree.tag_configure(
             "selected", background="#34b1eb", foreground="black")
-        # ADD8E6
 
         self.right_frame = ttk.Frame(content_frame)
         self.right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=False)
@@ -115,51 +117,45 @@ class FLPExporterUI:
         self.cart_listbox.pack(fill=tk.X, padx=10, pady=(5, 10))
         self.cart_listbox.bind("<Double-Button-1>", self.on_cart_double_click)
 
-        # Buttons
-        self.export_button = ttk.Button(
-            self.right_frame, text="Export", image=self.download_icon, compound=tk.LEFT,
-            command=self.export_selected, bootstyle="success")
+        self.export_button = ttk.Button(self.right_frame, text="Export", image=self.download_icon,
+                                        compound=tk.LEFT, command=self.export_selected, bootstyle="success")
         self.export_button.pack(pady=5, padx=20, fill=X)
 
-        self.enter_button = ttk.Button(
-            self.right_frame, text="Select", image=self.plus_icon, compound=tk.LEFT,
-            command=lambda: self.on_enter_key(None), bootstyle="outline-secondary")
+        self.enter_button = ttk.Button(self.right_frame, text="Select", image=self.plus_icon,
+                                       compound=tk.LEFT, command=lambda: self.on_enter_key(None), bootstyle="outline-secondary")
         self.enter_button.pack(pady=5, padx=20, fill=X)
 
-        self.clear_button = ttk.Button(
-            self.right_frame, text="Clear All", image=self.clear_icon, compound=tk.LEFT,
-            command=self.clear_selection, bootstyle="outline-secondary")
+        self.clear_button = ttk.Button(self.right_frame, text="Clear All", image=self.clear_icon,
+                                       compound=tk.LEFT, command=self.clear_selection, bootstyle="outline-secondary")
         self.clear_button.pack(pady=(0, 5), padx=20, fill=X)
 
-        self.add_today_button = ttk.Button(
-            self.right_frame, text="Recent", image=self.recent_icon, compound=tk.LEFT,
-            command=self.add_today_projects, bootstyle="outline-secondary")
+        self.add_today_button = ttk.Button(self.right_frame, text="Recent", image=self.recent_icon,
+                                           compound=tk.LEFT, command=self.add_today_projects, bootstyle="outline-secondary")
         self.add_today_button.pack(pady=(5, 5), padx=20, fill=X)
 
-        # Settings button at top left
+        # Settings button
         self.settings_button = ttk.Button(
-            self.root,
-            text="Settings",
-            image=self.settings_icon,
-            compound=tk.LEFT,
-            command=self.open_settings,
-            bootstyle="outline-secondary"  # already includes a border
-        )
-        self.settings_button.pack(pady=5, padx=5, anchor='nw')
+        self.top_bar,
+        text="Settings",
+        image=self.settings_icon,
+        command=self.open_settings,
+        bootstyle="outline-secondary"
+    )
+        self.settings_button.pack(side=tk.RIGHT)
+        self.settings_tip = Hovertip(self.settings_button, 'Settings')
 
-        # 🆕 Add Toggle Expand/Collapse Button
-        # Initially set to "+" icon
-        self.toggle_icon = load_icon("Media/Icons/plus.png")
+        self.toggle_icon = self.minus_icon
         self.toggle_button = ttk.Button(
-            self.root,
-            image=self.toggle_icon,
-            compound=tk.LEFT,
-            command=self.toggle_folders,
-            bootstyle="outline-secondary"
+        self.top_bar,
+        image=self.toggle_icon,
+        compound=tk.LEFT,
+        command=self.toggle_folders,
+        bootstyle="outline-secondary"
         )
-        self.toggle_button.pack(pady=5, padx=5, anchor='se')
 
-        # Message once button is clicked
+        self.toggle_button.pack(side=tk.RIGHT, padx=(0, 10))
+        self.toggle_tip = Hovertip(self.toggle_button, 'Collapse folders')
+
         self.status_label = ttk.Label(
             self.right_frame, text="", font=("Segoe UI", 9), bootstyle="success")
         self.status_label.pack(pady=(0, 10))
@@ -167,23 +163,24 @@ class FLPExporterUI:
         self.populate_tree(Root_Folder_K2)
         self.root.bind("<Return>", self.on_enter_key)
 
+    def load_icon(self, path, size=(16, 16)):
+        return ImageTk.PhotoImage(Image.open(path).resize(size, Image.LANCZOS))
+    
     def toggle_folders(self):
-    # Check if any folder is collapsed by looking at the first one
         first_item = self.tree.get_children("")
         if not first_item:
-            return  # If no items exist, return
-
-        # Toggle logic - expand all or collapse all
+            return
         if self.folders_expanded:
             self.collapse_all()
-            self.toggle_icon = load_icon("Media/Icons/plus.png")
+            self.toggle_icon = self.plus_icon
             self.folders_expanded = False
+            self.toggle_tip.text = 'Expand folders'
         else:
             self.expand_all()
-            self.toggle_icon = load_icon("Media/Icons/minus.png")
+            self.toggle_icon = self.minus_icon
             self.folders_expanded = True
+            self.toggle_tip.text = 'Collapse folders'
 
-            # Update button icon
         self.toggle_button.config(image=self.toggle_icon)
 
     def expand_all(self):
@@ -206,9 +203,43 @@ class FLPExporterUI:
             self.tree.item(item, open=False)
             self.collapse_all_nodes(item)
 
-
     def open_settings(self):
-        pass
+        if not self.settings_open:
+
+            # Save widgets and hide main UI
+            self.main_widgets = [self.heading, self.left_frame, self.right_frame]
+            for widget in self.main_widgets:
+                widget.pack_forget()
+
+            # Create and show settings UI
+            self.settings_frame = ttk.Frame(self.root)
+            self.settings_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)
+
+            # Example settings content
+            label = ttk.Label(self.settings_frame, text="Settings",
+                            font=("Segoe UI", 14, "bold"))
+            label.pack(pady=10)
+
+            self.example_entry = ttk.Entry(self.settings_frame)
+            self.example_entry.insert(0, "Example setting value")
+            self.example_entry.pack(pady=10)
+
+            self.settings_open = True
+            self.settings_button.config(text="Save")
+        else:
+            # Save logic (optional: store settings)
+            setting_value = self.example_entry.get()
+
+            # Hide settings UI and restore main UI
+            self.settings_frame.pack_forget()
+            self.settings_frame.destroy()
+
+            self.top_frame.pack(fill="x")
+            self.left_frame.pack(side="left", fill="both", expand=True)
+            self.right_frame.pack(side="right", fill="both", expand=True)
+
+            self.settings_open = False
+            self.settings_button.config(text="Settings")
 
     def on_enter_key(self, event):
         selected_items = self.tree.selection()
@@ -221,7 +252,6 @@ class FLPExporterUI:
                 else:
                     self.selected_files.add(file_path)
                     self.tree.item(item_id, tags=("selected",))
-
         self.refresh_cart()
 
     def populate_tree(self, parent_path, parent_node=""):
@@ -230,16 +260,12 @@ class FLPExporterUI:
             full_path = os.path.join(parent_path, entry)
             if "Backup" in full_path.split(os.sep):
                 continue
-
             if os.path.isdir(full_path):
-                contains_flp = any(
-                    os.path.isfile(os.path.join(full_path, f)
-                                   ) and f.lower().endswith(".flp")
-                    for f in os.listdir(full_path)
-                )
-                if contains_flp: 
-                    # True - Subfolders are pre opened
-                    node = self.tree.insert( parent_node, "end", text=entry, open=True)
+                contains_flp = any(os.path.isfile(os.path.join(full_path, f)) and f.lower(
+                ).endswith(".flp") for f in os.listdir(full_path))
+                if contains_flp:
+                    node = self.tree.insert(
+                        parent_node, "end", text=entry, open=True)
                     self.populate_tree(full_path, node)
             elif entry.lower().endswith(".flp"):
                 clean_name = re.sub(r"\.flp$", "", entry, flags=re.IGNORECASE)
@@ -251,24 +277,21 @@ class FLPExporterUI:
         region = self.tree.identify("region", event.x, event.y)
         if region != "tree":
             return
-
         item_id = self.tree.identify_row(event.y)
         if not item_id or item_id not in self.path_map:
             return
-
         file_path = self.path_map[item_id]
         if file_path in self.selected_files:
             self.selected_files.remove(file_path)
             self.tree.item(item_id, tags=())
         else:
-            if event.state & 0x0001:  # Shift key
+            if event.state & 0x0001:
                 self.select_range(item_id)
-            elif event.state & 0x0004:  # Control key
+            elif event.state & 0x0004:
                 self.toggle_select(item_id)
             else:
                 self.selected_files.add(file_path)
                 self.tree.item(item_id, tags=("selected",))
-
         self.refresh_cart()
 
     def select_range(self, new_item_id):
@@ -277,7 +300,6 @@ class FLPExporterUI:
             self.tree.item(new_item_id, tags=("selected",))
             self.last_selected_item = new_item_id
             return
-
         start_idx = self.tree.index(self.last_selected_item)
         end_idx = self.tree.index(new_item_id)
         for idx in range(min(start_idx, end_idx), max(start_idx, end_idx) + 1):
@@ -325,13 +347,11 @@ class FLPExporterUI:
 
     def export_selected(self):
         if not self.selected_files:
-            self.status_label.config(text="No files selected.", bootstyle="danger")
+            self.status_label.config(
+                text="No files selected.", bootstyle="danger")
             return
-
-        # Show "Exporting..." and force UI update
         self.status_label.config(text="Exporting...", bootstyle="warning")
         self.status_label.update_idletasks()
-
         total = len(self.selected_files)
         try:
             self.status_label.config(text="", bootstyle="secondary")
@@ -339,18 +359,12 @@ class FLPExporterUI:
             for idx, path in enumerate(self.selected_files, 1):
                 print(f"[{idx}/{total}] Exporting {os.path.basename(path)}")
                 export_flp_to_mp3(path)
-
             project_label = "project" if total == 1 else "projects"
             self.status_label.config(
-                text=f"{total} {project_label} exported.",
-                bootstyle="dark"
-            )
+                text=f"{total} {project_label} exported.", bootstyle="dark")
         except Exception as e:
             self.status_label.config(
-            text=f"Export failed: {str(e)}", bootstyle="danger"
-        )
-        
-
+                text=f"Export failed: {str(e)}", bootstyle="danger")
 
     def clear_selection(self):
         for item_id in self.path_map:
@@ -365,7 +379,6 @@ class FLPExporterUI:
         today_str = today.strftime("%d-%m-%Y")
         file_paths = get_file_paths(Root_Folder_K2)
         added = 0
-
         for file_path, modified_date in file_paths.items():
             if datetime.datetime.fromtimestamp(modified_date).strftime("%d-%m-%Y") == today_str:
                 if file_path not in self.selected_files:
@@ -374,16 +387,14 @@ class FLPExporterUI:
                         if path == file_path:
                             self.tree.item(item_id, tags=("selected",))
                             break
-                    added += 1  
-
+                    added += 1
         self.refresh_cart()
-
-    # 🆕 Update the status label based on whether any files were added
         if added == 0:
-            self.status_label.config(text="No files modified today.", bootstyle="warning")
+            self.status_label.config(
+                text="No files modified today.", bootstyle="warning")
         else:
-            self.status_label.config(text=f"{added} recent project(s) added.", bootstyle="info")
-
+            self.status_label.config(
+                text=f"{added} recent project(s) added.", bootstyle="info")
 
     def on_mousewheel(self, event):
         delta = -1 if event.delta > 0 else 1
@@ -396,4 +407,3 @@ if __name__ == "__main__":
     root = style.master
     app = FLPExporterUI(root)
     root.mainloop()
-  

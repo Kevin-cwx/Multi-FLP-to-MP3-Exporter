@@ -50,6 +50,7 @@ class FLPExporterUI:
         Background_Color = "white"
         self.root.configure(bg=Background_Color)
         self.folders_expanded = True
+        self.settings_open = False
 
         self.heading = ttk.Label(self.root, text="🎵 FLP to MP3 Exporter", font=(
             "Segoe UI", 16, "bold"), bootstyle="info")
@@ -132,22 +133,22 @@ class FLPExporterUI:
 
         # Settings button
         self.settings_button = ttk.Button(
-        self.top_bar,
-        text="Settings",
-        image=self.settings_icon,
-        command=self.open_settings,
-        bootstyle="outline-secondary"
-    )
+            self.top_bar,
+            text="Settings",
+            image=self.settings_icon,
+            command=self.open_settings,
+            bootstyle="outline-secondary"
+        )
         self.settings_button.pack(side=tk.RIGHT)
         self.settings_tip = Hovertip(self.settings_button, 'Settings')
 
         self.toggle_icon = self.minus_icon
         self.toggle_button = ttk.Button(
-        self.top_bar,
-        image=self.toggle_icon,
-        compound=tk.LEFT,
-        command=self.toggle_folders,
-        bootstyle="outline-secondary"
+            self.top_bar,
+            image=self.toggle_icon,
+            compound=tk.LEFT,
+            command=self.toggle_folders,
+            bootstyle="outline-secondary"
         )
 
         self.toggle_button.pack(side=tk.RIGHT, padx=(0, 10))
@@ -162,7 +163,7 @@ class FLPExporterUI:
 
     def load_icon(self, path, size=(16, 16)):
         return ImageTk.PhotoImage(Image.open(path).resize(size, Image.LANCZOS))
-    
+
     def toggle_folders(self):
         first_item = self.tree.get_children("")
         if not first_item:
@@ -201,7 +202,44 @@ class FLPExporterUI:
             self.collapse_all_nodes(item)
 
     def open_settings(self):
-        pass
+        if not self.settings_open:
+
+            # Save widgets and hide main UI
+            self.main_widgets = [self.heading,
+                                 self.left_frame, self.right_frame]
+            for widget in self.main_widgets:
+                widget.pack_forget()
+
+            # Create and show settings UI
+            self.settings_frame = ttk.Frame(self.root)
+            self.settings_frame.pack(
+                fill=tk.BOTH, expand=True, padx=20, pady=20)
+
+            # Example settings content
+            label = ttk.Label(self.settings_frame, text="Settings",
+                              font=("Segoe UI", 14, "bold"))
+            label.pack(pady=10)
+
+            self.example_entry = ttk.Entry(self.settings_frame)
+            self.example_entry.insert(0, "Example setting value")
+            self.example_entry.pack(pady=10)
+
+            self.settings_open = True
+            self.settings_button.config(text="Save")
+        else:
+            # Save logic (optional: store settings)
+            setting_value = self.example_entry.get()
+
+            # Hide settings UI and restore main UI
+            self.settings_frame.pack_forget()
+            self.settings_frame.destroy()
+
+            self.top_frame.pack(fill="x")
+            self.left_frame.pack(side="left", fill="both", expand=True)
+            self.right_frame.pack(side="right", fill="both", expand=True)
+
+            self.settings_open = False
+            self.settings_button.config(text="Settings")
 
     def on_enter_key(self, event):
         selected_items = self.tree.selection()
