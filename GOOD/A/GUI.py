@@ -61,6 +61,7 @@ class FLPExporterUI:
         self.plus_icon = load_icon("Media/Icons/plus.png")
         self.clear_icon = load_icon("Media/Icons/clear.png")
         self.recent_icon = load_icon("Media/Icons/recent.png")
+        self.settings_icon = load_icon("Media/Icons/settings.png")
 
         self.selected_files = set()
         self.path_map = {}
@@ -97,7 +98,8 @@ class FLPExporterUI:
 
         self.tree.bind("<Double-1>", self.on_tree_double_click)
         self.tree.tag_configure(
-            "selected", background="#ADD8E6", foreground="black")
+            "selected", background="#34b1eb", foreground="black")
+        # ADD8E6
 
         self.right_frame = ttk.Frame(content_frame)
         self.right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=False)
@@ -132,6 +134,17 @@ class FLPExporterUI:
             command=self.add_today_projects, bootstyle="outline-secondary")
         self.add_today_button.pack(pady=(5, 5), padx=20, fill=X)
 
+        # Settings button at top left
+        self.settings_button = ttk.Button(
+            self.root,
+            text="Settings",
+            image=self.settings_icon,
+            compound=tk.LEFT,
+            command=self.open_settings,
+            bootstyle="outline-secondary"  # already includes a border
+        )
+        self.settings_button.pack(pady=5, padx=5, anchor='nw')
+
         # Message once button is clicked
         self.status_label = ttk.Label(
             self.right_frame, text="", font=("Segoe UI", 9), bootstyle="success")
@@ -140,7 +153,8 @@ class FLPExporterUI:
         self.populate_tree(Root_Folder_K2)
         self.root.bind("<Return>", self.on_enter_key)
 
-        
+    def open_settings(self):
+        pass
 
     def on_enter_key(self, event):
         selected_items = self.tree.selection()
