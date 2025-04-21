@@ -61,6 +61,8 @@ class FLPExporterUI:
                                  font=("Segoe UI", 16, "bold"), bootstyle="info", foreground="black")
         self.heading.pack(side=tk.LEFT, pady=0)
 
+        style = ttk.Style()
+
         self.download_icon = self.load_icon("Media/Icons/download.png")
         self.plus_icon = self.load_icon("Media/Icons/plus.png")
         self.minus_icon = self.load_icon("Media/Icons/minus.png")
@@ -122,16 +124,17 @@ class FLPExporterUI:
         self.export_button.pack(pady=5, padx=20, fill=X)
 
         self.enter_button = ttk.Button(self.right_frame, text="Select", image=self.plus_icon,
-                                       compound=tk.LEFT, command=lambda: self.on_enter_key(None), bootstyle="outline-secondary")
+                                       compound=tk.LEFT, command=lambda: self.on_enter_key(None), bootstyle="outline-info")
         self.enter_button.pack(pady=5, padx=20, fill=X)
 
         self.clear_button = ttk.Button(self.right_frame, text="Clear All", image=self.clear_icon,
-                                       compound=tk.LEFT, command=self.clear_selection, bootstyle="outline-secondary")
+                                       compound=tk.LEFT, command=self.clear_selection, bootstyle="info-outline")
         self.clear_button.pack(pady=(0, 5), padx=20, fill=X)
 
         self.add_today_button = ttk.Button(self.right_frame, text="Recent", image=self.recent_icon,
-                                           compound=tk.LEFT, command=self.add_today_projects, bootstyle="outline-secondary")
+                                           compound=tk.LEFT, command=self.add_today_projects, bootstyle="outline-info")
         self.add_today_button.pack(pady=(5, 5), padx=20, fill=X)
+        # outline-secondary
 
         # Settings button
         self.settings_button = ttk.Button(
@@ -139,7 +142,7 @@ class FLPExporterUI:
             text="Settings",
             image=self.settings_icon,
             command=self.open_settings,
-            bootstyle="outline-secondary"
+            bootstyle="outline-info"
         )
         self.settings_button.pack(side=tk.RIGHT)
         self.settings_tip = Hovertip(self.settings_button, 'Settings')
@@ -150,7 +153,7 @@ class FLPExporterUI:
             image=self.toggle_icon,
             compound=tk.LEFT,
             command=self.toggle_folders,
-            bootstyle="outline-secondary"
+            bootstyle="outline-info"
         )
 
         self.toggle_button.pack(side=tk.RIGHT, padx=(0, 10))
