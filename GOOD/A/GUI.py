@@ -52,9 +52,14 @@ class FLPExporterUI:
         self.folders_expanded = True
         self.settings_open = False
 
-        self.heading = ttk.Label(self.root, text="🎵 FLP to MP3 Exporter", font=(
-            "Segoe UI", 16, "bold"), bootstyle="info")
-        self.heading.pack(pady=(0, 0))
+        # Create top bar frame first
+        self.top_bar = ttk.Frame(self.root)
+        self.top_bar.pack(side=tk.TOP, fill=tk.X, padx=10, pady=5)
+
+        # Add heading to the top bar frame (left side)
+        self.heading = ttk.Label(self.top_bar, text="🎵 FLP to MP3 Exporter",
+                                 font=("Segoe UI", 16, "bold"), bootstyle="info", foreground="black")
+        self.heading.pack(side=tk.LEFT, pady=0)
 
         self.download_icon = self.load_icon("Media/Icons/download.png")
         self.plus_icon = self.load_icon("Media/Icons/plus.png")
@@ -62,9 +67,6 @@ class FLPExporterUI:
         self.clear_icon = self.load_icon("Media/Icons/clear.png")
         self.recent_icon = self.load_icon("Media/Icons/recent.png")
         self.settings_icon = self.load_icon("Media/Icons/settings.png")
-
-        self.top_bar = ttk.Frame(self.root)
-        self.top_bar.pack(side=tk.TOP, fill=tk.X, padx=10, pady=5)
 
         self.selected_files = set()
         self.path_map = {}
