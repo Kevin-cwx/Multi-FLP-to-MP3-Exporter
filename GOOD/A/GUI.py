@@ -154,7 +154,7 @@ class FLPExporterUI:
         )
 
         self.toggle_button.pack(side=tk.RIGHT, padx=(0, 10))
-        self.toggle_tip = Hovertip(self.toggle_button, 'Collapse folders')
+        self.toggle_tip = Hovertip(self.toggle_button, 'Close folders')
 
         self.status_label = ttk.Label(
             self.right_frame, text="", font=("Segoe UI", 9), bootstyle="success")
@@ -174,12 +174,12 @@ class FLPExporterUI:
             self.collapse_all()
             self.toggle_icon = self.plus_icon
             self.folders_expanded = False
-            self.toggle_tip.text = 'Expand folders'
+            self.toggle_tip.text = 'Open folders'
         else:
             self.expand_all()
             self.toggle_icon = self.minus_icon
             self.folders_expanded = True
-            self.toggle_tip.text = 'Collapse folders'
+            self.toggle_tip.text = 'Close folders'
 
         self.toggle_button.config(image=self.toggle_icon)
 
@@ -205,21 +205,18 @@ class FLPExporterUI:
 
     def open_settings(self):
         if not self.settings_open:
-
-            # Save widgets and hide main UI
-            self.main_widgets = [self.heading,
-                                 self.left_frame, self.right_frame]
-            for widget in self.main_widgets:
-                widget.pack_forget()
+            # Hide the left and right frames and collapse button
+            self.left_frame.pack_forget()
+            self.right_frame.pack_forget()
+            self.toggle_button.pack_forget()
 
             # Create and show settings UI
             self.settings_frame = ttk.Frame(self.root)
-            self.settings_frame.pack(
-                fill=tk.BOTH, expand=True, padx=20, pady=20)
+            self.settings_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)
 
             # Example settings content
             label = ttk.Label(self.settings_frame, text="Settings",
-                              font=("Segoe UI", 14, "bold"))
+                            font=("Segoe UI", 14, "bold"))
             label.pack(pady=10)
 
             self.example_entry = ttk.Entry(self.settings_frame)
@@ -236,9 +233,10 @@ class FLPExporterUI:
             self.settings_frame.pack_forget()
             self.settings_frame.destroy()
 
-            self.top_frame.pack(fill="x")
-            self.left_frame.pack(side="left", fill="both", expand=True)
-            self.right_frame.pack(side="right", fill="both", expand=True)
+            # Show the left and right frames and collapse button again
+            self.left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+            self.right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=False)
+            self.toggle_button.pack(side=tk.RIGHT, padx=(0, 10))
 
             self.settings_open = False
             self.settings_button.config(text="Settings")
