@@ -27,3 +27,12 @@ Save values for next run
 **Styling**
 - Make dark mode
 - Change default to have a dark grey color
+
+
+
+
+**Bugs**
+1. Update status label
+    1. Export 1 project, then export another project. Label gets overlapped.
+    2. Added clear label in "def export_selected". 
+

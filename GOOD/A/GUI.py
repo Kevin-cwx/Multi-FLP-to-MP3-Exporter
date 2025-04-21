@@ -33,6 +33,7 @@ def get_file_paths(root_directory):
 
 def export_flp_to_mp3(file_path):
     Export_FLP_to_MP3 = f'cd "{FL_Studio_Path}" & {Processor_Type} /R /Emp3 "{file_path}" /O"{Output_Folder_Path}"'
+    print(Export_FLP_to_MP3)
     subprocess.call(Export_FLP_to_MP3, shell=True)
 
 
@@ -256,19 +257,32 @@ class FLPExporterUI:
 
     def export_selected(self):
         if not self.selected_files:
-            self.status_label.config(
-                text="No files selected.", bootstyle="danger")
+            self.status_label.config(text="No files selected.", bootstyle="danger")
             return
 
-        total = len(self.selected_files)
-        for idx, path in enumerate(self.selected_files, 1):
-            print(f"[{idx}/{total}] Exporting {os.path.basename(path)}")
-            export_flp_to_mp3(path)
+        # Show "Exporting..." and force UI update
+        self.status_label.config(text="Exporting...", bootstyle="warning")
+        self.status_label.update_idletasks()
 
-        self.status_label.config(
-            text=f"{total} project(s) exported.",
-            bootstyle="dark"
+        total = len(self.selected_files)
+        try:
+            self.status_label.config(text="", bootstyle="secondary")
+            self.status_label.update_idletasks()
+            for idx, path in enumerate(self.selected_files, 1):
+                print(f"[{idx}/{total}] Exporting {os.path.basename(path)}")
+                export_flp_to_mp3(path)
+
+            project_label = "project" if total == 1 else "projects"
+            self.status_label.config(
+                text=f"{total} {project_label} exported.",
+                bootstyle="dark"
+            )
+        except Exception as e:
+            self.status_label.config(
+            text=f"Export failed: {str(e)}", bootstyle="danger"
         )
+        
+
 
     def clear_selection(self):
         for item_id in self.path_map:

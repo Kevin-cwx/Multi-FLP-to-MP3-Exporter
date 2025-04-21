@@ -46,3 +46,11 @@ pyautogui.press('tab')
 pyautogui.press('enter')
 
 print("Done")
+
+"""
+Test via CMD
+https://www.image-line.com/fl-studio-learning/fl-studio-online-manual/html/fformats_save_export.htm
+search: Export to ZIP file
+
+
+"""
