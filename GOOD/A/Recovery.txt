@@ -1,4 +1,4 @@
-#Setting needs to be fixed
+#before Search
 import os
 import re
 import subprocess
@@ -15,7 +15,7 @@ from idlelib.tooltip import Hovertip
 
 # === CONFIG ===
 USE_DARK_MODE = False
-Root_Folder_K2 = r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 21 - projects"
+Dir_FLP_Projects = r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 21 - projects"
 Output_Folder_Path = r"C:\Users\Kfoen\Documents\Docs KF\FL SONGS MP3\Python_Audio_Output\A"
 FL_Studio_Path = r"C:\Program Files\Image-Line\FL Studio 21"
 Processor_Type = "FL64.exe"
@@ -42,21 +42,27 @@ def export_flp_to_mp3(file_path):
 class FLPExporterUI:
     def __init__(self, root):
         self.root = root
-        self.root.title("FLP Exporter")
+        self.root.title("FLP to MP3 Exporter")
         self.root.geometry("600x600+30+20")
         self.root.resizable(False, False)
         self.root.title("FLP to MP3 Exporter")
         transparent_icon = tk.PhotoImage(width=1, height=1)
-        self.root.iconbitmap(r"C:\Users\Kfoen\Pictures\FL21 - Icon.ico")
+        self.root.iconbitmap(r"Media/icons/FL21 - Icon.ico")
         Background_Color = "white"
         self.root.configure(bg=Background_Color)
         self.folders_expanded = True
         self.settings_open = False
 
+        # Create top bar frame first
+        self.top_bar = ttk.Frame(self.root)
+        self.top_bar.pack(side=tk.TOP, fill=tk.X, padx=10, pady=5)
 
-        self.heading = ttk.Label(self.root, text="🎵 FLP to MP3 Exporter", font=(
-            "Segoe UI", 16, "bold"), bootstyle="info")
-        self.heading.pack(pady=(0, 0))
+        # Add heading to the top bar frame (left side)
+        self.heading = ttk.Label(self.top_bar, text="🎵 FLP to MP3 Exporter",
+                                 font=("Segoe UI", 16, "bold"), bootstyle="info", foreground="black")
+        self.heading.pack(side=tk.LEFT, pady=0)
+
+        style = ttk.Style()
 
         self.download_icon = self.load_icon("Media/Icons/download.png")
         self.plus_icon = self.load_icon("Media/Icons/plus.png")
@@ -64,9 +70,6 @@ class FLPExporterUI:
         self.clear_icon = self.load_icon("Media/Icons/clear.png")
         self.recent_icon = self.load_icon("Media/Icons/recent.png")
         self.settings_icon = self.load_icon("Media/Icons/settings.png")
-
-        self.top_bar = ttk.Frame(self.root)
-        self.top_bar.pack(side=tk.TOP, fill=tk.X, padx=10, pady=5)
 
         self.selected_files = set()
         self.path_map = {}
@@ -122,50 +125,52 @@ class FLPExporterUI:
         self.export_button.pack(pady=5, padx=20, fill=X)
 
         self.enter_button = ttk.Button(self.right_frame, text="Select", image=self.plus_icon,
-                                       compound=tk.LEFT, command=lambda: self.on_enter_key(None), bootstyle="outline-secondary")
+                                       compound=tk.LEFT, command=lambda: self.on_enter_key(None), bootstyle="outline-info")
         self.enter_button.pack(pady=5, padx=20, fill=X)
 
         self.clear_button = ttk.Button(self.right_frame, text="Clear All", image=self.clear_icon,
-                                       compound=tk.LEFT, command=self.clear_selection, bootstyle="outline-secondary")
+                                       compound=tk.LEFT, command=self.clear_selection, bootstyle="info-outline")
         self.clear_button.pack(pady=(0, 5), padx=20, fill=X)
 
         self.add_today_button = ttk.Button(self.right_frame, text="Recent", image=self.recent_icon,
-                                           compound=tk.LEFT, command=self.add_today_projects, bootstyle="outline-secondary")
+                                           compound=tk.LEFT, command=self.add_today_projects, bootstyle="outline-info")
         self.add_today_button.pack(pady=(5, 5), padx=20, fill=X)
+        # outline-secondary
 
         # Settings button
         self.settings_button = ttk.Button(
-        self.top_bar,
-        text="Settings",
-        image=self.settings_icon,
-        command=self.open_settings,
-        bootstyle="outline-secondary"
-    )
+            self.top_bar,
+            text="Settings",
+            image=self.settings_icon,
+            command=self.open_settings,
+            bootstyle="outline-info"
+        )
         self.settings_button.pack(side=tk.RIGHT)
         self.settings_tip = Hovertip(self.settings_button, 'Settings')
 
         self.toggle_icon = self.minus_icon
-        self.toggle_button = ttk.Button(
-        self.top_bar,
-        image=self.toggle_icon,
-        compound=tk.LEFT,
-        command=self.toggle_folders,
-        bootstyle="outline-secondary"
+        self.toggle_button_Close_Folders = ttk.Button(
+            self.top_bar,
+            image=self.toggle_icon,
+            compound=tk.LEFT,
+            command=self.toggle_folders,
+            bootstyle="outline-info"
         )
 
-        self.toggle_button.pack(side=tk.RIGHT, padx=(0, 10))
-        self.toggle_tip = Hovertip(self.toggle_button, 'Collapse folders')
+        self.toggle_button_Close_Folders.pack(side=tk.RIGHT, padx=(0, 10))
+        self.toggle_tip = Hovertip(
+            self.toggle_button_Close_Folders, 'Close folders')
 
         self.status_label = ttk.Label(
             self.right_frame, text="", font=("Segoe UI", 9), bootstyle="success")
         self.status_label.pack(pady=(0, 10))
 
-        self.populate_tree(Root_Folder_K2)
+        self.populate_tree(Dir_FLP_Projects)
         self.root.bind("<Return>", self.on_enter_key)
 
     def load_icon(self, path, size=(16, 16)):
         return ImageTk.PhotoImage(Image.open(path).resize(size, Image.LANCZOS))
-    
+
     def toggle_folders(self):
         first_item = self.tree.get_children("")
         if not first_item:
@@ -174,14 +179,14 @@ class FLPExporterUI:
             self.collapse_all()
             self.toggle_icon = self.plus_icon
             self.folders_expanded = False
-            self.toggle_tip.text = 'Expand folders'
+            self.toggle_tip.text = 'Open folders'
         else:
             self.expand_all()
             self.toggle_icon = self.minus_icon
             self.folders_expanded = True
-            self.toggle_tip.text = 'Collapse folders'
+            self.toggle_tip.text = 'Close folders'
 
-        self.toggle_button.config(image=self.toggle_icon)
+        self.toggle_button_Close_Folders.config(image=self.toggle_icon)
 
     def expand_all(self):
         for item in self.tree.get_children():
@@ -205,11 +210,10 @@ class FLPExporterUI:
 
     def open_settings(self):
         if not self.settings_open:
-
-            # Save widgets and hide main UI
-            self.main_widgets = [self.heading, self.left_frame, self.right_frame]
-            for widget in self.main_widgets:
-                widget.pack_forget()
+            # Hide the left and right frames and collapse button
+            self.left_frame.pack_forget()
+            self.right_frame.pack_forget()
+            self.toggle_button_Close_Folders.pack_forget()
 
             # Create and show settings UI
             self.settings_frame = ttk.Frame(self.root)
@@ -234,9 +238,10 @@ class FLPExporterUI:
             self.settings_frame.pack_forget()
             self.settings_frame.destroy()
 
-            self.top_frame.pack(fill="x")
-            self.left_frame.pack(side="left", fill="both", expand=True)
-            self.right_frame.pack(side="right", fill="both", expand=True)
+            # Show the left and right frames and collapse button again
+            self.left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+            self.right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=False)
+            self.toggle_button_Close_Folders.pack(side=tk.RIGHT, padx=(0, 10))
 
             self.settings_open = False
             self.settings_button.config(text="Settings")
@@ -377,7 +382,7 @@ class FLPExporterUI:
     def add_today_projects(self):
         today = datetime.date.today()
         today_str = today.strftime("%d-%m-%Y")
-        file_paths = get_file_paths(Root_Folder_K2)
+        file_paths = get_file_paths(Dir_FLP_Projects)
         added = 0
         for file_path, modified_date in file_paths.items():
             if datetime.datetime.fromtimestamp(modified_date).strftime("%d-%m-%Y") == today_str:
@@ -398,7 +403,7 @@ class FLPExporterUI:
 
     def on_mousewheel(self, event):
         delta = -1 if event.delta > 0 else 1
-        self.tree.yview_scroll(3 * delta, "units")
+        self.tree.yview_scroll(5 * delta, "units")
 
 
 # === START APP ===

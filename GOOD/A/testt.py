@@ -69,12 +69,12 @@ class FLPExporterUI:
         self.clear_icon = self.load_icon("Media/Icons/clear.png")
         self.recent_icon = self.load_icon("Media/Icons/recent.png")
         self.settings_icon = self.load_icon("Media/Icons/settings.png")
+        self.search_icon = self.load_icon("Media/Icons/search.png")
 
         self.selected_files = set()
         self.path_map = {}
         self.last_selected_item = None
-        self.all_items = {}
-        self.original_tree_state = {}
+        self.all_items = {}  # To store all items for filtering
 
         content_frame = ttk.Frame(self.root)
         content_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=5)
@@ -85,11 +85,19 @@ class FLPExporterUI:
         # Add search frame
         search_frame = ttk.Frame(self.left_frame)
         search_frame.pack(fill=tk.X, padx=5, pady=(0, 5))
-
+        
         self.search_entry = ttk.Entry(search_frame)
-        self.search_entry.pack(side=tk.LEFT, fill=tk.X,
-                               expand=True, padx=(0, 5))
+        self.search_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 5))
         self.search_entry.bind("<KeyRelease>", self.filter_tree)
+        
+        self.search_button = ttk.Button(
+            search_frame, 
+            image=self.search_icon, 
+            command=lambda: self.filter_tree(None),
+            bootstyle="outline"
+        )
+        self.search_button.pack(side=tk.RIGHT)
+        self.search_tip = Hovertip(self.search_button, 'Search projects')
 
         self.tree_label = ttk.Label(
             self.left_frame, text="Projects", font=("Segoe UI", 11, "bold"))
@@ -180,59 +188,29 @@ class FLPExporterUI:
 
     def filter_tree(self, event):
         search_term = self.search_entry.get().lower()
-
-        # If search term is empty, restore original tree state
-        if not search_term:
-            self.restore_tree_state()
-            return
-
-        # Store current tree state if not already stored
-        if not self.original_tree_state:
-            self.store_tree_state()
-
+        
         # First, hide all items
         for item in self.tree.get_children():
             self.tree.item(item, open=False)
             self.hide_item_and_children(item)
-
-       # Show items that match the search term
+        
+        # If search term is empty, show all items
+        if not search_term:
+            for item in self.tree.get_children():
+                self.tree.item(item, open=True)
+                self.show_item_and_children(item)
+            return
+            
+        # Show items that match the search term
         for item_id, item_text in self.all_items.items():
             if search_term in item_text.lower():
                 self.show_item_and_parents(item_id)
-                # If it's a folder, look for matches in children
-                if self.tree.get_children(item_id):
-                    for child in self.tree.get_children(item_id):
-                        child_text = self.tree.item(child)['text']
-                        if search_term in child_text.lower():
-                            self.tree.reattach(child, item_id, 'end')
-                            self.tree.item(item_id, open=True)
-
-    def store_tree_state(self):
-        """Store the original expanded/collapsed state of all items."""
-        self.original_tree_state = {}
-        for item in self.tree.get_children():
-            self.store_item_state(item)
-
-    def store_item_state(self, item):
-        """Recursively store the state of an item and its children."""
-        self.original_tree_state[item] = self.tree.item(item)['open']
-        for child in self.tree.get_children(item):
-            self.store_item_state(child)
-
-    def restore_tree_state(self):
-        """Restore the original expanded/collapsed state of all items."""
-        if not self.original_tree_state:
-            return
-
-        # First, show all items
-        for item in self.tree.get_children():
-            self.show_item_and_children(item)
-        # Then restore the open/closed state
-        for item, is_open in self.original_tree_state.items():
-            try:
-                self.tree.item(item, open=is_open)
-            except:
-                pass  # Item might not exist anymore
+                self.tree.item(item_id, open=True)
+                # Expand to show matching children
+                for child in self.tree.get_children(item_id):
+                    child_text = self.tree.item(child)['text']
+                    if search_term in child_text.lower():
+                        self.tree.item(child, open=True)
 
     def hide_item_and_children(self, item):
         """Recursively hide an item and its children."""
@@ -304,12 +282,11 @@ class FLPExporterUI:
 
             # Create and show settings UI
             self.settings_frame = ttk.Frame(self.root)
-            self.settings_frame.pack(
-                fill=tk.BOTH, expand=True, padx=20, pady=20)
+            self.settings_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)
 
             # Example settings content
             label = ttk.Label(self.settings_frame, text="Settings",
-                              font=("Segoe UI", 14, "bold"))
+                            font=("Segoe UI", 14, "bold"))
             label.pack(pady=10)
 
             self.example_entry = ttk.Entry(self.settings_frame)
