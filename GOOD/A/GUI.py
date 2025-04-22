@@ -89,6 +89,7 @@ class FLPExporterUI:
         self.search_entry = ttk.Entry(search_frame)
         self.search_entry.pack(side=tk.LEFT, fill=tk.X,
                                expand=True, padx=(0, 5))
+        
         self.search_entry.bind("<KeyRelease>", self.filter_tree)
 
         self.tree_label = ttk.Label(
