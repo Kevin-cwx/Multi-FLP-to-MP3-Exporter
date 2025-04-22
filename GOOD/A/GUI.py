@@ -46,7 +46,7 @@ class FLPExporterUI:
         self.root.resizable(False, False)
         self.root.title("FLP to MP3 Exporter")
         transparent_icon = tk.PhotoImage(width=1, height=1)
-        self.root.iconbitmap(r"C:\Users\Kfoen\Pictures\FL21 - Icon.ico")
+        self.root.iconbitmap(r"Media/icons/FL21 - Icon.ico")
         Background_Color = "white"
         self.root.configure(bg=Background_Color)
         self.folders_expanded = True
@@ -148,7 +148,7 @@ class FLPExporterUI:
         self.settings_tip = Hovertip(self.settings_button, 'Settings')
 
         self.toggle_icon = self.minus_icon
-        self.toggle_button = ttk.Button(
+        self.toggle_button_Close_Folders = ttk.Button(
             self.top_bar,
             image=self.toggle_icon,
             compound=tk.LEFT,
@@ -156,8 +156,9 @@ class FLPExporterUI:
             bootstyle="outline-info"
         )
 
-        self.toggle_button.pack(side=tk.RIGHT, padx=(0, 10))
-        self.toggle_tip = Hovertip(self.toggle_button, 'Close folders')
+        self.toggle_button_Close_Folders.pack(side=tk.RIGHT, padx=(0, 10))
+        self.toggle_tip = Hovertip(
+            self.toggle_button_Close_Folders, 'Close folders')
 
         self.status_label = ttk.Label(
             self.right_frame, text="", font=("Segoe UI", 9), bootstyle="success")
@@ -184,7 +185,7 @@ class FLPExporterUI:
             self.folders_expanded = True
             self.toggle_tip.text = 'Close folders'
 
-        self.toggle_button.config(image=self.toggle_icon)
+        self.toggle_button_Close_Folders.config(image=self.toggle_icon)
 
     def expand_all(self):
         for item in self.tree.get_children():
@@ -211,7 +212,7 @@ class FLPExporterUI:
             # Hide the left and right frames and collapse button
             self.left_frame.pack_forget()
             self.right_frame.pack_forget()
-            self.toggle_button.pack_forget()
+            self.toggle_button_Close_Folders.pack_forget()
 
             # Create and show settings UI
             self.settings_frame = ttk.Frame(self.root)
@@ -239,7 +240,7 @@ class FLPExporterUI:
             # Show the left and right frames and collapse button again
             self.left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
             self.right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=False)
-            self.toggle_button.pack(side=tk.RIGHT, padx=(0, 10))
+            self.toggle_button_Close_Folders.pack(side=tk.RIGHT, padx=(0, 10))
 
             self.settings_open = False
             self.settings_button.config(text="Settings")
@@ -401,7 +402,7 @@ class FLPExporterUI:
 
     def on_mousewheel(self, event):
         delta = -1 if event.delta > 0 else 1
-        self.tree.yview_scroll(3 * delta, "units")
+        self.tree.yview_scroll(5 * delta, "units")
 
 
 # === START APP ===
