@@ -15,6 +15,7 @@ from idlelib.tooltip import Hovertip
 # === CONFIG ===
 USE_DARK_MODE = False
 Dir_FLP_Projects = r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 21 - projects"
+Dir_FLP_Projects = r"C:\Users\foendoe.kevin\Downloads\FLP files www.producersbuzz.com\FLP files www.producersbuzz.com"
 Output_Folder_Path = r"C:\Users\Kfoen\Documents\Docs KF\FL SONGS MP3\Python_Audio_Output\A"
 FL_Studio_Path = r"C:\Program Files\Image-Line\FL Studio 21"
 Processor_Type = "FL64.exe"
