@@ -514,11 +514,12 @@ class FLPExporterUI:
             self.status_label.config(
                 text="No files selected.", bootstyle="danger")
             return
-        self.status_label.config(text="Exporting...", bootstyle="warning")
+        #self.status_label.config(text="Exporting...", bootstyle="warning")
         self.status_label.update_idletasks()
         total = len(self.selected_files)
         try:
             self.status_label.config(text="", bootstyle="secondary")
+            self.status_label.config(text="Exporting...", bootstyle="warning")
             self.status_label.update_idletasks()
             for idx, path in enumerate(self.selected_files, 1):
                 print(f"[{idx}/{total}] Exporting {os.path.basename(path)}")
