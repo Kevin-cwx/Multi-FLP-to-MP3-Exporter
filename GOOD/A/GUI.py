@@ -41,7 +41,7 @@ def export_flp_to_mp3(file_path):
 class FLPExporterUI:
     def __init__(self, root):
         self.root = root
-        self.root.title("FLP Exporter")
+        self.root.title("FLP to MP3 Exporter")
         self.root.geometry("600x600+30+20")
         self.root.resizable(False, False)
         self.root.title("FLP to MP3 Exporter")
