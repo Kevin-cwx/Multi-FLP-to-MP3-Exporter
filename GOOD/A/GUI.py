@@ -14,7 +14,7 @@ from idlelib.tooltip import Hovertip
 
 # === CONFIG ===
 USE_DARK_MODE = False
-Root_Folder_K2 = r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 21 - projects"
+Dir_FLP_Projects = r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 21 - projects"
 Output_Folder_Path = r"C:\Users\Kfoen\Documents\Docs KF\FL SONGS MP3\Python_Audio_Output\A"
 FL_Studio_Path = r"C:\Program Files\Image-Line\FL Studio 21"
 Processor_Type = "FL64.exe"
@@ -164,7 +164,7 @@ class FLPExporterUI:
             self.right_frame, text="", font=("Segoe UI", 9), bootstyle="success")
         self.status_label.pack(pady=(0, 10))
 
-        self.populate_tree(Root_Folder_K2)
+        self.populate_tree(Dir_FLP_Projects)
         self.root.bind("<Return>", self.on_enter_key)
 
     def load_icon(self, path, size=(16, 16)):
@@ -381,7 +381,7 @@ class FLPExporterUI:
     def add_today_projects(self):
         today = datetime.date.today()
         today_str = today.strftime("%d-%m-%Y")
-        file_paths = get_file_paths(Root_Folder_K2)
+        file_paths = get_file_paths(Dir_FLP_Projects)
         added = 0
         for file_path, modified_date in file_paths.items():
             if datetime.datetime.fromtimestamp(modified_date).strftime("%d-%m-%Y") == today_str:
