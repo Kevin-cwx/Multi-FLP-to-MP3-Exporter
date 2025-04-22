@@ -524,9 +524,9 @@ class FLPExporterUI:
             for idx, path in enumerate(self.selected_files, 1):
                 print(f"[{idx}/{total}] Exporting {os.path.basename(path)}")
                 export_flp_to_mp3(path)
-            project_label = "project" if total == 1 else "projects"
+            Exported_project_label = "project" if total == 1 else "projects"
             self.status_label.config(
-                text=f"{total} {project_label} exported.", bootstyle="dark")
+                text=f"{total} {Exported_project_label} exported.", bootstyle="dark")
         except Exception as e:
             self.status_label.config(
                 text=f"Export failed: {str(e)}", bootstyle="danger")
@@ -558,8 +558,9 @@ class FLPExporterUI:
             self.status_label.config(
                 text="No files modified today.", bootstyle="warning")
         else:
+            Recent_Project_Label = "project" if added == 1 else "projects"
             self.status_label.config(
-                text=f"{added} recent project(s) added.", bootstyle="primary")
+                text=f"{added} recent {Recent_Project_Label} added.", bootstyle="primary")
 
     def on_mousewheel(self, event):
         delta = -1 if event.delta > 0 else 1
