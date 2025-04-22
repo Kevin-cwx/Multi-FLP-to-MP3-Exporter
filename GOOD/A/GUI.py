@@ -69,6 +69,7 @@ class FLPExporterUI:
         self.clear_icon = self.load_icon("Media/Icons/clear.png")
         self.recent_icon = self.load_icon("Media/Icons/recent.png")
         self.settings_icon = self.load_icon("Media/Icons/settings.png")
+        self.music_folder_icon = self.load_icon("Media/Icons/musical-note.png")
 
         self.selected_files = set()
         self.path_map = {}
@@ -168,6 +169,18 @@ class FLPExporterUI:
             bootstyle="outline-info"
         )
 
+        # Create the Music Output Folder button next to toggle button
+        self.music_folder_button = ttk.Button(
+            self.top_bar,
+            image=self.music_folder_icon,
+            compound=tk.LEFT,
+            command=self.open_output_folder,
+            bootstyle="outline-info"
+        )
+        self.music_folder_button.pack(side=tk.RIGHT, padx=(0, 10))
+        self.music_folder_tip = Hovertip(
+            self.music_folder_button, 'Open MP3 Output Folder')
+
         self.toggle_button_Close_Folders.pack(side=tk.RIGHT, padx=(0, 10))
         self.toggle_tip = Hovertip(
             self.toggle_button_Close_Folders, 'Close folders')
@@ -178,6 +191,16 @@ class FLPExporterUI:
 
         self.populate_tree(Dir_FLP_Projects)
         self.root.bind("<Return>", self.on_enter_key)
+
+    def open_output_folder(self):
+        """Open the output folder in file explorer"""
+        try:
+            if os.path.exists(Output_Folder_Path):
+                os.startfile(Output_Folder_Path)
+            else:
+                print("Output folder not found")
+        except Exception as e:
+            print(f"Error opening folder: {str(e)}")
 
     def filter_tree(self, event):
         search_term = self.search_entry.get().lower()
