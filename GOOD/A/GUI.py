@@ -192,10 +192,9 @@ class FLPExporterUI:
 
         # First, hide all items
         for item in self.tree.get_children():
-            self.tree.item(item, open=False)
             self.hide_item_and_children(item)
 
-       # Show items that match the search term
+        # Show items that match the search term
         for item_id, item_text in self.all_items.items():
             if search_term in item_text.lower():
                 self.show_item_and_parents(item_id)
@@ -206,6 +205,33 @@ class FLPExporterUI:
                         if search_term in child_text.lower():
                             self.tree.reattach(child, item_id, 'end')
                             self.tree.item(item_id, open=True)
+            search_term = self.search_entry.get().lower()
+
+            # If search term is empty, restore original tree state
+            if not search_term:
+                self.restore_tree_state()
+                return
+
+            # Store current tree state if not already stored
+            if not self.original_tree_state:
+                self.store_tree_state()
+
+            # First, hide all items
+            for item in self.tree.get_children():
+                self.tree.item(item, open=False)
+                self.hide_item_and_children(item)
+
+        # Show items that match the search term
+            for item_id, item_text in self.all_items.items():
+                if search_term in item_text.lower():
+                    self.show_item_and_parents(item_id)
+                    # If it's a folder, look for matches in children
+                    if self.tree.get_children(item_id):
+                        for child in self.tree.get_children(item_id):
+                            child_text = self.tree.item(child)['text']
+                            if search_term in child_text.lower():
+                                self.tree.reattach(child, item_id, 'end')
+                                self.tree.item(item_id, open=True)
 
     def store_tree_state(self):
         """Store the original expanded/collapsed state of all items."""
@@ -215,7 +241,11 @@ class FLPExporterUI:
 
     def store_item_state(self, item):
         """Recursively store the state of an item and its children."""
-        self.original_tree_state[item] = self.tree.item(item)['open']
+        self.original_tree_state[item] = {
+            'open': self.tree.item(item)['open'],
+            'parent': self.tree.parent(item),
+            'index': self.tree.index(item)
+        }
         for child in self.tree.get_children(item):
             self.store_item_state(child)
 
@@ -224,15 +254,30 @@ class FLPExporterUI:
         if not self.original_tree_state:
             return
 
-        # First, show all items
+        # First, show all items in their original structure
+        for item, state in self.original_tree_state.items():
+            parent = state['parent']
+            index = state['index']
+
+            # Reattach the item to its original parent and position
+            try:
+                if parent:
+                    children = list(self.tree.get_children(parent))
+                    if index < len(children):
+                        self.tree.move(item, parent, index)
+                    else:
+                        self.tree.reattach(item, parent, 'end')
+                else:
+                    self.tree.reattach(item, '', 'end')
+
+                # Restore the open/closed state
+                self.tree.item(item, open=state['open'])
+            except:
+                continue  # Skip if item no longer exists
+
+        # Ensure all items are visible
         for item in self.tree.get_children():
             self.show_item_and_children(item)
-        # Then restore the open/closed state
-        for item, is_open in self.original_tree_state.items():
-            try:
-                self.tree.item(item, open=is_open)
-            except:
-                pass  # Item might not exist anymore
 
     def hide_item_and_children(self, item):
         """Recursively hide an item and its children."""
@@ -467,7 +512,7 @@ class FLPExporterUI:
         self.selected_files.clear()
         self.cart_listbox.delete(0, tk.END)
         self.status_label.config(
-            text="Selection cleared.", bootstyle="secondary")
+            text="Selection cleared.", bootstyle="primary")
 
     def add_today_projects(self):
         today = datetime.date.today()
@@ -489,7 +534,7 @@ class FLPExporterUI:
                 text="No files modified today.", bootstyle="warning")
         else:
             self.status_label.config(
-                text=f"{added} recent project(s) added.", bootstyle="info")
+                text=f"{added} recent project(s) added.", bootstyle="primary")
 
     def on_mousewheel(self, event):
         delta = -1 if event.delta > 0 else 1
