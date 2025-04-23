@@ -24,6 +24,13 @@ Processor_Type = "FL64.exe"
 
 Search_Placeholder_Text = "Search Projects"
 
+# ---
+# Colors
+Selected_Project_Background_Color = "#34b1eb"
+Selected_Project_Text_Color = "black"
+Top_Title_Color ="black"
+Search_Placeholder_Text_Color = "black"
+# ---
 
 def get_file_paths(root_directory):
     file_paths = {}
@@ -63,7 +70,7 @@ class FLPExporterUI:
 
         # Add heading to the top bar frame (left side)
         self.heading = ttk.Label(self.top_bar, text="🎵 FLP to MP3 Exporter",
-                                 font=("Segoe UI", 16, "bold"), bootstyle="info", foreground="black")
+                                 font=("Segoe UI", 16, "bold"), bootstyle="info", foreground=Top_Title_Color)
         self.heading.pack(side=tk.LEFT, pady=0)
 
         style = ttk.Style()
@@ -100,13 +107,13 @@ class FLPExporterUI:
 
         # Add placeholder text and configure events
         self.search_entry.insert(0, Search_Placeholder_Text)
-        self.search_entry.config(foreground='black')
+        self.search_entry.config(foreground=Search_Placeholder_Text_Color)
         self.placeholder_active = True
         self.search_entry.bind("<FocusIn>", self.on_search_focus_in)
         self.search_entry.bind("<FocusOut>", self.on_search_focus_out)
         self.search_entry.bind("<KeyRelease>", self.filter_tree)
 
-        ###
+        
 
         self.search_entry.bind("<KeyRelease>", self.filter_tree)
 
@@ -119,10 +126,12 @@ class FLPExporterUI:
         self.instruction_label.pack(pady=(1, 1))
 
         tree_frame = ttk.Frame(self.left_frame)
-        tree_frame.pack(fill=tk.BOTH, expand=True, padx=5, pady=(5, 10))
+        tree_frame.pack(fill=tk.BOTH, expand=True, padx=5, pady=(0, 10))
 
+        # Projects Left Side
         self.tree = ttk.Treeview(tree_frame, selectmode="extended")
         self.tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
 
         self.tree.bind("<MouseWheel>", self.on_mousewheel)
         self.tree.bind("<Button-4>", self.on_mousewheel)
@@ -135,15 +144,15 @@ class FLPExporterUI:
 
         self.tree.bind("<Double-1>", self.on_tree_double_click)
         self.tree.tag_configure(
-            "selected", background="#34b1eb", foreground="black")
-
+            "selected", background=Selected_Project_Background_Color, foreground=Selected_Project_Text_Color)
+            
         self.right_frame = ttk.Frame(content_frame)
         self.right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=False)
 
         self.cart_label = ttk.Label(
             self.right_frame, text="Selected Projects", font=("Segoe UI", 11, "bold"))
         self.cart_label.pack(pady=(0, 0))
-
+        
         self.cart_listbox = Listbox(self.right_frame, height=15, width=20,
                                     selectmode=tk.SINGLE, bg="white", fg="black", font=("Segoe UI", 10))
         self.cart_listbox.pack(fill=tk.X, padx=10, pady=(5, 10))
