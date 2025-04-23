@@ -4,7 +4,8 @@
 
 ## **Other**
 - ✅ - Remove empty not a button below "Projects"
-- Test with flp project embedded in multiple levels, not a single sub folder 
+- ✅ - Test with flp project embedded in multiple levels, not a single sub folder 
+- Close folder, make it close per level, close all, close top subfolders
 
 ## **Settings**
 - Set output folder 

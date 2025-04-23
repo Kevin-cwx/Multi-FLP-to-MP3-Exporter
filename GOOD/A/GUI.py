@@ -10,12 +10,13 @@ import tkinter as tk
 import datetime
 from PIL import Image, ImageTk
 from idlelib.tooltip import Hovertip
+import threading
 
 
 # === CONFIG ===
 USE_DARK_MODE = False
 Dir_FLP_Projects = r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 21 - projects"
-Dir_FLP_Projects = r"C:\Users\foendoe.kevin\Downloads\FLP files www.producersbuzz.com\FLP files www.producersbuzz.com"
+# Dir_FLP_Projects = r"C:\Users\foendoe.kevin\Downloads\FLP files www.producersbuzz.com\FLP files www.producersbuzz.com"
 Output_Folder_Path = r"C:\Users\Kfoen\Documents\Docs KF\FL SONGS MP3\Python_Audio_Output\A"
 FL_Studio_Path = r"C:\Program Files\Image-Line\FL Studio 21"
 Processor_Type = "FL64.exe"
@@ -91,7 +92,7 @@ class FLPExporterUI:
         self.search_entry = ttk.Entry(search_frame)
         self.search_entry.pack(side=tk.LEFT, fill=tk.X,
                                expand=True, padx=(0, 5))
-        
+
         self.search_entry.bind("<KeyRelease>", self.filter_tree)
 
         self.tree_label = ttk.Label(
@@ -515,7 +516,7 @@ class FLPExporterUI:
             self.status_label.config(
                 text="No files selected.", bootstyle="danger")
             return
-        #self.status_label.config(text="Exporting...", bootstyle="warning")
+        # self.status_label.config(text="Exporting...", bootstyle="warning")
         self.status_label.update_idletasks()
         total = len(self.selected_files)
         try:
