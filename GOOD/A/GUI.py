@@ -10,7 +10,9 @@ import tkinter as tk
 import datetime
 from PIL import Image, ImageTk
 from idlelib.tooltip import Hovertip
-import threading
+import psutil
+import win32gui
+import win32process
 
 
 # === CONFIG ===
@@ -23,6 +25,8 @@ Processor_Type = "FL64.exe"
 
 
 Search_Placeholder_Text = "Search Projects"
+Set_Output_Sub_Folder = True
+Output_Sub_Folder_Name = ""
 
 # ---
 # Colors
@@ -46,10 +50,53 @@ def get_file_paths(root_directory):
     return file_paths
 
 
-def export_flp_to_mp3(file_path):
-    Export_FLP_to_MP3 = f'cd "{FL_Studio_Path}" & {Processor_Type} /R /Emp3 "{file_path}" /O"{Output_Folder_Path}"'
-    subprocess.call(Export_FLP_to_MP3, shell=True)
+# def export_flp_to_mp3(file_path):
+#     Export_FLP_to_MP3 = f'cd "{FL_Studio_Path}" & {Processor_Type} /R /Emp3 "{file_path}" /O"{Output_Folder_Path}"'
+#     subprocess.call(Export_FLP_to_MP3, shell=True)
+def close_fl_studio():
+    def enum_windows_callback(hwnd, pid_list):
+        if win32gui.IsWindowVisible(hwnd):
+            window_title = win32gui.GetWindowText(hwnd)
+            if "FL Studio" in window_title:
+                _, pid = win32process.GetWindowThreadProcessId(hwnd)
+                pid_list.append(pid)
 
+    fl_pids = []
+    win32gui.EnumWindows(enum_windows_callback, fl_pids)
+
+    for pid in set(fl_pids):
+        try:
+            proc = psutil.Process(pid)
+            print(f"Terminating: {proc.name()} (PID: {pid})")
+            proc.terminate()
+            proc.wait(timeout=5)
+        except Exception as e:
+            print(f"Failed to terminate PID {pid}: {e}")
+
+def export_flp_to_mp3(file_path):
+    global Output_Folder_Path
+    close_fl_studio()
+    # Get subfolder name if enabled
+    if Set_Output_Sub_Folder:
+        subfolder = app.subfolder_entry.get().strip()
+        if subfolder:
+            # Create full output path with subfolder
+            full_output_path = os.path.join(Output_Folder_Path, subfolder)
+
+            # Create directory if it doesn't exist
+            if not os.path.exists(full_output_path):
+                try:
+                    os.makedirs(full_output_path)
+                except OSError as e:
+                    print(f"Error creating subfolder: {e}")
+                    full_output_path = Output_Folder_Path  # Fallback to main folder
+        else:
+            full_output_path = Output_Folder_Path
+    else:
+        full_output_path = Output_Folder_Path
+
+    Export_FLP_to_MP3 = f'cd "{FL_Studio_Path}" & {Processor_Type} /R /Emp3 "{file_path}" /O"{full_output_path}"'
+    subprocess.call(Export_FLP_to_MP3, shell=True)
 
 class FLPExporterUI:
     def __init__(self, root):
@@ -104,6 +151,19 @@ class FLPExporterUI:
 
         self.search_entry = ttk.Entry(search_frame, style="Search.TEntry")
         self.search_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 0))
+
+        # Output Sub Folder
+        if Set_Output_Sub_Folder:
+            self.subfolder_frame = ttk.Frame(search_frame)
+            self.subfolder_frame.pack(side=tk.LEFT, fill=tk.X, padx=(0, 0))
+
+            self.subfolder_label = ttk.Label(
+                self.subfolder_frame, text="Output Subfolder:")
+            self.subfolder_label.pack(side=tk.LEFT, padx=(5, 2))
+
+            self.subfolder_entry = ttk.Entry(self.subfolder_frame, width=15)
+            self.subfolder_entry.pack(side=tk.LEFT, fill=tk.X)
+            self.subfolder_entry.insert(0, Output_Sub_Folder_Name)
 
         # Add placeholder text and configure events
         self.search_entry.insert(0, Search_Placeholder_Text)
@@ -173,7 +233,7 @@ class FLPExporterUI:
         self.clear_button.pack(pady=(0, 5), padx=20, fill=X)
 
         self.add_today_button = ttk.Button(self.right_frame, text="Recent", image=self.recent_icon,
-                                           compound=tk.LEFT, command=self.add_today_projects, bootstyle="outline-info")
+                                           compound=tk.LEFT, command=self.add_recent_projects, bootstyle="outline-info")
         self.add_today_button.pack(pady=(5, 5), padx=20, fill=X)
         # outline-secondary
 
@@ -231,7 +291,7 @@ class FLPExporterUI:
         """Handle focus out event to restore placeholder text if empty"""
         if not self.search_entry.get():
             self.search_entry.insert(0, Search_Placeholder_Text)
-            self.search_entry.config(foreground='grey')
+            self.search_entry.config(foreground=Search_Placeholder_Text_Color)
             self.placeholder_active = True
         else:
             self.placeholder_active = False
@@ -544,26 +604,45 @@ class FLPExporterUI:
             self.cart_listbox.insert(tk.END, name)
 
     def export_selected(self):
+            # Clear the status completely and force GUI update
+        self.status_label.config(text="")
+        self.status_label.update()
+        self.root.update_idletasks()  # Force complete GUI refresh
+
         if not self.selected_files:
-            self.status_label.config(
-                text="No files selected.", bootstyle="danger")
+            self.status_label.config(text="No files selected.", bootstyle="danger")
+            self.status_label.update()
             return
-        # self.status_label.config(text="Exporting...", bootstyle="warning")
-        self.status_label.update_idletasks()
+
         total = len(self.selected_files)
         try:
-            self.status_label.config(text="", bootstyle="secondary")
+            # Set exporting message and force display
             self.status_label.config(text="Exporting...", bootstyle="warning")
-            self.status_label.update_idletasks()
+            self.status_label.update()
+            self.root.update_idletasks()  # Force complete GUI refresh
+
             for idx, path in enumerate(self.selected_files, 1):
                 print(f"[{idx}/{total}] Exporting {os.path.basename(path)}")
                 export_flp_to_mp3(path)
+
+            # Clear before showing success message
+            self.status_label.config(text="")
+            self.status_label.update()
+
             Exported_project_label = "project" if total == 1 else "projects"
             self.status_label.config(
-                text=f"{total} {Exported_project_label} exported.", bootstyle="dark")
+                text=f"{total} {Exported_project_label} exported.",
+                bootstyle="success")
+            self.status_label.update()
+
         except Exception as e:
+            # Clear completely before error message
+            self.status_label.config(text="")
+            self.status_label.update()
             self.status_label.config(
-                text=f"Export failed: {str(e)}", bootstyle="danger")
+                text=f"Export failed: {str(e)}",
+                bootstyle="danger")
+            self.status_label.update()
 
     def clear_selection(self):
         for item_id in self.path_map:
@@ -573,10 +652,18 @@ class FLPExporterUI:
         self.status_label.config(
             text="Selection cleared.", bootstyle="primary")
 
-    def add_today_projects(self):
+    def add_recent_projects(self):
         today = datetime.date.today()
         today_str = today.strftime("%d-%m-%Y")
         file_paths = get_file_paths(Dir_FLP_Projects)
+
+        # First count all today's files (regardless of selection status)
+        total_today_files = 0
+        for modified_date in file_paths.values():
+            if datetime.datetime.fromtimestamp(modified_date).strftime("%d-%m-%Y") == today_str:
+                total_today_files += 1
+
+        # Now count how many were actually added (not previously selected)
         added = 0
         for file_path, modified_date in file_paths.items():
             if datetime.datetime.fromtimestamp(modified_date).strftime("%d-%m-%Y") == today_str:
@@ -587,18 +674,30 @@ class FLPExporterUI:
                             self.tree.item(item_id, tags=("selected",))
                             break
                     added += 1
+
         self.refresh_cart()
-        if added == 0:
+
+        if total_today_files == 0:
             self.status_label.config(
                 text="No files modified today.", bootstyle="warning")
         else:
-            Recent_Project_Label = "project" if added == 1 else "projects"
-            self.status_label.config(
-                text=f"{added} recent {Recent_Project_Label} added.", bootstyle="primary")
+            if added > 0:
+                # Show how many new files were added
+                Recent_Project_Label = "project" if added == 1 else "projects"
+                self.status_label.config(
+                    text=f"{added} recent {Recent_Project_Label} added.", bootstyle="primary")
+            else:
+                # Show that all today's files were already selected
+                Recent_Project_Label = "project" if total_today_files == 1 else "projects"
+                #self.status_label.config(text=f"All {total_today_files} recent {Recent_Project_Label} already selected.", bootstyle="info")
+                self.status_label.config(
+                    text=f"{total_today_files} recent {Recent_Project_Label} added.", bootstyle="primary")
 
     def on_mousewheel(self, event):
         delta = -1 if event.delta > 0 else 1
         self.tree.yview_scroll(5 * delta, "units")
+
+    
 
 
 # === START APP ===

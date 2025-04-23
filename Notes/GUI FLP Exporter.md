@@ -6,6 +6,10 @@
 - ✅ - Remove empty not a button below "Projects"
 - ✅ - Test with flp project embedded in multiple levels, not a single sub folder 
 - Close folder, make it close per level, close all, close top subfolders
+- Make a decision, should user be able to search for a folder?
+    - if yes, then build functionality, for when a folder is searched, they are able to open the folder and view ALL files within (non filtered / hidden projects)
+    -  ✅ - if no, then make sure flp with same name as folder is still visible
+
 
 ## **Settings**
 - Set output folder 
@@ -15,6 +19,10 @@
 - Set Processor_Type
 -  Launch at system startup
 - Toggle, auto export all projects you worked on today
+- Enable Set output folder sub folder, User can name the sub folder within subfolder where they want to export songs
+    - Create check if folde exists, else create folder
+- Add about section, with version name
+    - And disclaimer text, FL Studio must be closed. Show disclaimer 2 times, FLstudio must be closed before exporting songs
 
 If settings is empty (first time users), prompt user to run FL Studio, run code to get FL_Studio_Path and processes type, prompt user input fields for other values and store in json file
 Save values for next run
