@@ -30,6 +30,7 @@ Selected_Project_Background_Color = "#34b1eb"
 Selected_Project_Text_Color = "black"
 Top_Title_Color ="black"
 Search_Placeholder_Text_Color = "black"
+Project_Color_Tree ="white"
 # ---
 
 def get_file_paths(root_directory):
@@ -127,7 +128,7 @@ class FLPExporterUI:
         tree_frame = ttk.Frame(self.left_frame)
         tree_frame.pack(fill=tk.BOTH, expand=True, padx=5, pady=(0, 10))
 
-        style.configure("Custom.Treeview", background="#008000", fieldbackground="#f0f0f0")
+        style.configure("Custom.Treeview", background=Project_Color_Tree, fieldbackground="#f0f0f0")
 
         # Projects Left Side
         self.tree = ttk.Treeview(tree_frame, selectmode="extended",style="Custom.Treeview")
