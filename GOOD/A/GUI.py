@@ -16,7 +16,7 @@ import threading
 # === CONFIG ===
 USE_DARK_MODE = False
 Dir_FLP_Projects = r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 21 - projects"
-Dir_FLP_Projects = r"C:\Users\foendoe.kevin\Documents\findusic - FLP Input"
+# Dir_FLP_Projects = r"C:\Users\foendoe.kevin\Documents\findusic - FLP Input"
 Output_Folder_Path = r"C:\Users\Kfoen\Documents\Docs KF\FL SONGS MP3\Python_Audio_Output\A"
 FL_Studio_Path = r"C:\Program Files\Image-Line\FL Studio 21"
 Processor_Type = "FL64.exe"
@@ -249,7 +249,6 @@ class FLPExporterUI:
     def filter_tree(self, event):
         search_term = self.search_entry.get().lower()
 
-        """Filter tree items based on search term"""
         # Check if placeholder is active
         if self.placeholder_active:
             search_term = ""
@@ -269,44 +268,28 @@ class FLPExporterUI:
         for item in self.tree.get_children():
             self.hide_item_and_children(item)
 
-        # Show items that match the search term
+        # Show only FLP files that match the search term
         for item_id, item_text in self.all_items.items():
-            if search_term in item_text.lower():
+            # Only show items that are FLP files (have a path in path_map)
+            if item_id in self.path_map and search_term in item_text.lower():
                 self.show_item_and_parents(item_id)
-                # If it's a folder, look for matches in children
-                if self.tree.get_children(item_id):
-                    for child in self.tree.get_children(item_id):
-                        child_text = self.tree.item(child)['text']
-                        if search_term in child_text.lower():
-                            self.tree.reattach(child, item_id, 'end')
-                            self.tree.item(item_id, open=True)
-            search_term = self.search_entry.get().lower()
 
-            # If search term is empty, restore original tree state
-            if not search_term:
-                self.restore_tree_state()
-                return
+        # Additionally, show folders that contain matching FLP files
+        for item_id in self.tree.get_children():
+            # Check if this folder has any children that are FLP files matching the search
+            has_matching_flp = False
+            for child in self.tree.get_children(item_id):
+                if child in self.path_map and search_term in self.all_items[child].lower():
+                    has_matching_flp = True
+                    break
 
-            # Store current tree state if not already stored
-            if not self.original_tree_state:
-                self.store_tree_state()
-
-            # First, hide all items
-            for item in self.tree.get_children():
-                self.tree.item(item, open=False)
-                self.hide_item_and_children(item)
-
-        # Show items that match the search term
-            for item_id, item_text in self.all_items.items():
-                if search_term in item_text.lower():
-                    self.show_item_and_parents(item_id)
-                    # If it's a folder, look for matches in children
-                    if self.tree.get_children(item_id):
-                        for child in self.tree.get_children(item_id):
-                            child_text = self.tree.item(child)['text']
-                            if search_term in child_text.lower():
-                                self.tree.reattach(child, item_id, 'end')
-                                self.tree.item(item_id, open=True)
+            if has_matching_flp:
+                self.tree.reattach(item_id, self.tree.parent(item_id), 'end')
+                self.tree.item(item_id, open=True)
+                # Show all matching FLP files in this folder
+                for child in self.tree.get_children(item_id):
+                    if child in self.path_map and search_term in self.all_items[child].lower():
+                        self.tree.reattach(child, item_id, 'end')
 
     def store_tree_state(self):
         """Store the original expanded/collapsed state of all items."""
