@@ -63,6 +63,7 @@ class FLPExporterUI:
         self.root.configure(bg=Background_Color)
         self.folders_expanded = True
         self.settings_open = False
+        style = ttk.Style()
 
         # Create top bar frame first
         self.top_bar = ttk.Frame(self.root)
@@ -72,8 +73,6 @@ class FLPExporterUI:
         self.heading = ttk.Label(self.top_bar, text="🎵 FLP to MP3 Exporter",
                                  font=("Segoe UI", 16, "bold"), bootstyle="info", foreground=Top_Title_Color)
         self.heading.pack(side=tk.LEFT, pady=0)
-
-        style = ttk.Style()
 
         self.download_icon = self.load_icon("Media/Icons/download.png")
         self.plus_icon = self.load_icon("Media/Icons/plus.png")
@@ -128,8 +127,10 @@ class FLPExporterUI:
         tree_frame = ttk.Frame(self.left_frame)
         tree_frame.pack(fill=tk.BOTH, expand=True, padx=5, pady=(0, 10))
 
+        style.configure("Custom.Treeview", background="#008000", fieldbackground="#f0f0f0")
+
         # Projects Left Side
-        self.tree = ttk.Treeview(tree_frame, selectmode="extended")
+        self.tree = ttk.Treeview(tree_frame, selectmode="extended",style="Custom.Treeview")
         self.tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
 
