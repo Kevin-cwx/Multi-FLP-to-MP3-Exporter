@@ -22,6 +22,9 @@ FL_Studio_Path = r"C:\Program Files\Image-Line\FL Studio 21"
 Processor_Type = "FL64.exe"
 
 
+Search_Placeholder_Text = "Search Projects"
+
+
 def get_file_paths(root_directory):
     file_paths = {}
     for dirpath, dirnames, filenames in os.walk(root_directory):
@@ -87,13 +90,23 @@ class FLPExporterUI:
 
         # Add search frame
         search_frame = ttk.Frame(self.left_frame, borderwidth=2, relief='solid')
-        search_frame.pack(fill=tk.X, padx=5, pady=(0, 0))
+        search_frame.pack(fill=tk.X, padx=5, pady=(0, 10))
         
         style = ttk.Style()
         style.configure("Search.TEntry", relief="flat")
 
         self.search_entry = ttk.Entry(search_frame, style="Search.TEntry")
         self.search_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 0))
+
+        # Add placeholder text and configure events
+        self.search_entry.insert(0, Search_Placeholder_Text)
+        self.search_entry.config(foreground='grey')
+        self.placeholder_active = True
+        self.search_entry.bind("<FocusIn>", self.on_search_focus_in)
+        self.search_entry.bind("<FocusOut>", self.on_search_focus_out)
+        self.search_entry.bind("<KeyRelease>", self.filter_tree)
+
+        ###
 
         self.search_entry.bind("<KeyRelease>", self.filter_tree)
 
@@ -196,6 +209,22 @@ class FLPExporterUI:
         self.populate_tree(Dir_FLP_Projects)
         self.root.bind("<Return>", self.on_enter_key)
 
+    def on_search_focus_in(self, event):
+        """Handle focus in event to remove placeholder text"""
+        if self.placeholder_active:
+            self.search_entry.delete(0, tk.END)
+            self.search_entry.config(foreground='black')
+            self.placeholder_active = False
+
+    def on_search_focus_out(self, event):
+        """Handle focus out event to restore placeholder text if empty"""
+        if not self.search_entry.get():
+            self.search_entry.insert(0, Search_Placeholder_Text)
+            self.search_entry.config(foreground='grey')
+            self.placeholder_active = True
+        else:
+            self.placeholder_active = False
+
     def open_output_folder(self):
         """Open the output folder in file explorer"""
         try:
@@ -208,6 +237,13 @@ class FLPExporterUI:
 
     def filter_tree(self, event):
         search_term = self.search_entry.get().lower()
+
+        """Filter tree items based on search term"""
+        # Check if placeholder is active
+        if self.placeholder_active:
+            search_term = ""
+        else:
+            search_term = self.search_entry.get().lower()
 
         # If search term is empty, restore original tree state
         if not search_term:
