@@ -100,7 +100,7 @@ class FLPExporterUI:
 
         # Add placeholder text and configure events
         self.search_entry.insert(0, Search_Placeholder_Text)
-        self.search_entry.config(foreground='grey')
+        self.search_entry.config(foreground='black')
         self.placeholder_active = True
         self.search_entry.bind("<FocusIn>", self.on_search_focus_in)
         self.search_entry.bind("<FocusOut>", self.on_search_focus_out)
