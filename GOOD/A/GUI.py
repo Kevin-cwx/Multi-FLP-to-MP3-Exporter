@@ -16,7 +16,7 @@ import threading
 # === CONFIG ===
 USE_DARK_MODE = False
 Dir_FLP_Projects = r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 21 - projects"
-# Dir_FLP_Projects = r"C:\Users\foendoe.kevin\Downloads\FLP files www.producersbuzz.com\FLP files www.producersbuzz.com"
+Dir_FLP_Projects = r"C:\Users\foendoe.kevin\Documents\findusic - FLP Input"
 Output_Folder_Path = r"C:\Users\Kfoen\Documents\Docs KF\FL SONGS MP3\Python_Audio_Output\A"
 FL_Studio_Path = r"C:\Program Files\Image-Line\FL Studio 21"
 Processor_Type = "FL64.exe"
@@ -86,12 +86,14 @@ class FLPExporterUI:
         self.left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
         # Add search frame
-        search_frame = ttk.Frame(self.left_frame)
-        search_frame.pack(fill=tk.X, padx=5, pady=(0, 5))
+        search_frame = ttk.Frame(self.left_frame, borderwidth=2, relief='solid')
+        search_frame.pack(fill=tk.X, padx=5, pady=(0, 0))
+        
+        style = ttk.Style()
+        style.configure("Search.TEntry", relief="flat")
 
-        self.search_entry = ttk.Entry(search_frame)
-        self.search_entry.pack(side=tk.LEFT, fill=tk.X,
-                               expand=True, padx=(0, 5))
+        self.search_entry = ttk.Entry(search_frame, style="Search.TEntry")
+        self.search_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 0))
 
         self.search_entry.bind("<KeyRelease>", self.filter_tree)
 
