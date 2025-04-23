@@ -173,7 +173,7 @@ class FLPExporterUI:
         self.clear_button.pack(pady=(0, 5), padx=20, fill=X)
 
         self.add_today_button = ttk.Button(self.right_frame, text="Recent", image=self.recent_icon,
-                                           compound=tk.LEFT, command=self.add_today_projects, bootstyle="outline-info")
+                                           compound=tk.LEFT, command=self.add_recent_projects, bootstyle="outline-info")
         self.add_today_button.pack(pady=(5, 5), padx=20, fill=X)
         # outline-secondary
 
@@ -231,7 +231,7 @@ class FLPExporterUI:
         """Handle focus out event to restore placeholder text if empty"""
         if not self.search_entry.get():
             self.search_entry.insert(0, Search_Placeholder_Text)
-            self.search_entry.config(foreground='grey')
+            self.search_entry.config(foreground=Search_Placeholder_Text_Color)
             self.placeholder_active = True
         else:
             self.placeholder_active = False
@@ -573,10 +573,18 @@ class FLPExporterUI:
         self.status_label.config(
             text="Selection cleared.", bootstyle="primary")
 
-    def add_today_projects(self):
+    def add_recent_projects(self):
         today = datetime.date.today()
         today_str = today.strftime("%d-%m-%Y")
         file_paths = get_file_paths(Dir_FLP_Projects)
+
+        # First count all today's files (regardless of selection status)
+        total_today_files = 0
+        for modified_date in file_paths.values():
+            if datetime.datetime.fromtimestamp(modified_date).strftime("%d-%m-%Y") == today_str:
+                total_today_files += 1
+
+        # Now count how many were actually added (not previously selected)
         added = 0
         for file_path, modified_date in file_paths.items():
             if datetime.datetime.fromtimestamp(modified_date).strftime("%d-%m-%Y") == today_str:
@@ -587,14 +595,24 @@ class FLPExporterUI:
                             self.tree.item(item_id, tags=("selected",))
                             break
                     added += 1
+
         self.refresh_cart()
-        if added == 0:
+
+        if total_today_files == 0:
             self.status_label.config(
                 text="No files modified today.", bootstyle="warning")
         else:
-            Recent_Project_Label = "project" if added == 1 else "projects"
-            self.status_label.config(
-                text=f"{added} recent {Recent_Project_Label} added.", bootstyle="primary")
+            if added > 0:
+                # Show how many new files were added
+                Recent_Project_Label = "project" if added == 1 else "projects"
+                self.status_label.config(
+                    text=f"{added} recent {Recent_Project_Label} added.", bootstyle="primary")
+            else:
+                # Show that all today's files were already selected
+                Recent_Project_Label = "project" if total_today_files == 1 else "projects"
+                #self.status_label.config(text=f"All {total_today_files} recent {Recent_Project_Label} already selected.", bootstyle="info")
+                self.status_label.config(
+                    text=f"{total_today_files} recent {Recent_Project_Label} added.", bootstyle="primary")
 
     def on_mousewheel(self, event):
         delta = -1 if event.delta > 0 else 1
