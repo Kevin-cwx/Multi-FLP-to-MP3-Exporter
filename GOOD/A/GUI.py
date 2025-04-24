@@ -27,6 +27,8 @@ Processor_Type = "FL64.exe"
 Search_Placeholder_Text = "Search Projects"
 Set_Output_Sub_Folder = True
 Output_Sub_Folder_Name = ""
+Output_Audio_Format = "ogg"
+# Emp3,ogg,wav
 
 # ---
 # Colors
@@ -49,29 +51,26 @@ def get_file_paths(root_directory):
                 file_paths[file_path] = modified_date
     return file_paths
 
-
-# def export_flp_to_mp3(file_path):
-#     Export_FLP_to_MP3 = f'cd "{FL_Studio_Path}" & {Processor_Type} /R /Emp3 "{file_path}" /O"{Output_Folder_Path}"'
-#     subprocess.call(Export_FLP_to_MP3, shell=True)
 def close_fl_studio():
-    def enum_windows_callback(hwnd, pid_list):
-        if win32gui.IsWindowVisible(hwnd):
-            window_title = win32gui.GetWindowText(hwnd)
-            if "FL Studio" in window_title:
-                _, pid = win32process.GetWindowThreadProcessId(hwnd)
-                pid_list.append(pid)
+    try:
+        # Method 1: Using taskkill with the process name
+        os.system("taskkill /f /im FL64.exe")  # For 64-bit version
+        os.system("taskkill /f /im FL.exe")    # For 32-bit version
 
-    fl_pids = []
-    win32gui.EnumWindows(enum_windows_callback, fl_pids)
-
-    for pid in set(fl_pids):
+        # Alternative Method 2: Using psutil (more elegant)
         try:
-            proc = psutil.Process(pid)
-            print(f"Terminating: {proc.name()} (PID: {pid})")
-            proc.terminate()
-            proc.wait(timeout=5)
-        except Exception as e:
-            print(f"Failed to terminate PID {pid}: {e}")
+            import psutil
+            for proc in psutil.process_iter():
+                if proc.name().lower() in ['fl64.exe', 'fl.exe']:
+                    proc.kill()
+        except ImportError:
+            pass
+
+        return True
+    except Exception as e:
+        return False
+
+
 
 def export_flp_to_mp3(file_path):
     global Output_Folder_Path
@@ -95,7 +94,10 @@ def export_flp_to_mp3(file_path):
     else:
         full_output_path = Output_Folder_Path
 
-    Export_FLP_to_MP3 = f'cd "{FL_Studio_Path}" & {Processor_Type} /R /Emp3 "{file_path}" /O"{full_output_path}"'
+    # Export_FLP_to_MP3 = f'cd "{FL_Studio_Path}" & {Processor_Type} /R /Emp3 "{file_path}" /O"{full_output_path}"'
+
+    Export_FLP_to_MP3 = f'cd "{FL_Studio_Path}" & {Processor_Type} /R /{Output_Audio_Format} "{file_path}" /O"{full_output_path}"'
+    print(Export_FLP_to_MP3)
     subprocess.call(Export_FLP_to_MP3, shell=True)
 
 class FLPExporterUI:

@@ -13,7 +13,6 @@
     - Shift + Down Key
     - Ctrl + Down Key
 
-
 ## **Settings**
 - Set output folder 
 - Set input folder (Multiple, if not in same location)
