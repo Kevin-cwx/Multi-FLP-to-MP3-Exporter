@@ -26,8 +26,9 @@
 - Add about section, with version name
     - And disclaimer text, FL Studio must be closed. Show disclaimer 2 times, FLstudio must be closed before exporting song
 
-If settings is empty (first time users), prompt user to run FL Studio, run code to get FL_Studio_Path and processes type, prompt user input fields for other values and store in json file
-Save values for next run
+- If settings is empty (first time users), prompt user to run FL Studio, run code to get FL_Studio_Path and processes type, prompt user input fields for other values and store in json file
+ - Save values for next run
+ - User can set mouse scroll speed 4 speeds. Normal, 2X, 3X, 5X
 
 ## **Search**
 - ✅ - Search input field, text should only show project in left side, and should open the folder if in sub folder
@@ -54,3 +55,7 @@ Save values for next run
     1. Export 1 project, then export another project. Label gets overlapped.
     2. Added clear label in "def export_selected". 
 
+
+
+## **Exporting**
+cd "C:\Program Files\Image-Line\FL Studio 21" & FL64.exe /R /ogg "C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 21 - projects\2024\616\Hue.flp" /O"C:\Users\Kfoen\Documents\Docs KF\FL SONGS MP3\Python_Audio_Output\A"

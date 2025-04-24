@@ -27,7 +27,8 @@ Processor_Type = "FL64.exe"
 Search_Placeholder_Text = "Search Projects"
 Set_Output_Sub_Folder = True
 Output_Sub_Folder_Name = ""
-Output_Audio_Format = "ogg"
+Output_Audio_Format = "Emp3"
+Mouse_Scroll_Speed = 7
 # Emp3,ogg,wav
 #ogg does not work in powershell, FL might have disabled
 
@@ -95,10 +96,8 @@ def export_flp_to_mp3(file_path):
     else:
         full_output_path = Output_Folder_Path
 
-    # Export_FLP_to_MP3 = f'cd "{FL_Studio_Path}" & {Processor_Type} /R /Emp3 "{file_path}" /O"{full_output_path}"'
-
     Export_FLP_to_MP3 = f'cd "{FL_Studio_Path}" & {Processor_Type} /R /{Output_Audio_Format} "{file_path}" /O"{full_output_path}"'
-    print(Export_FLP_to_MP3)
+    #print(Export_FLP_to_MP3)
     subprocess.call(Export_FLP_to_MP3, shell=True)
 
 class FLPExporterUI:
@@ -698,7 +697,7 @@ class FLPExporterUI:
 
     def on_mousewheel(self, event):
         delta = -1 if event.delta > 0 else 1
-        self.tree.yview_scroll(5 * delta, "units")
+        self.tree.yview_scroll(Mouse_Scroll_Speed * delta, "units")
 
     
 
