@@ -258,16 +258,16 @@ class FLPExporterUI:
         )
 
         # Create the Music Output Folder button next to toggle button
-        self.music_folder_button = ttk.Button(
+        self.output_music_folder_button = ttk.Button(
             self.top_bar,
             image=self.music_folder_icon,
             compound=tk.LEFT,
             command=self.open_output_folder,
             bootstyle="outline-info"
         )
-        self.music_folder_button.pack(side=tk.RIGHT, padx=(0, 10))
+        self.output_music_folder_button.pack(side=tk.RIGHT, padx=(0, 10))
         self.music_folder_tip = Hovertip(
-            self.music_folder_button, 'Open MP3 Output Folder')
+            self.output_music_folder_button, 'Open MP3 Output Folder')
 
         self.toggle_button_Close_Folders.pack(side=tk.RIGHT, padx=(0, 10))
         self.toggle_tip = Hovertip(
