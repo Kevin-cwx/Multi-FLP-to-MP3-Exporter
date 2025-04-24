@@ -29,6 +29,7 @@ Set_Output_Sub_Folder = True
 Output_Sub_Folder_Name = ""
 Output_Audio_Format = "ogg"
 # Emp3,ogg,wav
+#ogg does not work in powershell, FL might have disabled
 
 # ---
 # Colors
