@@ -22,7 +22,7 @@
 - Enable Set output folder sub folder, User can name the sub folder within subfolder where they want to export songs
     - Create check if folde exists, else create folder
 - Add about section, with version name
-    - And disclaimer text, FL Studio must be closed. Show disclaimer 2 times, FLstudio must be closed before exporting songs
+    - And disclaimer text, FL Studio must be closed. Show disclaimer 2 times, FLstudio must be closed before exporting song
 
 If settings is empty (first time users), prompt user to run FL Studio, run code to get FL_Studio_Path and processes type, prompt user input fields for other values and store in json file
 Save values for next run
