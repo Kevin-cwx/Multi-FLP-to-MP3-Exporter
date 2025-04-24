@@ -9,6 +9,9 @@
 - Make a decision, should user be able to search for a folder?
     - if yes, then build functionality, for when a folder is searched, they are able to open the folder and view ALL files within (non filtered / hidden projects)
     -  ✅ - if no, then make sure flp with same name as folder is still visible
+- Select projects via
+    - Shift + Down Key
+    - Ctrl + Down Key
 
 
 ## **Settings**
