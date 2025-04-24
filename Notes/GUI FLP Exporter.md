@@ -28,7 +28,8 @@
 
 - If settings is empty (first time users), prompt user to run FL Studio, run code to get FL_Studio_Path and processes type, prompt user input fields for other values and store in json file
  - Save values for next run
- - User can set mouse scroll speed 4 speeds. Normal, 2X, 3X, 5X
+- User can set mouse scroll speed 4 speeds. Normal, 2X, 3X, 5X
+- Create button, go to input folder
 
 ## **Search**
 - ✅ - Search input field, text should only show project in left side, and should open the folder if in sub folder
