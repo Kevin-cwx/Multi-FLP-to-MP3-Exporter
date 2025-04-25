@@ -13,7 +13,7 @@ from idlelib.tooltip import Hovertip
 import psutil
 import win32gui
 import win32process
-
+from tkinter import messagebox
 
 # === CONFIG ===
 USE_DARK_MODE = False
@@ -119,6 +119,8 @@ class FLPExporterUI:
         self.top_bar = ttk.Frame(self.root)
         self.top_bar.pack(side=tk.TOP, fill=tk.X, padx=10, pady=5)
 
+        
+
         # Add heading to the top bar frame (left side)
         self.heading = ttk.Label(self.top_bar, text="🎵 FLP to MP3 Exporter",
                                  font=("Segoe UI", 16, "bold"), bootstyle="info", foreground=Top_Title_Color)
@@ -209,7 +211,10 @@ class FLPExporterUI:
         self.tree.bind("<Double-1>", self.on_tree_double_click)
         self.tree.tag_configure(
             "selected", background=Selected_Project_Background_Color, foreground=Selected_Project_Text_Color)
-            
+        
+        # Add right-click binding to the tree
+        self.tree.bind("<Button-3>", self.on_right_click)
+
         self.right_frame = ttk.Frame(content_frame)
         self.right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=False)
 
@@ -698,8 +703,21 @@ class FLPExporterUI:
     def on_mousewheel(self, event):
         delta = -1 if event.delta > 0 else 1
         self.tree.yview_scroll(Mouse_Scroll_Speed * delta, "units")
-
     
+    # Right click opens the file, test at home if it opens in FL
+    def on_right_click(self, event):
+        """Handle right-click event to open file dialog"""
+        item_id = self.tree.identify_row(event.y)
+        if item_id and item_id in self.path_map:
+            file_path = self.path_map[item_id]
+            file_name = os.path.basename(file_path)
+            os.startfile(file_path)
+            # response = messagebox.askokcancel(
+            #     "Open File",
+            #     f"Do you want to open '{file_name}'?"
+            # )
+            # if response:
+            #     os.startfile(file_path)
 
 
 # === START APP ===
