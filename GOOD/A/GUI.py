@@ -13,6 +13,8 @@ from idlelib.tooltip import Hovertip
 import psutil
 import win32gui
 import win32process
+from tkinter import messagebox
+
 
 
 global Output_Folder_Path
@@ -199,7 +201,10 @@ class FLPExporterUI:
         tree_frame = ttk.Frame(self.left_frame)
         tree_frame.pack(fill=tk.BOTH, expand=True, padx=5, pady=(0, 10))
 
-        style.configure("Custom.Treeview", background=Project_Color_Tree, fieldbackground="#f0f0f0")
+        # Increase size of projects
+        #  rowheight=20
+        style.configure("Custom.Treeview", background=Project_Color_Tree,
+                        fieldbackground="#f0f0f0", font=("Segoe UI", 9))
 
         # Projects Left Side
         self.tree = ttk.Treeview(tree_frame, selectmode="extended",style="Custom.Treeview")
@@ -674,7 +679,7 @@ class FLPExporterUI:
         self.root.update_idletasks()  # Force complete GUI refresh
 
         if not self.selected_files:
-            self.status_label.config(text="No files selected.", bootstyle="danger")
+            self.status_label.config(text="No files selected.", bootstyle="primary")
             self.status_label.update()
             return
 
@@ -743,7 +748,7 @@ class FLPExporterUI:
 
         if total_today_files == 0:
             self.status_label.config(
-                text="No files modified today.", bootstyle="warning")
+                text="No files modified today.", bootstyle="primary")
         else:
             if added > 0:
                 # Show how many new files were added
