@@ -706,18 +706,62 @@ class FLPExporterUI:
     
     # Right click opens the file, test at home if it opens in FL
     def on_right_click(self, event):
-        """Handle right-click event to open file dialog"""
+        """Handle right-click to show context menu"""
         item_id = self.tree.identify_row(event.y)
+        self.context_item = item_id  # Store the clicked item
+        
         if item_id and item_id in self.path_map:
-            file_path = self.path_map[item_id]
-            file_name = os.path.basename(file_path)
-            os.startfile(file_path)
-            # response = messagebox.askokcancel(
-            #     "Open File",
-            #     f"Do you want to open '{file_name}'?"
-            # )
-            # if response:
-            #     os.startfile(file_path)
+            # Create context menu
+            self.context_menu = tk.Menu(self.root, tearoff=0)
+            self.context_menu.add_command(
+                label="Open File", 
+                command=self.open_selected_file
+            )
+            self.context_menu.add_command(
+                label="Open Folder", 
+                command=self.open_containing_folder
+            )
+            
+            # Show menu at cursor position
+            self.context_menu.post(event.x_root, event.y_root)
+
+    def open_selected_file(self):
+        """Open the selected file directly"""
+        if hasattr(self, 'context_item') and self.context_item in self.path_map:
+            file_path = self.path_map[self.context_item]
+            try:
+                os.startfile(file_path)
+                self.status_label.config(
+                    text="File opened successfully", 
+                    bootstyle="success"
+                )
+            except Exception as e:
+                self.status_label.config(
+                    text=f"Error opening file: {str(e)}", 
+                    bootstyle="danger"
+                )
+            finally:
+                self.context_menu.destroy()
+
+    def open_containing_folder(self):
+        """Open the folder containing the selected file"""
+        if hasattr(self, 'context_item') and self.context_item in self.path_map:
+            file_path = self.path_map[self.context_item]
+            folder_path = os.path.dirname(file_path)
+            
+            try:
+                os.startfile(folder_path)
+                self.status_label.config(
+                    text="Folder opened successfully", 
+                    bootstyle="success"
+                )
+            except Exception as e:
+                self.status_label.config(
+                    text=f"Error opening folder: {str(e)}", 
+                    bootstyle="danger"
+                )
+            finally:
+                self.context_menu.destroy()
 
 
 # === START APP ===
