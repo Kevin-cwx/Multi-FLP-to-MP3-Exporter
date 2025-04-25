@@ -281,7 +281,7 @@ class FLPExporterUI:
             self.toggle_button_Close_Folders, 'Close folders')
 
         self.status_label = ttk.Label(
-            self.right_frame, text="", font=("Segoe UI", 9), bootstyle="success")
+            self.right_frame, text="", font=("Segoe UI", 11), bootstyle="success")
         self.status_label.pack(pady=(0, 10))
 
         self.populate_tree(Dir_FLP_Projects)
@@ -731,15 +731,10 @@ class FLPExporterUI:
             file_path = self.path_map[self.context_item]
             try:
                 os.startfile(file_path)
-                self.status_label.config(
-                    text="File opened successfully", 
-                    bootstyle="success"
-                )
+                #self.status_label.config(text="File opened successfully", bootstyle="success")
             except Exception as e:
-                self.status_label.config(
-                    text=f"Error opening file: {str(e)}", 
-                    bootstyle="danger"
-                )
+                #self.status_label.config( text=f"Error opening file: {str(e)}", bootstyle="danger")
+                pass
             finally:
                 self.context_menu.destroy()
 
@@ -751,15 +746,10 @@ class FLPExporterUI:
             
             try:
                 os.startfile(folder_path)
-                self.status_label.config(
-                    text="Folder opened successfully", 
-                    bootstyle="success"
-                )
+                #self.status_label.config( text="Folder opened successfully", bootstyle="success")
             except Exception as e:
-                self.status_label.config(
-                    text=f"Error opening folder: {str(e)}", 
-                    bootstyle="danger"
-                )
+                #self.status_label.config(text=f"Error opening folder: {str(e)}", bootstyle="danger")
+                pass
             finally:
                 self.context_menu.destroy()
 
