@@ -13,12 +13,14 @@ from idlelib.tooltip import Hovertip
 import psutil
 import win32gui
 import win32process
+from tkinter import filedialog, messagebox
 
 
+global Output_Folder_Path
 # === CONFIG ===
 USE_DARK_MODE = False
 Dir_FLP_Projects = r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 21 - projects"
-Dir_FLP_Projects = r"C:\Users\foendoe.kevin\Documents\findusic - FLP Input"
+#Dir_FLP_Projects = r"C:\Users\foendoe.kevin\Documents\findusic - FLP Input"
 Output_Folder_Path = r"C:\Users\Kfoen\Documents\Docs KF\FL SONGS MP3\Python_Audio_Output\A"
 FL_Studio_Path = r"C:\Program Files\Image-Line\FL Studio 21"
 Processor_Type = "FL64.exe"
@@ -114,7 +116,7 @@ class FLPExporterUI:
         self.folders_expanded = True
         self.settings_open = False
         style = ttk.Style()
-
+        
         # Create top bar frame first
         self.top_bar = ttk.Frame(self.root)
         self.top_bar.pack(side=tk.TOP, fill=tk.X, padx=10, pady=5)
@@ -131,6 +133,7 @@ class FLPExporterUI:
         self.recent_icon = self.load_icon("Media/Icons/recent.png")
         self.settings_icon = self.load_icon("Media/Icons/settings.png")
         self.music_folder_icon = self.load_icon("Media/Icons/musical-note.png")
+        
 
         self.selected_files = set()
         self.path_map = {}
@@ -175,7 +178,12 @@ class FLPExporterUI:
         self.search_entry.bind("<FocusOut>", self.on_search_focus_out)
         self.search_entry.bind("<KeyRelease>", self.filter_tree)
 
-        
+        self.close_button = ttk.Button(
+            self.top_bar,
+            text="Cancel",
+            command=self.close_settings_without_saving,
+            bootstyle="outline-danger"
+        )
 
         self.search_entry.bind("<KeyRelease>", self.filter_tree)
 
@@ -281,7 +289,7 @@ class FLPExporterUI:
 
         self.populate_tree(Dir_FLP_Projects)
         self.root.bind("<Return>", self.on_enter_key)
-
+    
     def on_search_focus_in(self, event):
         """Handle focus in event to remove placeholder text"""
         if self.placeholder_active:
@@ -461,8 +469,10 @@ class FLPExporterUI:
             self.collapse_all_nodes(item)
 
     def open_settings(self):
+        #global Output_Folder_Path
         if not self.settings_open:
             # Hide the left and right frames and collapse button
+            global Output_Folder_Path
             self.left_frame.pack_forget()
             self.right_frame.pack_forget()
             self.toggle_button_Close_Folders.pack_forget()
@@ -477,27 +487,75 @@ class FLPExporterUI:
                               font=("Segoe UI", 14, "bold"))
             label.pack(pady=10)
 
-            self.example_entry = ttk.Entry(self.settings_frame)
-            self.example_entry.insert(0, "Example setting value")
-            self.example_entry.pack(pady=10)
+            # Output Folder Picker
+            output_folder_frame = ttk.Frame(self.settings_frame)
+            output_folder_frame.pack(fill=tk.X, pady=10)
 
-            self.settings_open = True
+            self.output_folder_label = ttk.Label(
+                output_folder_frame, text="Output Folder:")
+            self.output_folder_label.pack(side=tk.LEFT, padx=(0, 5))
+
+            self.output_folder_entry = ttk.Entry(output_folder_frame)
+            self.output_folder_entry.pack(
+                side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 5))
+            self.output_folder_entry.insert(0, Output_Folder_Path)
+
+            
+            self.browse_button = ttk.Button(
+                output_folder_frame,
+                text="Browse",
+                command=self.browse_output_folder,
+                bootstyle="info"
+            )
+            self.browse_button.pack(side=tk.LEFT)
+
+            # Show the close button and update settings button
+            self.close_button.pack(side=tk.RIGHT, padx=(0, 10))
             self.settings_button.config(text="Save")
+            self.settings_open = True
         else:
-            # Save logic (optional: store settings)
-            setting_value = self.example_entry.get()
+            # Save the output folder path
+            new_path = self.output_folder_entry.get().strip()
+            if not os.path.isdir(new_path):
+                messagebox.showerror(
+                    "Error", "The specified directory does not exist.")
+                return
 
-            # Hide settings UI and restore main UI
-            self.settings_frame.pack_forget()
+            
+            Output_Folder_Path = new_path
+
+            # Close settings UI
             self.settings_frame.destroy()
+            self.settings_open = False
+            self.settings_button.config( text="Settings", image=self.settings_icon)
+            self.close_button.pack_forget()
 
-            # Show the left and right frames and collapse button again
+            # Restore hidden UI elements
             self.left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
             self.right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=False)
             self.toggle_button_Close_Folders.pack(side=tk.RIGHT, padx=(0, 10))
+            self.output_music_folder_button.pack(side=tk.RIGHT, padx=(0, 10))
 
-            self.settings_open = False
-            self.settings_button.config(text="Settings")
+    def browse_output_folder(self):
+        global Output_Folder_Path
+        folder_selected = filedialog.askdirectory(
+            initialdir=Output_Folder_Path)
+        if folder_selected:
+            self.output_folder_entry.delete(0, tk.END)
+            self.output_folder_entry.insert(0, folder_selected)
+
+    def close_settings_without_saving(self):
+        # Close settings without saving
+        self.settings_frame.destroy()
+        self.settings_open = False
+        self.settings_button.config(text="Settings", image=self.settings_icon)
+        self.close_button.pack_forget()
+
+        # Restore hidden UI elements
+        self.left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        self.right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=False)
+        self.toggle_button_Close_Folders.pack(side=tk.RIGHT, padx=(0, 10))
+        self.output_music_folder_button.pack(side=tk.RIGHT, padx=(0, 10))
 
     def on_enter_key(self, event):
         selected_items = self.tree.selection()
