@@ -13,7 +13,6 @@ from idlelib.tooltip import Hovertip
 import psutil
 import win32gui
 import win32process
-from tkinter import filedialog, messagebox
 
 
 global Output_Folder_Path
@@ -121,6 +120,8 @@ class FLPExporterUI:
         self.top_bar = ttk.Frame(self.root)
         self.top_bar.pack(side=tk.TOP, fill=tk.X, padx=10, pady=5)
 
+        
+
         # Add heading to the top bar frame (left side)
         self.heading = ttk.Label(self.top_bar, text="🎵 FLP to MP3 Exporter",
                                  font=("Segoe UI", 16, "bold"), bootstyle="info", foreground=Top_Title_Color)
@@ -217,7 +218,10 @@ class FLPExporterUI:
         self.tree.bind("<Double-1>", self.on_tree_double_click)
         self.tree.tag_configure(
             "selected", background=Selected_Project_Background_Color, foreground=Selected_Project_Text_Color)
-            
+        
+        # Add right-click binding to the tree
+        self.tree.bind("<Button-3>", self.on_right_click)
+
         self.right_frame = ttk.Frame(content_frame)
         self.right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=False)
 
@@ -284,7 +288,7 @@ class FLPExporterUI:
             self.toggle_button_Close_Folders, 'Close folders')
 
         self.status_label = ttk.Label(
-            self.right_frame, text="", font=("Segoe UI", 9), bootstyle="success")
+            self.right_frame, text="", font=("Segoe UI", 11), bootstyle="success")
         self.status_label.pack(pady=(0, 10))
 
         self.populate_tree(Dir_FLP_Projects)
@@ -756,8 +760,55 @@ class FLPExporterUI:
     def on_mousewheel(self, event):
         delta = -1 if event.delta > 0 else 1
         self.tree.yview_scroll(Mouse_Scroll_Speed * delta, "units")
-
     
+    # Right click opens the file, test at home if it opens in FL
+    def on_right_click(self, event):
+        """Handle right-click to show context menu"""
+        item_id = self.tree.identify_row(event.y)
+        self.context_item = item_id  # Store the clicked item
+        
+        if item_id and item_id in self.path_map:
+            # Create context menu
+            self.context_menu = tk.Menu(self.root, tearoff=0)
+            self.context_menu.add_command(
+                label="Open File", 
+                command=self.open_selected_file
+            )
+            self.context_menu.add_command(
+                label="Open Folder", 
+                command=self.open_containing_folder
+            )
+            
+            # Show menu at cursor position
+            self.context_menu.post(event.x_root, event.y_root)
+
+    def open_selected_file(self):
+        """Open the selected file directly"""
+        if hasattr(self, 'context_item') and self.context_item in self.path_map:
+            file_path = self.path_map[self.context_item]
+            try:
+                os.startfile(file_path)
+                #self.status_label.config(text="File opened successfully", bootstyle="success")
+            except Exception as e:
+                #self.status_label.config( text=f"Error opening file: {str(e)}", bootstyle="danger")
+                pass
+            finally:
+                self.context_menu.destroy()
+
+    def open_containing_folder(self):
+        """Open the folder containing the selected file"""
+        if hasattr(self, 'context_item') and self.context_item in self.path_map:
+            file_path = self.path_map[self.context_item]
+            folder_path = os.path.dirname(file_path)
+            
+            try:
+                os.startfile(folder_path)
+                #self.status_label.config( text="Folder opened successfully", bootstyle="success")
+            except Exception as e:
+                #self.status_label.config(text=f"Error opening folder: {str(e)}", bootstyle="danger")
+                pass
+            finally:
+                self.context_menu.destroy()
 
 
 # === START APP ===
