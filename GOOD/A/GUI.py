@@ -38,7 +38,7 @@ Processor_Type = "FL64.exe"
 
 Search_Placeholder_Text = "Search Projects"
 
-Project_Order_By = "date" #date, name
+Project_Order_By = "name" #date, name
 Set_Output_Sub_Folder = True
 Output_Sub_Folder_Name = ""
 Output_Audio_Format = "Emp3"
@@ -736,7 +736,7 @@ class FLPExporterUI:
                 return 0
             
             return sorted(items, key=get_mtime, reverse=True)
-        else:
+        elif Project_Order_By == "date":
             # Default: sort by name (case-insensitive)
             return sorted(items, key=lambda x: x[0].lower() if len(x) >= 1 else "")
 
