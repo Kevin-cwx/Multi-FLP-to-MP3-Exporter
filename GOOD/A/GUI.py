@@ -23,7 +23,14 @@ global Output_Folder_Path
 # === CONFIG ===
 USE_DARK_MODE = False
 Dir_FLP_Projects = r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 21 - projects"
+Dir_FLP_Projects = r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects"
 #Dir_FLP_Projects = r"C:\Users\foendoe.kevin\Documents\findusic - FLP Input"
+
+Dir_FLP_Projects = [
+    r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 12 - projects",
+    r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 20 - projects",
+    # r"C:\Users\foendoe.kevin\Documents\findusic - FLP Input"
+]
 Output_Folder_Path = r"C:\Users\Kfoen\Documents\Docs KF\FL SONGS MP3\Python_Audio_Output\A"
 FL_Studio_Path = r"C:\Program Files\Image-Line\FL Studio 21"
 Processor_Type = "FL64.exe"
@@ -47,16 +54,21 @@ Search_Placeholder_Text_Color = "black"
 Project_Color_Tree ="white"
 # ---
 
-def get_file_paths(root_directory):
+
+def get_file_paths(root_directories):
     file_paths = {}
-    for dirpath, dirnames, filenames in os.walk(root_directory):
-        if "Backup" in dirpath.split(os.sep):
-            continue
-        for filename in filenames:
-            if filename.lower().endswith(".flp"):
-                file_path = os.path.join(dirpath, filename)
-                modified_date = os.path.getmtime(file_path)
-                file_paths[file_path] = modified_date
+    if isinstance(root_directories, str):
+        root_directories = [root_directories]
+
+    for root_directory in root_directories:
+        for dirpath, dirnames, filenames in os.walk(root_directory):
+            if "Backup" in dirpath.split(os.sep):
+                continue
+            for filename in filenames:
+                if filename.lower().endswith(".flp"):
+                    file_path = os.path.join(dirpath, filename)
+                    modified_date = os.path.getmtime(file_path)
+                    file_paths[file_path] = modified_date
     return file_paths
 
 def close_fl_studio():
@@ -603,26 +615,49 @@ class FLPExporterUI:
                     self.tree.item(item_id, tags=("selected",))
         self.refresh_cart()
 
-    def populate_tree(self, parent_path, parent_node=""):
-        entries = sorted(os.listdir(parent_path))
-        for entry in entries:
-            full_path = os.path.join(parent_path, entry)
-            if "Backup" in full_path.split(os.sep):
-                continue
-            if os.path.isdir(full_path):
-                contains_flp = any(os.path.isfile(os.path.join(full_path, f)) and f.lower(
-                ).endswith(".flp") for f in os.listdir(full_path))
-                if contains_flp:
-                    node = self.tree.insert(
-                        parent_node, "end", text=entry, open=True)
-                    self.all_items[node] = entry  # Store for filtering
-                    self.populate_tree(full_path, node)
-            elif entry.lower().endswith(".flp"):
-                clean_name = re.sub(r"\.flp$", "", entry, flags=re.IGNORECASE)
-                item_id = self.tree.insert(
-                    parent_node, "end", text=clean_name, values=(full_path,))
-                self.all_items[item_id] = clean_name  # Store for filtering
-                self.path_map[item_id] = full_path
+    def populate_tree(self, parent_paths, parent_node=""):
+        if isinstance(parent_paths, str):
+            parent_paths = [parent_paths]
+
+        # First pass: Create top-level nodes for each root directory
+        for path in parent_paths:
+            root_name = os.path.basename(path)
+            root_node = self.tree.insert(
+                parent_node, "end", text=root_name, open=True)
+            self.all_items[root_node] = root_name
+            self.scan_directory(path, root_node)
+
+    def scan_directory(self, current_path, parent_node):
+        try:
+            entries = sorted(os.listdir(current_path))
+            for entry in entries:
+                full_path = os.path.join(current_path, entry)
+                if "Backup" in full_path.split(os.sep):
+                    continue
+
+                if os.path.isdir(full_path):
+                    # Check if this directory or any subdirectory contains FLP files
+                    has_flp = False
+                    for root, dirs, files in os.walk(full_path):
+                        if any(f.lower().endswith('.flp') for f in files):
+                            has_flp = True
+                            break
+
+                    if has_flp:
+                        node = self.tree.insert(
+                            parent_node, "end", text=entry, open=True)
+                        self.all_items[node] = entry
+                        self.scan_directory(full_path, node)
+
+                elif entry.lower().endswith(".flp"):
+                    clean_name = re.sub(r"\.flp$", "", entry, flags=re.IGNORECASE)
+                    item_id = self.tree.insert(
+                        parent_node, "end", text=clean_name, values=(full_path,))
+                    self.all_items[item_id] = clean_name
+                    self.path_map[item_id] = full_path
+
+        except PermissionError:
+            pass
 
     def on_tree_double_click(self, event):
         region = self.tree.identify("region", event.x, event.y)
