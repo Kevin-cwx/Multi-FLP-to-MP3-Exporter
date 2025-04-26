@@ -30,6 +30,7 @@
  - Save values for next run
 - User can set mouse scroll speed 4 speeds. Normal, 2X, 3X, 5X
 - Create button, go to input folder
+- Project_Order_By, toggle name or date
 
 ## **Search**
 - ✅ - Search input field, text should only show project in left side, and should open the folder if in sub folder

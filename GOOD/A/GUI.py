@@ -20,10 +20,9 @@ from tkinter import filedialog
 
 
 global Output_Folder_Path
+global Project_Order_By
 # === CONFIG ===
 USE_DARK_MODE = False
-Dir_FLP_Projects = r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 21 - projects"
-Dir_FLP_Projects = r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects"
 #Dir_FLP_Projects = r"C:\Users\foendoe.kevin\Documents\findusic - FLP Input"
 
 Dir_FLP_Projects = [
@@ -37,6 +36,8 @@ Processor_Type = "FL64.exe"
 
 
 Search_Placeholder_Text = "Search Projects"
+
+Project_Order_By = "date" #date, name
 Set_Output_Sub_Folder = True
 Output_Sub_Folder_Name = ""
 Output_Audio_Format = "Emp3"
@@ -44,6 +45,7 @@ Mouse_Scroll_Speed = 7
 Application_Name = "Multi FLP to MP3"
 # Emp3,ogg,wav
 #ogg does not work in powershell, FL might have disabled
+
 
 # ---
 # Colors
@@ -151,7 +153,8 @@ class FLPExporterUI:
         self.recent_icon = self.load_icon("Media/Icons/recent.png")
         self.settings_icon = self.load_icon("Media/Icons/settings.png")
         self.music_folder_icon = self.load_icon("Media/Icons/musical-note.png")
-        
+        self.sync_icon = self.load_icon("Media/Icons/sync.png")
+
 
         self.selected_files = set()
         self.path_map = {}
@@ -290,6 +293,18 @@ class FLPExporterUI:
             command=self.toggle_folders,
             bootstyle="outline-info"
         )
+
+        self.sync_button = ttk.Button(
+            self.top_bar,
+            image=self.sync_icon,
+            compound=tk.LEFT,
+            command=self.sync_projects,
+            bootstyle="outline-info"
+        )
+
+        self.sync_button.pack(side=tk.RIGHT, padx=(0, 10))
+        self.sync_tip = Hovertip(self.sync_button, 'Sync and update project tree')
+
 
         # Create the Music Output Folder button next to toggle button
         self.output_music_folder_button = ttk.Button(
@@ -492,10 +507,11 @@ class FLPExporterUI:
             self.tree.item(item, open=False)
             self.collapse_all_nodes(item)
 
+    
     def open_settings(self):
+        global Output_Folder_Path
+        global Project_Order_By
         if not self.settings_open:
-            global Output_Folder_Path
-
             # Hide main UI
             self.left_frame.pack_forget()
             self.right_frame.pack_forget()
@@ -552,6 +568,23 @@ class FLPExporterUI:
                 bootstyle="info"
             )
             self.browse_button.pack(side=tk.LEFT)
+            
+            #new_1
+            order_frame = ttk.Frame(self.settings_right)
+            order_frame.pack(fill=tk.X, pady=10)
+
+            self.order_label = ttk.Label(order_frame, text="Project Order:")
+            self.order_label.pack(side=tk.LEFT, padx=(0, 5))
+            
+            self.order_var = tk.StringVar(value=Project_Order_By)
+            self.order_combobox = ttk.Combobox(
+                order_frame, 
+                textvariable=self.order_var,
+                values=["date", "name"],
+                state="readonly",
+                width=10
+            )
+            self.order_combobox.pack(side=tk.LEFT)
 
             # Show close button and update settings button
             self.close_button.pack(side=tk.RIGHT, padx=(0, 10))
@@ -566,6 +599,10 @@ class FLPExporterUI:
                     "Error", "The specified directory does not exist.")
                 return
             Output_Folder_Path = new_path
+
+            #New_1
+            
+            Project_Order_By = self.order_var.get()
 
             # Destroy settings UI
             self.settings_frame.destroy()
@@ -628,28 +665,45 @@ class FLPExporterUI:
             self.scan_directory(path, root_node)
 
     def scan_directory(self, current_path, parent_node):
+        """Scans directory and adds items to tree with proper ordering"""
         try:
-            entries = sorted(os.listdir(current_path))
+            entries = os.listdir(current_path)
+            dirs = []
+            files = []
+
+            # Separate directories and files
             for entry in entries:
                 full_path = os.path.join(current_path, entry)
                 if "Backup" in full_path.split(os.sep):
                     continue
 
                 if os.path.isdir(full_path):
-                    # Check if this directory or any subdirectory contains FLP files
+                    # Check if directory contains FLP files
                     has_flp = False
-                    for root, dirs, files in os.walk(full_path):
-                        if any(f.lower().endswith('.flp') for f in files):
+                    for root, dirs_walk, files_walk in os.walk(full_path):
+                        if any(f.lower().endswith('.flp') for f in files_walk):
                             has_flp = True
                             break
-
                     if has_flp:
-                        node = self.tree.insert(
-                            parent_node, "end", text=entry, open=True)
-                        self.all_items[node] = entry
-                        self.scan_directory(full_path, node)
-
+                        # Ensure tuple with exactly 2 elements
+                        dirs.append((entry, full_path))
                 elif entry.lower().endswith(".flp"):
+                    # Ensure tuple with exactly 2 elements
+                    files.append((entry, full_path))
+
+            # Always show subfolders first
+            for item in self._sort_items(dirs, current_path):
+                if len(item) >= 2:  # Ensure we have at least 2 elements
+                    entry, full_path = item[0], item[1]
+                    node = self.tree.insert(
+                        parent_node, "end", text=entry, open=True)
+                    self.all_items[node] = entry
+                    self.scan_directory(full_path, node)
+
+            # Then show files
+            for item in self._sort_items(files, current_path):
+                if len(item) >= 2:  # Ensure we have at least 2 elements
+                    entry, full_path = item[0], item[1]
                     clean_name = re.sub(r"\.flp$", "", entry, flags=re.IGNORECASE)
                     item_id = self.tree.insert(
                         parent_node, "end", text=clean_name, values=(full_path,))
@@ -658,6 +712,28 @@ class FLPExporterUI:
 
         except PermissionError:
             pass
+
+    def _sort_items(self, items, parent_path):
+        """Sorts items based on Project_Order_By setting"""
+        if not items:
+            return items
+        
+        if Project_Order_By == "date":
+            # Sort by modification date (newest first)
+            def get_mtime(item):
+                if len(item) >= 2:  # Ensure we have at least 2 elements
+                    item_path = os.path.join(parent_path, item[0])
+                    try:
+                        return os.path.getmtime(item_path)
+                    except (OSError, AttributeError):
+                        return 0  # Default value if can't get mtime
+                return 0
+            
+            return sorted(items, key=get_mtime, reverse=True)
+        else:
+            # Default: sort by name (case-insensitive)
+            return sorted(items, key=lambda x: x[0].lower() if len(x) >= 1 else "")
+
 
     def on_tree_double_click(self, event):
         region = self.tree.identify("region", event.x, event.y)
@@ -874,7 +950,92 @@ class FLPExporterUI:
             finally:
                 self.context_menu.destroy()
 
+    def sync_projects(self):
+        """Sync and update the project tree while preserving folder states"""
+        try:
+            # Store the exact expanded state of all folders
+            expanded_state = self.get_all_folder_states()
 
+            # Store current selection
+            current_selection = set(self.selected_files)
+
+            # Visual refresh - flash the frames
+            self.flash_refresh()
+
+            # Clear the tree
+            self.tree.delete(*self.tree.get_children())
+            self.path_map.clear()
+            self.all_items.clear()
+            self.selected_files.clear()
+            self.cart_listbox.delete(0, tk.END)
+
+            # Repopulate the tree
+            self.populate_tree(Dir_FLP_Projects)
+
+            # Restore expanded state exactly as it was
+            self.restore_all_folder_states(expanded_state)
+
+            # Restore selection
+            for path in current_selection:
+                for item_id, item_path in self.path_map.items():
+                    if path == item_path:
+                        self.selected_files.add(path)
+                        self.tree.item(item_id, tags=("selected",))
+
+            self.refresh_cart()
+            self.status_label.config(
+                text="Project tree synced", bootstyle="success")
+            self.toggle_icon = self.minus_icon
+        except Exception as e:
+            self.status_label.config(
+                text=f"Sync failed: {str(e)}", bootstyle="danger")
+
+    def get_all_folder_states(self):
+        """Returns a dictionary of all folder open/closed states"""
+        states = {}
+        for item in self.tree.get_children():
+            if not self.tree.exists(item):
+                continue
+            states[item] = self.tree.item(item)['open']
+            # Recursively get states of children
+            self._get_child_states(item, states)
+        return states
+
+
+    def _get_child_states(self, parent, states_dict):
+        """Helper method to recursively get child states"""
+        for item in self.tree.get_children(parent):
+            if not self.tree.exists(item):
+                continue
+            states_dict[item] = self.tree.item(item)['open']
+            self._get_child_states(item, states_dict)
+
+
+    def restore_all_folder_states(self, states):
+        """Restores all folder open/closed states from dictionary"""
+        for item, is_open in states.items():
+            if self.tree.exists(item):
+                self.tree.item(item, open=is_open)
+
+
+    def flash_refresh(self):
+        """Visual effect to show refresh is happening"""
+        # Temporarily hide frames
+        self.left_frame.pack_forget()
+        self.right_frame.pack_forget()
+
+        # Update the UI immediately
+        self.root.update_idletasks()
+
+        # Brief delay
+        self.root.after(125, self._show_frames_after_flash)
+
+
+    def _show_frames_after_flash(self):
+        """Shows frames again after flash effect"""
+        self.left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        self.right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=False)
+        
 # === START APP ===
 if __name__ == "__main__":
     style = Style("pulse" if USE_DARK_MODE else "flatly")
