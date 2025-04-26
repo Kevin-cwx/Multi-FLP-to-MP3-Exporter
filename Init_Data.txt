@@ -1,2 +1,0 @@
-Dir_Output_Folder = C:/Users/Kfoen/Music/DropHere
-parent_folder_path = C:/Users/Kfoen/Documents/Docs KF/MyPythonProjects

@@ -28,6 +28,7 @@ USE_DARK_MODE = False
 Dir_FLP_Projects = [
     r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 12 - projects",
     r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 20 - projects",
+    r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 21 - projects"
     # r"C:\Users\foendoe.kevin\Documents\findusic - FLP Input"
 ]
 Output_Folder_Path = r"C:\Users\Kfoen\Documents\Docs KF\FL SONGS MP3\Python_Audio_Output\A"
@@ -516,6 +517,7 @@ class FLPExporterUI:
             self.left_frame.pack_forget()
             self.right_frame.pack_forget()
             self.toggle_button_Close_Folders.pack_forget()
+            self.sync_button.pack_forget()
 
             # Change heading
             self.heading.config(text="Settings")
@@ -609,13 +611,17 @@ class FLPExporterUI:
             self.settings_open = False
 
             # Restore header and UI
+            self.output_music_folder_button.pack(side=tk.RIGHT, padx=(0, 10))
             self.heading.config(text=f"🎵 {Application_Name}")
             self.settings_button.config(text="", image=self.settings_icon)
             self.close_button.pack_forget()
+            self.sync_button.pack(side=tk.RIGHT, padx=(0, 10))
             self.left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
             self.right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=False)
             self.toggle_button_Close_Folders.pack(side=tk.RIGHT, padx=(0, 10))
-            self.output_music_folder_button.pack(side=tk.RIGHT, padx=(0, 10))
+          
+          
+            
 
 
     def browse_output_folder(self):
