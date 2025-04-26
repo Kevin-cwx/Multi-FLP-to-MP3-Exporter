@@ -50,7 +50,8 @@ Application_Name = "Multi FLP to MP3"
 
 # ---
 # Colors
-Selected_Project_Background_Color = "#34b1eb"
+#  #34b1eb
+Selected_Project_Background_Color = "#34b1eb" 
 Selected_Project_Text_Color = "black"
 Top_Title_Color ="black"
 Search_Placeholder_Text_Color = "black"
