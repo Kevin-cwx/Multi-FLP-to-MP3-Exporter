@@ -126,7 +126,8 @@ class FLPExporterUI:
     def __init__(self, root):
         self.root = root
         self.root.title(Application_Name)
-        self.root.geometry("600x600+30+20")
+        #self.root.geometry("600x600+30+20")
+        self.root.geometry("600x700+30+20")
         self.root.resizable(False, False)
         self.root.title(Application_Name)
         transparent_icon = tk.PhotoImage(width=1, height=1)
