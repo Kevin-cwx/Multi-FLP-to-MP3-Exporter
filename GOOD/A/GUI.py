@@ -691,14 +691,14 @@ class FLPExporterUI:
                             has_flp = True
                             break
                     if has_flp:
-                        # Ensure tuple with exactly 2 elements
                         dirs.append((entry, full_path))
                 elif entry.lower().endswith(".flp"):
-                    # Ensure tuple with exactly 2 elements
                     files.append((entry, full_path))
 
             # Always show subfolders first
-            for item in self._sort_items(dirs, current_path):
+            # Ensure we pass empty list if no dirs
+            sorted_dirs = self._sort_items(dirs or [], current_path)
+            for item in sorted_dirs:
                 if len(item) >= 2:  # Ensure we have at least 2 elements
                     entry, full_path = item[0], item[1]
                     node = self.tree.insert(
@@ -707,7 +707,9 @@ class FLPExporterUI:
                     self.scan_directory(full_path, node)
 
             # Then show files
-            for item in self._sort_items(files, current_path):
+            # Ensure we pass empty list if no files
+            sorted_files = self._sort_items(files or [], current_path)
+            for item in sorted_files:
                 if len(item) >= 2:  # Ensure we have at least 2 elements
                     entry, full_path = item[0], item[1]
                     clean_name = re.sub(r"\.flp$", "", entry, flags=re.IGNORECASE)
@@ -719,10 +721,11 @@ class FLPExporterUI:
         except PermissionError:
             pass
 
+  
     def _sort_items(self, items, parent_path):
         """Sorts items based on Project_Order_By setting"""
-        if not items:
-            return items
+        if not items:  # Return empty list if no items
+            return []
         
         if Project_Order_By == "date":
             # Sort by modification date (newest first)
@@ -736,10 +739,9 @@ class FLPExporterUI:
                 return 0
             
             return sorted(items, key=get_mtime, reverse=True)
-        elif Project_Order_By == "date":
+        else:
             # Default: sort by name (case-insensitive)
             return sorted(items, key=lambda x: x[0].lower() if len(x) >= 1 else "")
-
 
     def on_tree_double_click(self, event):
         region = self.tree.identify("region", event.x, event.y)
