@@ -55,7 +55,7 @@ Selected_Project_Text_Color = "black"
 Top_Title_Color ="black"
 Search_Placeholder_Text_Color = "black"
 Project_Color_Tree ="white"
-Background_Color = "#ff69b4"
+Background_Color = "#8a9296"
 
 # ---
 
@@ -219,7 +219,7 @@ class FLPExporterUI:
             self.left_frame,
             text="Projects",
             font=("Segoe UI", 11, "bold"),
-            background=Background_Color  # Add this line
+            background=Background_Color
         )
         self.tree_label.pack(pady=(0, 0))
 
@@ -236,11 +236,19 @@ class FLPExporterUI:
 
         # Increase size of projects
         #  rowheight=20
-        style.configure("Custom.Treeview", background=Project_Color_Tree,
-                        fieldbackground="#f0f0f0", font=("Segoe UI", 9))
-
+        style.configure("Custom.Treeview",
+                        # Light gray (or any color you prefer)
+                        background="#f0f0f0",
+                        fieldbackground="#f0f0f0",  # Match the background
+                        foreground="black",  # Text color
+                        font=("Segoe UI", 9)
+                        )
         # Projects Left Side
-        self.tree = ttk.Treeview(tree_frame, selectmode="extended",style="Custom.Treeview")
+        self.tree = ttk.Treeview(
+        tree_frame, 
+        selectmode="extended",
+        style="Custom.Treeview"  # Use the custom style
+)
         self.tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
 
@@ -271,8 +279,15 @@ class FLPExporterUI:
         )
         self.cart_label.pack(pady=(0, 0))
         
-        self.cart_listbox = Listbox(self.right_frame, height=15, width=20,
-                                    selectmode=tk.SINGLE, bg="white", fg="black", font=("Segoe UI", 10))
+        self.cart_listbox = Listbox(
+            self.right_frame,
+            height=15,
+            width=20,
+            selectmode=tk.SINGLE,
+            bg="green",  # Light gray (match left tree)
+            fg="red",    # Text color
+            font=("Segoe UI", 10)
+        )
         self.cart_listbox.pack(fill=tk.X, padx=10, pady=(5, 10))
         self.cart_listbox.bind("<Double-Button-1>", self.on_cart_double_click)
 
