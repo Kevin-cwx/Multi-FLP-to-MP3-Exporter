@@ -37,7 +37,6 @@ Processor_Type = "FL64.exe"
 
 
 Search_Placeholder_Text = "Search Projects"
-
 Project_Order_By = "name" #date, name
 Set_Output_Sub_Folder = True
 Output_Sub_Folder_Name = ""
@@ -56,6 +55,8 @@ Selected_Project_Text_Color = "black"
 Top_Title_Color ="black"
 Search_Placeholder_Text_Color = "black"
 Project_Color_Tree ="white"
+Background_Color = "#ff69b4"
+
 # ---
 
 
@@ -132,21 +133,24 @@ class FLPExporterUI:
         self.root.title(Application_Name)
         transparent_icon = tk.PhotoImage(width=1, height=1)
         self.root.iconbitmap(r"Media/icons/FL21 - Icon.ico")
-        Background_Color = "white"
+        # white
         self.root.configure(bg=Background_Color)
         self.folders_expanded = True
         self.settings_open = False
         style = ttk.Style()
-        
-        # Create top bar frame first
-        self.top_bar = ttk.Frame(self.root)
+        style.configure('TLabel', background=Background_Color)
+        style.configure('success.TLabel', background=Background_Color)
+        # Define hot pink background
+        style.configure('HotPink.TFrame', background=Background_Color)
+
+        # 2. Apply the style to the top bar frame
+        # Use the custom style
+        self.top_bar = ttk.Frame(self.root, style='HotPink.TFrame')
         self.top_bar.pack(side=tk.TOP, fill=tk.X, padx=10, pady=5)
-
         
-
         # Add heading to the top bar frame (left side)
         self.heading = ttk.Label(self.top_bar, text=f"🎵 {Application_Name}",
-                                 font=("Segoe UI", 16, "bold"), bootstyle="info", foreground=Top_Title_Color)
+                                 font=("Segoe UI", 16, "bold"), bootstyle="info", foreground=Top_Title_Color, background=Background_Color)
         self.heading.pack(side=tk.LEFT, pady=0)
 
         self.download_icon = self.load_icon("Media/Icons/download.png")
@@ -165,15 +169,15 @@ class FLPExporterUI:
         self.all_items = {}
         self.original_tree_state = {}
 
-        content_frame = ttk.Frame(self.root)
+        content_frame = ttk.Frame(self.root, style='HotPink.TFrame')
         content_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=5)
 
-        self.left_frame = ttk.Frame(content_frame)
+        self.left_frame = ttk.Frame(content_frame, style='HotPink.TFrame')
         self.left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
         # Add search frame
         search_frame = ttk.Frame(self.left_frame, borderwidth=2, relief='solid')
-        search_frame.pack(fill=tk.X, padx=5, pady=(0, 10))
+        search_frame.pack(fill=tk.X, padx=5, pady=(0, 0))
         
         style = ttk.Style()
         style.configure("Search.TEntry", relief="flat")
@@ -187,7 +191,7 @@ class FLPExporterUI:
             self.subfolder_frame.pack(side=tk.LEFT, fill=tk.X, padx=(0, 0))
 
             self.subfolder_label = ttk.Label(
-                self.subfolder_frame, text="Output Subfolder:")
+                self.subfolder_frame, text="Output Subfolder:", background="white")
             self.subfolder_label.pack(side=tk.LEFT, padx=(5, 2))
 
             self.subfolder_entry = ttk.Entry(self.subfolder_frame, width=15)
@@ -212,11 +216,19 @@ class FLPExporterUI:
         self.search_entry.bind("<KeyRelease>", self.filter_tree)
 
         self.tree_label = ttk.Label(
-            self.left_frame, text="Projects", font=("Segoe UI", 11, "bold"))
+            self.left_frame,
+            text="Projects",
+            font=("Segoe UI", 11, "bold"),
+            background=Background_Color  # Add this line
+        )
         self.tree_label.pack(pady=(0, 0))
 
         self.instruction_label = ttk.Label(
-            self.left_frame, text="Double click to select / unselect projects", font=("Segoe UI", 9))
+            self.left_frame,
+            text="Double click to select / unselect projects",
+            font=("Segoe UI", 9),
+            background=Background_Color  # Add this line
+        )
         self.instruction_label.pack(pady=(1, 1))
 
         tree_frame = ttk.Frame(self.left_frame)
@@ -248,11 +260,15 @@ class FLPExporterUI:
         # Add right-click binding to the tree
         self.tree.bind("<Button-3>", self.on_right_click)
 
-        self.right_frame = ttk.Frame(content_frame)
+        self.right_frame = ttk.Frame(content_frame, style='HotPink.TFrame')
         self.right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=False)
 
         self.cart_label = ttk.Label(
-            self.right_frame, text="Selected Projects", font=("Segoe UI", 11, "bold"))
+        self.right_frame, 
+        text="Selected Projects", 
+        font=("Segoe UI", 11, "bold"),
+        background=Background_Color  # Add this line
+        )
         self.cart_label.pack(pady=(0, 0))
         
         self.cart_listbox = Listbox(self.right_frame, height=15, width=20,
@@ -326,7 +342,12 @@ class FLPExporterUI:
             self.toggle_button_Close_Folders, 'Close folders')
 
         self.status_label = ttk.Label(
-            self.right_frame, text="", font=("Segoe UI", 11), bootstyle="success")
+            self.right_frame,
+            text="",
+            font=("Segoe UI", 11),
+            bootstyle="success",
+            background=Background_Color  # Add this line
+        )
         self.status_label.pack(pady=(0, 10))
 
         self.populate_tree(Dir_FLP_Projects)
@@ -1046,6 +1067,11 @@ class FLPExporterUI:
         self.left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         self.right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=False)
         
+        ###
+    
+
+
+
 # === START APP ===
 if __name__ == "__main__":
     style = Style("pulse" if USE_DARK_MODE else "flatly")
