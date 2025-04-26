@@ -32,6 +32,7 @@ Set_Output_Sub_Folder = True
 Output_Sub_Folder_Name = ""
 Output_Audio_Format = "Emp3"
 Mouse_Scroll_Speed = 7
+Application_Name = "Multi FLP to MP3"
 # Emp3,ogg,wav
 #ogg does not work in powershell, FL might have disabled
 
@@ -106,10 +107,10 @@ def export_flp_to_mp3(file_path):
 class FLPExporterUI:
     def __init__(self, root):
         self.root = root
-        self.root.title("FLP to MP3 Exporter")
+        self.root.title(Application_Name)
         self.root.geometry("600x600+30+20")
         self.root.resizable(False, False)
-        self.root.title("FLP to MP3 Exporter")
+        self.root.title(Application_Name)
         transparent_icon = tk.PhotoImage(width=1, height=1)
         self.root.iconbitmap(r"Media/icons/FL21 - Icon.ico")
         Background_Color = "white"
@@ -125,7 +126,7 @@ class FLPExporterUI:
         
 
         # Add heading to the top bar frame (left side)
-        self.heading = ttk.Label(self.top_bar, text="🎵 FLP to MP3 Exporter",
+        self.heading = ttk.Label(self.top_bar, text=f"🎵 {Application_Name}",
                                  font=("Segoe UI", 16, "bold"), bootstyle="info", foreground=Top_Title_Color)
         self.heading.pack(side=tk.LEFT, pady=0)
 
@@ -478,13 +479,16 @@ class FLPExporterUI:
             self.collapse_all_nodes(item)
 
     def open_settings(self):
-        #global Output_Folder_Path
+            # global Output_Folder_Path
         if not self.settings_open:
             # Hide the left and right frames and collapse button
             global Output_Folder_Path
             self.left_frame.pack_forget()
             self.right_frame.pack_forget()
             self.toggle_button_Close_Folders.pack_forget()
+
+            # Change heading text to "Settings"
+            self.heading.config(text="Settings")
 
             # Create and show settings UI
             self.settings_frame = ttk.Frame(self.root)
@@ -493,7 +497,7 @@ class FLPExporterUI:
 
             # Example settings content
             label = ttk.Label(self.settings_frame, text="Settings",
-                              font=("Segoe UI", 14, "bold"))
+                            font=("Segoe UI", 14, "bold"))
             label.pack(pady=10)
 
             # Output Folder Picker
@@ -509,7 +513,6 @@ class FLPExporterUI:
                 side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 5))
             self.output_folder_entry.insert(0, Output_Folder_Path)
 
-            
             self.browse_button = ttk.Button(
                 output_folder_frame,
                 text="Browse",
@@ -520,7 +523,8 @@ class FLPExporterUI:
 
             # Show the close button and update settings button
             self.close_button.pack(side=tk.RIGHT, padx=(0, 10))
-            self.settings_button.config(text="Save")
+            # Remove icon and show text
+            self.settings_button.config(text="Save Settings", image='')
             self.settings_open = True
         else:
             # Save the output folder path
@@ -530,13 +534,15 @@ class FLPExporterUI:
                     "Error", "The specified directory does not exist.")
                 return
 
-            
             Output_Folder_Path = new_path
 
             # Close settings UI
             self.settings_frame.destroy()
             self.settings_open = False
-            self.settings_button.config( text="Settings", image=self.settings_icon)
+            # Change heading back to original
+            self.heading.config(text=f"🎵 {Application_Name}")
+            # Show icon and remove text
+            self.settings_button.config(text="", image=self.settings_icon)
             self.close_button.pack_forget()
 
             # Restore hidden UI elements
@@ -754,7 +760,7 @@ class FLPExporterUI:
                 # Show how many new files were added
                 Recent_Project_Label = "project" if added == 1 else "projects"
                 self.status_label.config(
-                    text=f"{added} recent {Recent_Project_Label} added.", bootstyle="primary")
+                    text=f"{added}\nrecent {Recent_Project_Label} added.", bootstyle="primary")
             else:
                 # Show that all today's files were already selected
                 Recent_Project_Label = "project" if total_today_files == 1 else "projects"
