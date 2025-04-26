@@ -14,6 +14,8 @@ import psutil
 import win32gui
 import win32process
 from tkinter import messagebox
+from tkinter import filedialog
+
 
 
 
@@ -479,29 +481,47 @@ class FLPExporterUI:
             self.collapse_all_nodes(item)
 
     def open_settings(self):
-            # global Output_Folder_Path
         if not self.settings_open:
-            # Hide the left and right frames and collapse button
             global Output_Folder_Path
+
+            # Hide main UI
             self.left_frame.pack_forget()
             self.right_frame.pack_forget()
             self.toggle_button_Close_Folders.pack_forget()
 
-            # Change heading text to "Settings"
+            # Change heading
             self.heading.config(text="Settings")
 
-            # Create and show settings UI
+            # Create the settings frame
             self.settings_frame = ttk.Frame(self.root)
-            self.settings_frame.pack(
-                fill=tk.BOTH, expand=True, padx=20, pady=20)
+            self.settings_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)
 
-            # Example settings content
-            label = ttk.Label(self.settings_frame, text="Settings",
+            # Create two sub-frames inside settings_frame
+            self.settings_left = ttk.Frame(self.settings_frame)
+            self.settings_left.pack(
+                side=tk.LEFT, fill=tk.BOTH, expand=True, padx=10, pady=10)
+
+            self.settings_right = ttk.Frame(self.settings_frame)
+            self.settings_right.pack(
+                side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=10)
+
+
+            # ✅ Kevin label on the left side
+            self.kevin_label = ttk.Label(
+                self.settings_left,
+                text="kevin",
+                font=("Segoe UI", 24, "bold"),
+                foreground="#34b1eb"
+            )
+            self.kevin_label.pack(anchor="center", expand=True)
+
+            # Settings title
+            label = ttk.Label(self.settings_right, text="Settings",
                             font=("Segoe UI", 14, "bold"))
             label.pack(pady=10)
 
             # Output Folder Picker
-            output_folder_frame = ttk.Frame(self.settings_frame)
+            output_folder_frame = ttk.Frame(self.settings_right)
             output_folder_frame.pack(fill=tk.X, pady=10)
 
             self.output_folder_label = ttk.Label(
@@ -521,35 +541,33 @@ class FLPExporterUI:
             )
             self.browse_button.pack(side=tk.LEFT)
 
-            # Show the close button and update settings button
+            # Show close button and update settings button
             self.close_button.pack(side=tk.RIGHT, padx=(0, 10))
-            # Remove icon and show text
             self.settings_button.config(text="Save Settings", image='')
             self.settings_open = True
+
         else:
-            # Save the output folder path
+            # Save output path
             new_path = self.output_folder_entry.get().strip()
             if not os.path.isdir(new_path):
                 messagebox.showerror(
                     "Error", "The specified directory does not exist.")
                 return
-
             Output_Folder_Path = new_path
 
-            # Close settings UI
+            # Destroy settings UI
             self.settings_frame.destroy()
             self.settings_open = False
-            # Change heading back to original
+
+            # Restore header and UI
             self.heading.config(text=f"🎵 {Application_Name}")
-            # Show icon and remove text
             self.settings_button.config(text="", image=self.settings_icon)
             self.close_button.pack_forget()
-
-            # Restore hidden UI elements
             self.left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
             self.right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=False)
             self.toggle_button_Close_Folders.pack(side=tk.RIGHT, padx=(0, 10))
             self.output_music_folder_button.pack(side=tk.RIGHT, padx=(0, 10))
+
 
     def browse_output_folder(self):
         global Output_Folder_Path
