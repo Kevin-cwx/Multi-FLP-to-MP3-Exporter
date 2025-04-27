@@ -64,7 +64,7 @@
 1. Update status label
     1. Export 1 project, then export another project. Label gets overlapped.
     2. Added clear label in "def export_selected". 
-2. When sync is clicked, and i manually close the folders, it did not update when i clicked sync again
+2. When sync is clicked, and I manually close the folders, it did not update  the close folder button, when i clicked sync again
 3. Original Sync button does not take same location once settings is clicked again
 
 
