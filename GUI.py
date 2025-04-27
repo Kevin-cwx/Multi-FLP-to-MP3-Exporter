@@ -568,18 +568,23 @@ class FLPExporterUI:
             self.settings_frame = ttk.Frame(self.root)
             self.settings_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=0)
 
-            # Settings title
-            label = ttk.Label(self.settings_frame, text="Settings",
-                            font=("Segoe UI", 14, "bold"))
-            label.pack(pady=10)
-
+            # Sub General Section Header
+            self.general_header = ttk.Label(
+                self.settings_frame, text="General", font=("Segoe UI", 16, "bold"))
+            self.general_header.pack(anchor="w", padx=10, pady=(10, 5))
+            
             # Output Folder Picker
             output_folder_frame = ttk.Frame(self.settings_frame)
             output_folder_frame.pack(fill=tk.X, pady=0)
 
             self.output_folder_label = ttk.Label(
-                output_folder_frame, text="Output Folder:")
-            self.output_folder_label.pack(side=tk.LEFT, padx=(0, 5))
+                output_folder_frame, font=("Segoe UI", 14)
+            )
+            self.output_folder_label.pack(side=tk.LEFT, padx=(0, 0), pady=5)
+
+            self.output_folder_label = ttk.Label(
+                output_folder_frame, text="Output Folder", font=("Segoe UI", 14))
+            self.output_folder_label.pack(side=tk.LEFT, padx=(0, 0), pady=5)
 
             self.output_folder_entry = ttk.Entry(output_folder_frame)
             self.output_folder_entry.pack(
@@ -594,11 +599,21 @@ class FLPExporterUI:
             )
             self.browse_button.pack(side=tk.LEFT)
 
+            # ✨ Add a new label underneath
+            self.output_folder_info_label = ttk.Label(
+                self.settings_frame,
+                text="This is where your songs will be exported to.",
+                font=("Segoe UI", 14),  
+                foreground="black"      
+            )
+            self.output_folder_info_label.pack(anchor="w", padx=5, pady=(2, 10))
+
             # Project Order selection
             order_frame = ttk.Frame(self.settings_frame)
             order_frame.pack(fill=tk.X, pady=0)
 
-            self.order_label = ttk.Label(order_frame, text="Project Order:")
+            self.order_label = ttk.Label(
+                order_frame, text="Project Order:", font=("Segoe UI", 14))
             self.order_label.pack(side=tk.LEFT, padx=(0, 5))
 
             self.order_var = tk.StringVar(value=Project_Order_By)
@@ -607,9 +622,22 @@ class FLPExporterUI:
                 textvariable=self.order_var,
                 values=["date", "name"],
                 state="readonly",
-                width=10
+                width=10,
+                style="CustomCombobox.TCombobox"
             )
             self.order_combobox.pack(side=tk.LEFT)
+            self.order_combobox.configure(font=("Segoe UI", 14))
+
+            # Sub General Section Header
+            self.general_header = ttk.Label(
+                self.settings_frame, text="Advanced", font=("Segoe UI", 16, "bold"))
+            self.general_header.pack(anchor="w", padx=10, pady=(10, 5))
+
+
+             # Sub General Section Header
+            self.general_header = ttk.Label(
+                self.settings_frame, text="About", font=("Segoe UI", 16, "bold"))
+            self.general_header.pack(anchor="w", padx=10, pady=(10, 5))
 
             # Show close button and update settings button
             self.close_button.pack(side=tk.RIGHT, padx=(0, 10))
