@@ -131,8 +131,8 @@ class FLPExporterUI:
     def __init__(self, root):
         self.root = root
         self.root.title(Application_Name)
-        #self.root.geometry("600x600+30+20")
-        self.root.geometry("600x700+30+20")
+        self.root.geometry("600x600+30+20")
+        #self.root.geometry("600x700+30+20")
         self.root.resizable(False, False)
         self.root.title(Application_Name)
         transparent_icon = tk.PhotoImage(width=1, height=1)
@@ -173,10 +173,10 @@ class FLPExporterUI:
         self.all_items = {}
         self.original_tree_state = {}
 
-        content_frame = ttk.Frame(self.root, style='HotPink.TFrame')
-        content_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=5)
+        self.content_frame = ttk.Frame(self.root, style='HotPink.TFrame')
+        self.content_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=5)
 
-        self.left_frame = ttk.Frame(content_frame, style='HotPink.TFrame')
+        self.left_frame = ttk.Frame(self.content_frame, style='HotPink.TFrame')
         self.left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
         # Add search frame
@@ -272,7 +272,7 @@ class FLPExporterUI:
         # Add right-click binding to the tree
         self.tree.bind("<Button-3>", self.on_right_click)
 
-        self.right_frame = ttk.Frame(content_frame, style='HotPink.TFrame')
+        self.right_frame = ttk.Frame(self.content_frame, style='HotPink.TFrame')
         self.right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=False)
 
         self.cart_label = ttk.Label(
@@ -550,7 +550,6 @@ class FLPExporterUI:
             self.tree.item(item, open=False)
             self.collapse_all_nodes(item)
 
-    
     def open_settings(self):
         global Output_Folder_Path
         global Project_Order_By
@@ -558,6 +557,7 @@ class FLPExporterUI:
             # Hide main UI
             self.left_frame.pack_forget()
             self.right_frame.pack_forget()
+            self.content_frame.pack_forget()
             self.toggle_button_Close_Folders.pack_forget()
             self.sync_button.pack_forget()
 
@@ -566,35 +566,16 @@ class FLPExporterUI:
 
             # Create the settings frame
             self.settings_frame = ttk.Frame(self.root)
-            self.settings_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)
-
-            # Create two sub-frames inside settings_frame
-            self.settings_left = ttk.Frame(self.settings_frame)
-            self.settings_left.pack(
-                side=tk.LEFT, fill=tk.BOTH, expand=True, padx=10, pady=10)
-
-            self.settings_right = ttk.Frame(self.settings_frame)
-            self.settings_right.pack(
-                side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=10)
-
-
-            # ✅ Kevin label on the left side
-            self.kevin_label = ttk.Label(
-                self.settings_left,
-                text="kevin",
-                font=("Segoe UI", 24, "bold"),
-                foreground="#34b1eb"
-            )
-            self.kevin_label.pack(anchor="center", expand=True)
+            self.settings_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=0)
 
             # Settings title
-            label = ttk.Label(self.settings_right, text="Settings",
+            label = ttk.Label(self.settings_frame, text="Settings",
                             font=("Segoe UI", 14, "bold"))
             label.pack(pady=10)
 
             # Output Folder Picker
-            output_folder_frame = ttk.Frame(self.settings_right)
-            output_folder_frame.pack(fill=tk.X, pady=10)
+            output_folder_frame = ttk.Frame(self.settings_frame)
+            output_folder_frame.pack(fill=tk.X, pady=0)
 
             self.output_folder_label = ttk.Label(
                 output_folder_frame, text="Output Folder:")
@@ -612,17 +593,17 @@ class FLPExporterUI:
                 bootstyle="info"
             )
             self.browse_button.pack(side=tk.LEFT)
-            
-            #new_1
-            order_frame = ttk.Frame(self.settings_right)
-            order_frame.pack(fill=tk.X, pady=10)
+
+            # Project Order selection
+            order_frame = ttk.Frame(self.settings_frame)
+            order_frame.pack(fill=tk.X, pady=0)
 
             self.order_label = ttk.Label(order_frame, text="Project Order:")
             self.order_label.pack(side=tk.LEFT, padx=(0, 5))
-            
+
             self.order_var = tk.StringVar(value=Project_Order_By)
             self.order_combobox = ttk.Combobox(
-                order_frame, 
+                order_frame,
                 textvariable=self.order_var,
                 values=["date", "name"],
                 state="readonly",
@@ -644,8 +625,7 @@ class FLPExporterUI:
                 return
             Output_Folder_Path = new_path
 
-            #New_1
-            
+            # Save project order
             Project_Order_By = self.order_var.get()
 
             # Destroy settings UI
@@ -653,6 +633,7 @@ class FLPExporterUI:
             self.settings_open = False
 
             # Restore header and UI
+            self.content_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=5)
             self.output_music_folder_button.pack(side=tk.RIGHT, padx=(0, 10))
             self.heading.config(text=f"🎵 {Application_Name}")
             self.settings_button.config(text="", image=self.settings_icon)
@@ -661,10 +642,6 @@ class FLPExporterUI:
             self.left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
             self.right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=False)
             self.toggle_button_Close_Folders.pack(side=tk.RIGHT, padx=(0, 10))
-          
-          
-            
-
 
     def browse_output_folder(self):
         global Output_Folder_Path
