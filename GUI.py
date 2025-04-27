@@ -136,7 +136,7 @@ class FLPExporterUI:
         self.root.resizable(False, False)
         self.root.title(Application_Name)
         transparent_icon = tk.PhotoImage(width=1, height=1)
-        self.root.iconbitmap(r"Media/icons/FL21 - Icon.ico")
+        self.root.iconbitmap(r"Media/Icons/FL21 - Icon.ico")
         # white
         self.root.configure(bg=Background_Color)
         self.folders_expanded = True
@@ -566,7 +566,7 @@ class FLPExporterUI:
 
             # Create the settings frame
             self.settings_frame = ttk.Frame(self.root)
-            self.settings_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=0)
+            self.settings_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=0)
 
             # Settings title
             label = ttk.Label(self.settings_frame, text="Settings",

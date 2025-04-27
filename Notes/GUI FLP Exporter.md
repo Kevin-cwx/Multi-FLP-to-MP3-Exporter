@@ -66,3 +66,10 @@ FL64.exe /R /ogg "C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 21 -
 
 
 FL64.exe /Z"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 21 - projects\2024\616\Hue.flp" /O"C:\Users\Kfoen\Documents\Docs KF\FL SONGS MP3\Python_Audio_Output\A"
+
+---
+Watchdog
+Run in GUI.py dir
+watchmedo auto-restart --patterns="*.py" --recursive -- python GUI.py
+
+If it fails, move file back to Good/A dir
