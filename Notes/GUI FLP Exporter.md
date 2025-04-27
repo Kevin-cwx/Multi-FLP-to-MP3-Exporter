@@ -14,23 +14,31 @@
     - Ctrl + Down Key
 
 ## **Settings**
+#### General
 - Set output folder 
 - Set input folder (Multiple, if not in same location)
 - Set dark mode
+- Launch at system startup
+- Project_Order_By, toggle name or date
+
+#### Advanced
 - Set FL_Studio_Path ( Write function to find on own, but make editable)
 - Set Processor_Type
--  Launch at system startup
-- Toggle, auto export all projects you worked on today
+- Toggle, enable auto export all projects you worked on today
 - Enable Set output folder sub folder, User can name the sub folder within subfolder where they want to export songs
     - Create check if folde exists, else create folder
-- Add about section, with version name
-    - And disclaimer text, FL Studio must be closed. Show disclaimer 2 times, FLstudio must be closed before exporting song
+- User can set mouse scroll speed 4 speeds. Normal, 2X, 3X, 5X
 
 - If settings is empty (first time users), prompt user to run FL Studio, run code to get FL_Studio_Path and processes type, prompt user input fields for other values and store in json file
  - Save values for next run
-- User can set mouse scroll speed 4 speeds. Normal, 2X, 3X, 5X
 - Create button, go to input folder
-- Project_Order_By, toggle name or date
+
+#### About
+- Add about section, with version name
+    - And disclaimer text, FL Studio must be closed. Show disclaimer 2 times, FLstudio must be closed before exporting song
+
+
+
 
 ## **Search**
 - ✅ - Search input field, text should only show project in left side, and should open the folder if in sub folder
