@@ -17,7 +17,6 @@
 #### General
 - Set output folder 
 - Set input folder (Multiple, if not in same location)
-- Set dark mode
 - Launch at system startup
 - Project_Order_By, toggle name or date
 

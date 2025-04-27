@@ -15,6 +15,8 @@ import win32gui
 import win32process
 from tkinter import messagebox
 from tkinter import filedialog
+import winreg
+import sys
 
 
 
@@ -43,6 +45,7 @@ Output_Sub_Folder_Name = ""
 Output_Audio_Format = "Emp3"
 Mouse_Scroll_Speed = 7
 Application_Name = "Multi FLP to MP3"
+Launch_At_Startup = False
 # Emp3,ogg,wav
 #ogg does not work in powershell, FL might have disabled
 
@@ -553,6 +556,8 @@ class FLPExporterUI:
     def open_settings(self):
         global Output_Folder_Path
         global Project_Order_By
+        global Dir_FLP_Projects  # Add this line to access the FLP projects directory variable
+        Settings_Info_Label_Size = 10
         if not self.settings_open:
             # Hide main UI
             self.left_frame.pack_forget()
@@ -568,7 +573,9 @@ class FLPExporterUI:
             self.settings_frame = ttk.Frame(self.root)
             self.settings_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=0)
 
-            # Sub General Section Header
+            #
+            # General
+            #
             self.general_header = ttk.Label(
                 self.settings_frame, text="General", font=("Segoe UI", 16, "bold"))
             self.general_header.pack(anchor="w", padx=10, pady=(10, 5))
@@ -599,21 +606,53 @@ class FLPExporterUI:
             )
             self.browse_button.pack(side=tk.LEFT)
 
-            # ✨ Add a new label underneath
+            
             self.output_folder_info_label = ttk.Label(
                 self.settings_frame,
                 text="This is where your songs will be exported to.",
-                font=("Segoe UI", 14),  
+                font=("Segoe UI", Settings_Info_Label_Size),
                 foreground="black"      
             )
             self.output_folder_info_label.pack(anchor="w", padx=5, pady=(2, 10))
+
+            # FLP Projects Folder Picker (Multiple folders)
+            flp_folder_frame = ttk.Frame(self.settings_frame)
+            flp_folder_frame.pack(fill=tk.X, pady=0)
+
+            self.flp_folder_label = ttk.Label(
+                flp_folder_frame, text="FLP Projects Folders", font=("Segoe UI", 14))
+            self.flp_folder_label.pack(side=tk.LEFT, padx=(0, 0), pady=5)
+
+            self.flp_folder_entry = ttk.Entry(flp_folder_frame)
+            self.flp_folder_entry.pack(
+                side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 5))
+            # Display existing folders separated by semicolons if they exist
+            if hasattr(self, 'Dir_FLP_Projects'):
+                self.flp_folder_entry.insert(0, "; ".join(Dir_FLP_Projects))
+
+            self.browse_flp_button = ttk.Button(
+                flp_folder_frame,
+                text="Browse",
+                command=self.browse_flp_folders,
+                bootstyle="info"
+            )
+            self.browse_flp_button.pack(side=tk.LEFT)
+
+            # Add label underneath
+            self.flp_folder_info_label = ttk.Label(
+                self.settings_frame,
+                text="This is where your FLP projects are, add the top folder.\nClick Browse to add multiple folders.",
+                font=("Segoe UI", Settings_Info_Label_Size),
+                foreground="black"
+            )
+            self.flp_folder_info_label.pack(anchor="w", padx=5, pady=(2, 10))
 
             # Project Order selection
             order_frame = ttk.Frame(self.settings_frame)
             order_frame.pack(fill=tk.X, pady=0)
 
             self.order_label = ttk.Label(
-                order_frame, text="Project Order:", font=("Segoe UI", 14))
+                order_frame, text="Project Order:", font=("Segoe UI", 14), background="red")
             self.order_label.pack(side=tk.LEFT, padx=(0, 5))
 
             self.order_var = tk.StringVar(value=Project_Order_By)
@@ -628,13 +667,76 @@ class FLPExporterUI:
             self.order_combobox.pack(side=tk.LEFT)
             self.order_combobox.configure(font=("Segoe UI", 14))
 
-            # Sub General Section Header
+            # Launch at Startup Toggle
+            startup_frame = ttk.Frame(self.settings_frame)
+            startup_frame.pack(fill=tk.X, pady=10)
+
+            self.startup_label = ttk.Label(
+                startup_frame, text="Launch application at system startup:", font=("Segoe UI", 14))
+            self.startup_label.pack(side=tk.LEFT, padx=(0, 10))
+
+            self.startup_var = tk.BooleanVar(value=self.check_startup_status())
+            self.startup_toggle = ttk.Checkbutton(
+                startup_frame,
+                variable=self.startup_var,
+                bootstyle="round-toggle",
+                command=self.toggle_startup
+            )
+            self.startup_toggle.pack(side=tk.LEFT)
+            
+            #
+            # Advanced
+            #
             self.general_header = ttk.Label(
                 self.settings_frame, text="Advanced", font=("Segoe UI", 16, "bold"))
-            self.general_header.pack(anchor="w", padx=10, pady=(10, 5))
+            self.general_header.pack(anchor="w", padx=10, pady=(30, 5))
+            
+            # FL Studio Path Picker
+            fl_studio_frame = ttk.Frame(self.settings_frame)
+            fl_studio_frame.pack(fill=tk.X, pady=5)
+
+            self.fl_studio_path_label = ttk.Label(
+                fl_studio_frame,
+                text="FL Studio Path:",
+                font=("Segoe UI", 14)
+            )
+            self.fl_studio_path_label.pack(side=tk.LEFT, padx=(0, 5))
+
+            self.fl_studio_path_entry = ttk.Entry(fl_studio_frame)
+            self.fl_studio_path_entry.pack(
+                side=tk.LEFT,
+                fill=tk.X,
+                expand=True,
+                padx=(0, 5)
+            )
+            # Set current path if it exists
+            if hasattr(self, 'FL_Studio_Path') and self.FL_Studio_Path:
+                self.fl_studio_path_entry.insert(0, self.FL_Studio_Path)
+
+            self.browse_fl_studio_button = ttk.Button(
+                fl_studio_frame,
+                text="Browse",
+                command=self.browse_fl_studio_path,
+                bootstyle="info"
+            )
+            self.browse_fl_studio_button.pack(side=tk.LEFT)
+
+            # Info label
+            self.fl_studio_path_info_label = ttk.Label(
+                self.settings_frame,
+                text="Path to your FL Studio installation (used for advanced integration)",
+                font=("Segoe UI", 12),
+                foreground="gray"
+            )
+            self.fl_studio_path_info_label.pack(
+                anchor="w", padx=5, pady=(0, 10))
 
 
-             # Sub General Section Header
+
+
+             # 
+             # ABOUT
+             #
             self.general_header = ttk.Label(
                 self.settings_frame, text="About", font=("Segoe UI", 16, "bold"))
             self.general_header.pack(anchor="w", padx=10, pady=(10, 5))
@@ -653,14 +755,46 @@ class FLPExporterUI:
                 return
             Output_Folder_Path = new_path
 
+            # Save FLP projects folders
+            flp_folders = self.flp_folder_entry.get().strip()
+            if flp_folders:
+                Dir_FLP_Projects = [f.strip() for f in flp_folders.split(";") if f.strip()]
+                # Validate each folder
+                for folder in Dir_FLP_Projects:
+                    if not os.path.isdir(folder):
+                        messagebox.showerror(
+                            "Error", f"The specified FLP directory does not exist: {folder}")
+                        return
+
             # Save project order
             Project_Order_By = self.order_var.get()
+
+            # Handle startup setting
+            if self.startup_var.get():
+                self.add_to_startup()
+            else:
+                self.remove_from_startup()
 
             # Destroy settings UI
             self.settings_frame.destroy()
             self.settings_open = False
 
             self.restore_header_and_ui()
+
+
+    def browse_flp_folders(self):
+        """Open a dialog to select multiple FLP project folders"""
+        folders = filedialog.askdirectory(mustexist=True, title="Select FLP Project Folders")
+        if folders:
+            # Get current folders from the entry
+            current_folders = self.flp_folder_entry.get()
+            if current_folders:
+                # Append new folder to existing ones, separated by semicolon
+                updated_folders = f"{current_folders}; {folders}"
+            else:
+                updated_folders = folders
+            self.flp_folder_entry.delete(0, tk.END)
+            self.flp_folder_entry.insert(0, updated_folders)
 
     def browse_output_folder(self):
         global Output_Folder_Path
@@ -1091,9 +1225,69 @@ class FLPExporterUI:
         self.right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=False)
         
         ###
-    
+
+    def toggle_startup(self):
+        """Handle the startup toggle button"""
+        if self.startup_var.get():
+            self.add_to_startup()
+        else:
+            self.remove_from_startup()
+        
+    def add_to_startup(self):
+        """Add the program to Windows startup"""
+        if getattr(sys, 'frozen', False):
+            # If the application is run as a bundle (pyinstaller)
+            app_path = sys.executable
+        else:
+            app_path = os.path.abspath(__file__)
+
+        key = winreg.OpenKey(
+            winreg.HKEY_CURRENT_USER,
+            r'Software\Microsoft\Windows\CurrentVersion\Run',
+            0, winreg.KEY_SET_VALUE
+        )
+        winreg.SetValueEx(key, "FLPManager", 0, winreg.REG_SZ, app_path)
+        winreg.CloseKey(key)
 
 
+    def remove_from_startup(self):
+        """Remove the program from Windows startup"""
+        try:
+            key = winreg.OpenKey(
+                winreg.HKEY_CURRENT_USER,
+                r'Software\Microsoft\Windows\CurrentVersion\Run',
+                0, winreg.KEY_SET_VALUE
+            )
+            winreg.DeleteValue(key, "FLPManager")
+            winreg.CloseKey(key)
+        except WindowsError:
+            pass  # Key didn't exist, which is fine
+
+
+    def check_startup_status(self):
+        """Check if the program is in Windows startup"""
+        try:
+            key = winreg.OpenKey(
+                winreg.HKEY_CURRENT_USER,
+                r'Software\Microsoft\Windows\CurrentVersion\Run',
+                0, winreg.KEY_READ
+            )
+            winreg.QueryValueEx(key, "FLPManager")
+            winreg.CloseKey(key)
+            return True
+        except WindowsError:
+            return False
+
+    def browse_fl_studio_path(self):
+        """Open a dialog to select FL Studio installation folder"""
+        path = filedialog.askdirectory(
+            mustexist=True,
+            title="Select FL Studio Installation Folder",
+            initialdir="C:\\Program Files"  # Common installation location
+        )
+        if path:
+            self.fl_studio_path_entry.delete(0, tk.END)
+            self.fl_studio_path_entry.insert(0, path)
 
 # === START APP ===
 if __name__ == "__main__":
