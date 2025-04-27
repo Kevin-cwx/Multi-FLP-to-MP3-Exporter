@@ -632,16 +632,7 @@ class FLPExporterUI:
             self.settings_frame.destroy()
             self.settings_open = False
 
-            # Restore header and UI
-            self.content_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=5)
-            self.output_music_folder_button.pack(side=tk.RIGHT, padx=(0, 10))
-            self.heading.config(text=f"🎵 {Application_Name}")
-            self.settings_button.config(text="", image=self.settings_icon)
-            self.close_button.pack_forget()
-            self.sync_button.pack(side=tk.RIGHT, padx=(0, 10))
-            self.left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-            self.right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=False)
-            self.toggle_button_Close_Folders.pack(side=tk.RIGHT, padx=(0, 10))
+            self.restore_header_and_ui()
 
     def browse_output_folder(self):
         global Output_Folder_Path
@@ -658,11 +649,19 @@ class FLPExporterUI:
         self.settings_button.config(text="Settings", image=self.settings_icon)
         self.close_button.pack_forget()
 
-        # Restore hidden UI elements
+        self.restore_header_and_ui()
+
+    def restore_header_and_ui(self):
+        # Restore header and UI
+        self.content_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=5)
+        self.output_music_folder_button.pack(side=tk.RIGHT, padx=(0, 10))
+        self.heading.config(text=f"🎵 {Application_Name}")
+        self.settings_button.config(text="", image=self.settings_icon)
+        self.close_button.pack_forget()
+        self.sync_button.pack(side=tk.RIGHT, padx=(0, 10))
         self.left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         self.right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=False)
         self.toggle_button_Close_Folders.pack(side=tk.RIGHT, padx=(0, 10))
-        self.output_music_folder_button.pack(side=tk.RIGHT, padx=(0, 10))
 
     def on_enter_key(self, event):
         selected_items = self.tree.selection()
