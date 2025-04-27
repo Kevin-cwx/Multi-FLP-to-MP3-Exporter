@@ -17,6 +17,8 @@ from tkinter import messagebox
 from tkinter import filedialog
 import winreg
 import sys
+from tkinter import PhotoImage
+
 
 
 
@@ -41,6 +43,7 @@ Processor_Type = "FL64.exe"
 Search_Placeholder_Text = "Search Projects"
 Project_Order_By = "name" #date, name
 Set_Output_Sub_Folder = True
+Output_Sub_Folder_Name = ""
 Output_Sub_Folder_Name = ""
 Output_Audio_Format = "Emp3"
 Mouse_Scroll_Speed = 7
@@ -697,7 +700,7 @@ class FLPExporterUI:
 
             self.fl_studio_path_label = ttk.Label(
                 fl_studio_frame,
-                text="FL Studio Path:",
+                text="FL Studio Path",
                 font=("Segoe UI", 14)
             )
             self.fl_studio_path_label.pack(side=tk.LEFT, padx=(0, 5))
@@ -724,15 +727,157 @@ class FLPExporterUI:
             # Info label
             self.fl_studio_path_info_label = ttk.Label(
                 self.settings_frame,
-                text="Path to your FL Studio installation (used for advanced integration)",
-                font=("Segoe UI", 12),
-                foreground="gray"
+                text="Path to your FL Studio installation folder.\nEnsure this is the correct path as you will not be able to export if the path is incorrect.",
+                font=("Segoe UI", Settings_Info_Label_Size)
             )
             self.fl_studio_path_info_label.pack(
                 anchor="w", padx=5, pady=(0, 10))
+            
+            # Processor Type Dropdown
+            processor_frame = ttk.Frame(self.settings_frame)
+            processor_frame.pack(fill=tk.X, pady=5)
 
+            self.processor_label = ttk.Label(
+                processor_frame,
+                text="Processor Type:",
+                font=("Segoe UI", 14)
+            )
+            self.processor_label.pack(side=tk.LEFT, padx=(0, 10))
 
+            # Initialize with current Processor_Type value
+            self.processor_var = tk.StringVar(value=Processor_Type)
+            self.processor_combobox = ttk.Combobox(
+                processor_frame,
+                textvariable=self.processor_var,
+                values=["FL64.exe", "FL.exe"],
+                state="readonly",
+                width=10,
+                font=("Segoe UI", 14)
+            )
+            self.processor_combobox.pack(side=tk.LEFT)
 
+            # Info label
+            self.processor_info_label = ttk.Label(
+                self.settings_frame,
+                text="Select FL64.exe (64-bit) or FL.exe (32-bit)",
+                font=("Segoe UI", 12),
+                foreground="gray"
+            )
+            self.processor_info_label.pack(anchor="w", padx=5, pady=(0, 10))
+
+            # Output Subfolder Toggle and Entry
+            subfolder_frame = ttk.Frame(self.settings_frame)
+            subfolder_frame.pack(fill=tk.X, pady=5)
+
+            self.subfolder_toggle_var = tk.BooleanVar(
+                value=Set_Output_Sub_Folder)
+            self.subfolder_toggle = ttk.Checkbutton(
+                subfolder_frame,
+                text="Enable output subfolder",
+                variable=self.subfolder_toggle_var,
+                bootstyle="round-toggle",
+                command=self.toggle_subfolder_entry
+            )
+            self.subfolder_toggle.pack(side=tk.LEFT, padx=(0, 10))
+
+            self.subfolder_entry = ttk.Entry(
+                subfolder_frame,
+                width=20,
+                font=("Segoe UI", 12)
+            )
+            self.subfolder_entry.pack(side=tk.LEFT)
+            self.subfolder_entry.insert(0, Output_Sub_Folder_Name)
+            self.subfolder_entry.config(
+                state=tk.NORMAL if Set_Output_Sub_Folder else tk.DISABLED)
+
+            # Info label
+            self.subfolder_info_label = ttk.Label(
+                self.settings_frame,
+                text="Creates a subfolder in your output directory for better organization. For example an album name.",
+                font=("Segoe UI", Settings_Info_Label_Size)
+            )
+            self.subfolder_info_label.pack(anchor="w", padx=5, pady=(0, 10))
+            
+                       # Mouse Scroll Speed Dropdown
+            scroll_frame = ttk.Frame(self.settings_frame)
+            scroll_frame.pack(fill=tk.X, pady=5)
+
+            self.scroll_speed_label = ttk.Label(
+                scroll_frame,
+                text="Mouse Scroll Speed:",
+                font=("Segoe UI", 14)
+            )
+            self.scroll_speed_label.pack(side=tk.LEFT, padx=(0, 10))
+
+            SCROLL_SPEED_MAPPING = {
+                1: 7,   # Slow
+                2: 10,  # Medium (default)
+                3: 15,  # Fast
+                4: 19   # Very fast
+            }
+            
+            # Find which key has our current value (reverse lookup)
+            current_key = next(
+                (k for k, v in SCROLL_SPEED_MAPPING.items()
+                 if v == Mouse_Scroll_Speed),
+                2  # Default to medium if not found
+            )
+
+            self.scroll_speed_var = tk.IntVar(value=current_key)
+            self.scroll_combobox = ttk.Combobox(
+                scroll_frame,
+                textvariable=self.scroll_speed_var,
+                values=list(SCROLL_SPEED_MAPPING.keys()),
+                state="readonly",
+                width=5,
+                font=("Segoe UI", 14)
+            )
+            self.scroll_combobox.pack(side=tk.LEFT)
+
+            # Info label showing speed descriptions
+            self.scroll_info_label = ttk.Label(
+                self.settings_frame,
+                text="1 (Slow) - 2 (Medium) - 3 (Fast) - 4 (Very Fast)",
+                font=("Segoe UI", 12),
+                foreground="gray"
+            )
+            self.scroll_info_label.pack(anchor="w", padx=5, pady=(0, 10))
+
+            # Add the FL Studio icon button below the folder picker
+        icon_button_frame = ttk.Frame(self.settings_frame)
+        icon_button_frame.pack(fill=tk.X, pady=(0, 10))
+
+        try:
+            self.fl_icon = tk.PhotoImage(
+                file="Media/Icons/FL21 - Icon.png").subsample(4, 4)
+            self.fl_icon_button = ttk.Button(
+                icon_button_frame,
+                image=self.fl_icon,
+                command=self.open_first_flp_folder,
+                bootstyle="link",
+                padding=(2, 2)
+            )
+            self.fl_icon_button.pack(side=tk.LEFT, padx=(10, 0))
+
+            # Add label next to icon
+            self.icon_button_label = ttk.Label(
+                icon_button_frame,
+                text="Open first FLP folder",
+                font=("Segoe UI", 10)
+            )
+            self.icon_button_label.pack(side=tk.LEFT, padx=(5, 0))
+
+        except Exception as e:
+            print(f"Could not load FL icon: {str(e)}")
+            # Fallback to text button if icon fails
+            self.fallback_button = ttk.Button(
+                icon_button_frame,
+                text="Open FLP Folder",
+                command=self.open_first_flp_folder,
+                bootstyle="outline",
+                padding=(2, 2)
+            )
+            self.fallback_button.pack(side=tk.LEFT, padx=(10, 0))
 
              # 
              # ABOUT
@@ -740,6 +885,37 @@ class FLPExporterUI:
             self.general_header = ttk.Label(
                 self.settings_frame, text="About", font=("Segoe UI", 16, "bold"))
             self.general_header.pack(anchor="w", padx=10, pady=(10, 5))
+
+            # About Section
+            self.about_header = ttk.Label(
+                self.settings_frame,
+                text="About",
+                font=("Segoe UI", 16, "bold")
+            )
+            self.about_header.pack(anchor="w", padx=10, pady=(10, 5))
+
+            # Version Info
+            version_frame = ttk.Frame(self.settings_frame)
+            version_frame.pack(fill=tk.X, pady=(0, 10))
+
+            self.version_label = ttk.Label(
+                version_frame,
+                text="Version 1.1",
+                font=("Segoe UI", 14)
+            )
+            self.version_label.pack(side=tk.LEFT, padx=(0, 10))
+
+            # Warning Note
+            self.warning_note = ttk.Label(
+                self.settings_frame,
+                text="Note: FL Studio must be closed before exporting song.\nMake sure to save your project.\nClicking export will automatically close FL Studio",
+                font=("Segoe UI", 12),
+                foreground="#FF6B6B",  # Light red color for warning
+                wraplength=400,  # Adjust based on your window width
+                justify=tk.LEFT
+            )
+            self.warning_note.pack(anchor="w", padx=10, pady=(0, 20))
+
 
             # Show close button and update settings button
             self.close_button.pack(side=tk.RIGHT, padx=(0, 10))
@@ -774,6 +950,33 @@ class FLPExporterUI:
                 self.add_to_startup()
             else:
                 self.remove_from_startup()
+
+            # Save processor type
+            Processor_Type = self.processor_var.get()
+
+            # Save subfolder settings
+            Set_Output_Sub_Folder = self.subfolder_toggle_var.get()
+            if Set_Output_Sub_Folder:
+                subfolder_name = self.subfolder_entry.get().strip()
+                if not subfolder_name:
+                    messagebox.showerror(
+                        "Error", "Subfolder name cannot be empty when enabled.")
+                    return
+                Output_Sub_Folder_Name = subfolder_name
+
+            # Save mouse scroll speed
+            selected_key = self.scroll_speed_var.get()
+            Mouse_Scroll_Speed = SCROLL_SPEED_MAPPING.get(
+                selected_key, 10)  # Default to medium if invalid
+
+            # Save FL Studio path
+            fl_studio_path = self.fl_studio_path_entry.get().strip()
+            if fl_studio_path:  # Only validate if path is provided
+                if not os.path.isdir(fl_studio_path):
+                    messagebox.showerror(
+                        "Error", "The specified FL Studio directory does not exist.")
+                    return
+                FL_Studio_Path = fl_studio_path
 
             # Destroy settings UI
             self.settings_frame.destroy()
@@ -1089,26 +1292,113 @@ class FLPExporterUI:
         delta = -1 if event.delta > 0 else 1
         self.tree.yview_scroll(Mouse_Scroll_Speed * delta, "units")
     
-    # Right click opens the file, test at home if it opens in FL
+    # Right click opens the file
     def on_right_click(self, event):
         """Handle right-click to show context menu"""
         item_id = self.tree.identify_row(event.y)
         self.context_item = item_id  # Store the clicked item
-        
-        if item_id and item_id in self.path_map:
+
+        if item_id:
             # Create context menu
             self.context_menu = tk.Menu(self.root, tearoff=0)
-            self.context_menu.add_command(
-                label="Open File", 
-                command=self.open_selected_file
-            )
-            self.context_menu.add_command(
-                label="Open Folder", 
-                command=self.open_containing_folder
-            )
-            
-            # Show menu at cursor position
-            self.context_menu.post(event.x_root, event.y_root)
+
+            # For FLP files (items in path_map)
+            if item_id in self.path_map:
+                self.context_menu.add_command(
+                    label="Open File",
+                    command=self.open_selected_file
+                )
+                self.context_menu.add_command(
+                    label="Open Containing Folder",
+                    command=self.open_containing_folder
+                )
+            # For folders (items not in path_map)
+            else:
+                self.context_menu.add_command(
+                    label="Open Folder",
+                    command=lambda: self.open_folder(item_id)
+                )
+
+            # Show menu at cursor position if we added any items
+            if self.context_menu.index(tk.END) is not None:
+                self.context_menu.post(event.x_root, event.y_root)
+
+    def open_folder(self, item_id):
+        """Open the selected folder in File Explorer"""
+        try:
+            # Check if this is a top-level folder (direct child of tree root)
+            if not self.tree.parent(item_id):  # Top-level item
+                # Get the folder name
+                folder_name = self.tree.item(item_id, 'text')
+
+                # Find matching root directory
+                for dir_path in Dir_FLP_Projects:
+                    if os.path.basename(dir_path) == folder_name:
+                        if os.path.isdir(dir_path):
+                            os.startfile(dir_path)
+                            return
+                        else:
+                            messagebox.showerror(
+                                "Error", "Folder path does not exist")
+                            return
+
+                messagebox.showerror(
+                    "Error", "Could not find matching root directory")
+                return
+
+            # For nested folders (original logic)
+            path_parts = []
+            current_id = item_id
+
+            # Walk up the tree to build the full path
+            while current_id:
+                text = self.tree.item(current_id, 'text')
+                path_parts.insert(0, text)
+                current_id = self.tree.parent(current_id)
+
+            # Find which root directory this belongs to
+            root_node = self.tree.parent(item_id)
+            while self.tree.parent(root_node):  # Walk up to top-level node
+                root_node = self.tree.parent(root_node)
+
+            root_text = self.tree.item(root_node, 'text')
+
+            # Find the matching root directory path
+            root_path = None
+            for dir_path in Dir_FLP_Projects:
+                if os.path.basename(dir_path) == root_text:
+                    root_path = dir_path
+                    break
+
+            if root_path:
+                # Reconstruct the full folder path
+                full_path = os.path.join(root_path, *path_parts[1:])
+                if os.path.isdir(full_path):
+                    os.startfile(full_path)
+                else:
+                    messagebox.showerror("Error", "Folder path does not exist")
+            else:
+                messagebox.showerror("Error", "Could not determine folder path")
+
+        except Exception as e:
+            messagebox.showerror("Error", f"Could not open folder: {str(e)}")
+        finally:
+            if hasattr(self, 'context_menu'):
+                self.context_menu.destroy()
+
+    def open_containing_folder(self):
+        """Open the folder containing the selected file"""
+        if hasattr(self, 'context_item') and self.context_item in self.path_map:
+            file_path = self.path_map[self.context_item]
+            folder_path = os.path.dirname(file_path)
+
+            try:
+                os.startfile(folder_path)
+            except Exception as e:
+                messagebox.showerror("Error", f"Could not open folder: {str(e)}")
+            finally:
+                if hasattr(self, 'context_menu'):
+                    self.context_menu.destroy()
 
     def open_selected_file(self):
         """Open the selected file directly"""
@@ -1288,6 +1578,37 @@ class FLPExporterUI:
         if path:
             self.fl_studio_path_entry.delete(0, tk.END)
             self.fl_studio_path_entry.insert(0, path)
+
+    def toggle_subfolder_entry(self):
+        """Enable/disable the subfolder entry based on toggle state"""
+        if self.subfolder_toggle_var.get():
+            self.subfolder_entry.config(state=tk.NORMAL)
+        else:
+            self.subfolder_entry.config(state=tk.DISABLED)
+    
+    def apply_scroll_speed(self):
+        """Apply the selected scroll speed to the application"""
+        if hasattr(self, 'canvas'):  # If you have a canvas widget
+            self.canvas.configure(yscrollincrement=Mouse_Scroll_Speed)
+        if hasattr(self, 'text_widget'):  # If you have text widgets
+            self.text_widget.configure(yscrollincrement=Mouse_Scroll_Speed)
+        # Add other widgets that need scroll speed adjustment
+
+    def open_first_flp_folder(self):
+        """Open the first FLP folder in File Explorer"""
+        if Dir_FLP_Projects and len(Dir_FLP_Projects) > 0:
+            first_folder = Dir_FLP_Projects[0]
+            if os.path.isdir(first_folder):
+                try:
+                    os.startfile(first_folder)
+                except Exception as e:
+                    messagebox.showerror(
+                        "Error", f"Could not open folder: {str(e)}")
+            else:
+                messagebox.showerror(
+                    "Error", "The specified FLP directory does not exist")
+        else:
+            messagebox.showerror("Error", "No FLP folders are set in settings")
 
 # === START APP ===
 if __name__ == "__main__":

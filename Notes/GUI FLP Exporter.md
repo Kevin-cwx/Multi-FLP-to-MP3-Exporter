@@ -23,9 +23,9 @@
 #### Advanced
 - Set FL_Studio_Path ( Write function to find on own, but make editable)
 - Set Processor_Type
-- Toggle, enable auto export all projects you worked on today
+- ❌ - Toggle, enable auto export all projects you worked on today
+    - No need to build this. Users can just click recent projects
 - Enable Set output folder sub folder, User can name the sub folder within subfolder where they want to export songs
-    - Create check if folde exists, else create folder
 - User can set mouse scroll speed 4 speeds. Normal, 2X, 3X, 5X
 
 - If settings is empty (first time users), prompt user to run FL Studio, run code to get FL_Studio_Path and processes type, prompt user input fields for other values and store in json file
@@ -65,6 +65,7 @@
     2. Added clear label in "def export_selected". 
 2. When sync is clicked, and I manually close the folders, it did not update  the close folder button, when i clicked sync again
 3. Original Sync button does not take same location once settings is clicked again
+4. Add right click on folder also, to open folder location
 
 
 ## **Exporting**
