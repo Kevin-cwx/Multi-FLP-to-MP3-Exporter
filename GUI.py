@@ -53,16 +53,19 @@ Launch_At_Startup = False
 #ogg does not work in powershell, FL might have disabled
 
 
-# ---
+# 
 # Colors
 #  
-Selected_Project_Background_Color = "#34b1eb" 
+Selected_Project_Background_Color = "#8b8a53" 
 Selected_Project_Text_Color = "black"
+Selected_Project_Window_Background_Color = "#77f190"
+
 Top_Title_Color ="black"
 Search_Placeholder_Text_Color = "black"
 Project_Color_Tree ="white"
-Background_Color = "#8a9296"
-
+Background_Color = "#cee4ff"
+Project_Tree_Background_Color = "white"
+Project_Tree_Text_Color="black"
 """
 #34b1eb
 #8a9296
@@ -248,9 +251,9 @@ class FLPExporterUI:
         #  rowheight=20
         style.configure("Custom.Treeview",
                         # Light gray (or any color you prefer)
-                        background="#f0f0f0",
+                        background=Project_Tree_Background_Color,
                         fieldbackground="#f0f0f0",  # Match the background
-                        foreground="black",  # Text color
+                        foreground=Project_Tree_Text_Color,  # Text color
                         font=("Segoe UI", 9)
                         )
         # Projects Left Side
@@ -294,7 +297,7 @@ class FLPExporterUI:
             height=15,
             width=20,
             selectmode=tk.SINGLE,
-            bg="green",  # Light gray (match left tree)
+            selectbackground="#fd4545",  # Light gray (match left tree)
             fg="red",    # Text color
             font=("Segoe UI", 10)
         )
@@ -614,7 +617,7 @@ class FLPExporterUI:
                 "<MouseWheel>", self._on_mousewheel_settings)
 
 
-
+            
             #
             # General
             #
@@ -798,7 +801,7 @@ class FLPExporterUI:
             # Info label
             self.processor_info_label = ttk.Label(
                 self.scrollable_settings_frame,
-                text="Select FL64.exe (64-bit) or FL.exe (32-bit)",
+                text="SelectFL64.exe (64-bit) or FL.exe (32-bit)",
                 font=("Segoe UI", 12),
                 foreground="gray"
             )
@@ -882,11 +885,11 @@ class FLPExporterUI:
             )
             self.scroll_info_label.pack(anchor="w", padx=5, pady=(0, 10))
 
-            # Add the FL Studio icon button below the folder picker
-        icon_button_frame = ttk.Frame(self.scrollable_settings_frame)
-        icon_button_frame.pack(fill=tk.X, pady=(0, 10))
+                # Add the FL Studio icon button below the folder picker
+            icon_button_frame = ttk.Frame(self.scrollable_settings_frame)
+            icon_button_frame.pack(fill=tk.X, pady=(0, 10))
 
-        try:
+            
             self.fl_icon = tk.PhotoImage(
                 file="Media/Icons/FL21 - Icon.png").subsample(4, 4)
             self.fl_icon_button = ttk.Button(
@@ -906,21 +909,11 @@ class FLPExporterUI:
             )
             self.icon_button_label.pack(side=tk.LEFT, padx=(5, 0))
 
-        except Exception as e:
-            print(f"Could not load FL icon: {str(e)}")
-            # Fallback to text button if icon fails
-            self.fallback_button = ttk.Button(
-                icon_button_frame,
-                text="Open FLP Folder",
-                command=self.open_first_flp_folder,
-                bootstyle="outline",
-                padding=(2, 2)
-            )
-            self.fallback_button.pack(side=tk.LEFT, padx=(10, 0))
+            
 
-             # 
-             # ABOUT
-             #
+                # 
+                # ABOUT
+                #
             self.general_header = ttk.Label(
                 self.scrollable_settings_frame, text="About", font=("Segoe UI", 16, "bold"))
             self.general_header.pack(anchor="w", padx=10, pady=(10, 5))
@@ -955,11 +948,11 @@ class FLPExporterUI:
             )
             self.warning_note.pack(anchor="w", padx=10, pady=(0, 20))
 
-
-            # Show close button and update settings button
+        # Show close button and update settings button
             self.close_button.pack(side=tk.RIGHT, padx=(0, 10))
             self.settings_button.config(text="Save Settings", image='')
             self.settings_open = True
+            
 
         else:   
             # Save output path
