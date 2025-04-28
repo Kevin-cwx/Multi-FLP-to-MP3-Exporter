@@ -30,10 +30,10 @@ USE_DARK_MODE = False
 #Dir_FLP_Projects = r"C:\Users\foendoe.kevin\Documents\findusic - FLP Input"
 
 Dir_FLP_Projects = [
-    #r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 12 - projects",
-    #r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 20 - projects",
-    #r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 21 - projects"
-    r"C:\Users\foendoe.kevin\Documents\findusic - FLP Input"
+    r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 12 - projects",
+    r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 20 - projects",
+    r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 21 - projects"
+    #r"C:\Users\foendoe.kevin\Documents\findusic - FLP Input"
 ]
 Output_Folder_Path = r"C:\Users\Kfoen\Documents\Docs KF\FL SONGS MP3\Python_Audio_Output\A"
 FL_Studio_Path = r"C:\Program Files\Image-Line\FL Studio 21"
@@ -42,6 +42,7 @@ Processor_Type = "FL64.exe"
 
 Search_Placeholder_Text = "Search Projects"
 Project_Order_By = "name" #date, name
+global Set_Output_Sub_Folder
 Set_Output_Sub_Folder = True
 Output_Sub_Folder_Name = ""
 Output_Sub_Folder_Name = ""
@@ -565,6 +566,8 @@ class FLPExporterUI:
         global Dir_FLP_Projects  # Add this line to access the FLP projects directory variable
         Settings_Info_Label_Size = 10
         if not self.settings_open:
+            if hasattr(self, 'settings_frame'):
+                self.settings_frame.destroy()
             # Hide main UI
             self.left_frame.pack_forget()
             self.right_frame.pack_forget()
@@ -574,6 +577,11 @@ class FLPExporterUI:
 
             # Change heading
             self.heading.config(text="Settings")
+
+            # Show close button and update settings button
+            self.close_button.pack(side=tk.RIGHT, padx=(0, 10))
+            self.settings_button.config(text="Save Settings", image='')
+            self.settings_open = True
 
             # Create the main settings container frame
             self.settings_frame = ttk.Frame(self.root)
@@ -786,31 +794,21 @@ class FLPExporterUI:
             )
             self.processor_label.pack(side=tk.LEFT, padx=(0, 10))
 
-            # Initialize with current Processor_Type value
-            self.processor_var = tk.StringVar(value=Processor_Type)
-            self.processor_combobox = ttk.Combobox(
-                processor_frame,
-                textvariable=self.processor_var,
-                values=["FL64.exe", "FL.exe"],
-                state="readonly",
-                width=10,
-                font=("Segoe UI", 14)
-            )
-            self.processor_combobox.pack(side=tk.LEFT)
+            
 
             # Info label
             self.processor_info_label = ttk.Label(
                 self.scrollable_settings_frame,
-                text="SelectFL64.exe (64-bit) or FL.exe (32-bit)",
-                font=("Segoe UI", 12),
-                foreground="gray"
+                text="Select FL64.exe (64-bit) or FL.exe (32-bit)",
+                font=("Segoe UI", 12)
             )
             self.processor_info_label.pack(anchor="w", padx=5, pady=(0, 10))
 
             # Output Subfolder Toggle and Entry
             subfolder_frame = ttk.Frame(self.scrollable_settings_frame)
             subfolder_frame.pack(fill=tk.X, pady=5)
-
+            
+            Set_Output_Sub_Folder = ""
             self.subfolder_toggle_var = tk.BooleanVar(
                 value=Set_Output_Sub_Folder)
             self.subfolder_toggle = ttk.Checkbutton(
@@ -948,10 +946,7 @@ class FLPExporterUI:
             )
             self.warning_note.pack(anchor="w", padx=10, pady=(0, 20))
 
-        # Show close button and update settings button
-            self.close_button.pack(side=tk.RIGHT, padx=(0, 10))
-            self.settings_button.config(text="Save Settings", image='')
-            self.settings_open = True
+            
             
 
         else:   
@@ -983,8 +978,7 @@ class FLPExporterUI:
             else:
                 self.remove_from_startup()
 
-            # Save processor type
-            Processor_Type = self.processor_var.get()
+            
 
             # Save subfolder settings
             Set_Output_Sub_Folder = self.subfolder_toggle_var.get()
@@ -1059,7 +1053,7 @@ class FLPExporterUI:
         self.content_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=5)
         self.output_music_folder_button.pack(side=tk.RIGHT, padx=(0, 10))
         self.heading.config(text=f"🎵 {Application_Name}")
-        self.settings_button.config(text="", image=self.settings_icon)
+        self.settings_button.config(text="Settings!@#", image=self.settings_icon)
         self.close_button.pack_forget()
         self.sync_button.pack(side=tk.RIGHT, padx=(0, 10))
         self.left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
