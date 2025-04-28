@@ -30,10 +30,10 @@ USE_DARK_MODE = False
 #Dir_FLP_Projects = r"C:\Users\foendoe.kevin\Documents\findusic - FLP Input"
 
 Dir_FLP_Projects = [
-    r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 12 - projects",
-    r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 20 - projects",
-    r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 21 - projects"
-    # r"C:\Users\foendoe.kevin\Documents\findusic - FLP Input"
+    #r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 12 - projects",
+    #r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 20 - projects",
+    #r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 21 - projects"
+    r"C:\Users\foendoe.kevin\Documents\findusic - FLP Input"
 ]
 Output_Folder_Path = r"C:\Users\Kfoen\Documents\Docs KF\FL SONGS MP3\Python_Audio_Output\A"
 FL_Studio_Path = r"C:\Program Files\Image-Line\FL Studio 21"
@@ -1354,7 +1354,7 @@ class FLPExporterUI:
                     command=self.open_selected_file
                 )
                 self.context_menu.add_command(
-                    label="Open Containing Folder",
+                    label="Open Folder",
                     command=self.open_containing_folder
                 )
             # For folders (items not in path_map)
