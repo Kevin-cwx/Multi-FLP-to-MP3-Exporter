@@ -572,19 +572,58 @@ class FLPExporterUI:
             # Change heading
             self.heading.config(text="Settings")
 
-            # Create the settings frame
+            # Create the main settings container frame
             self.settings_frame = ttk.Frame(self.root)
             self.settings_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=0)
+
+            # Create a canvas and vertical scrollbar
+            self.settings_canvas = tk.Canvas(self.settings_frame, highlightthickness=0)
+            self.settings_scrollbar = ttk.Scrollbar(
+            self.settings_frame, 
+            orient="vertical", 
+            command=self.settings_canvas.yview
+             )
+
+            # Create the scrollable frame that will hold all settings widgets
+            self.scrollable_settings_frame = ttk.Frame(self.settings_canvas)
+
+            # Configure the canvas
+            self.scrollable_settings_frame.bind(
+                "<Configure>",
+                lambda e: self.settings_canvas.configure(
+                    scrollregion=self.settings_canvas.bbox("all")
+                )
+            )
+
+            # Create window in canvas for scrollable frame
+            self.settings_canvas.create_window(
+                (0, 0),
+                window=self.scrollable_settings_frame,
+                anchor="nw"
+            )
+
+            self.settings_canvas.configure(
+                yscrollcommand=self.settings_scrollbar.set)
+
+            # Pack the canvas and scrollbar
+            self.settings_canvas.pack(side="left", fill="both", expand=True)
+            self.settings_scrollbar.pack(side="right", fill="y")
+
+            # Mouse wheel binding for scrolling
+            self.settings_canvas.bind_all(
+                "<MouseWheel>", self._on_mousewheel_settings)
+
+
 
             #
             # General
             #
             self.general_header = ttk.Label(
-                self.settings_frame, text="General", font=("Segoe UI", 16, "bold"))
+                self.scrollable_settings_frame, text="General", font=("Segoe UI", 16, "bold"))
             self.general_header.pack(anchor="w", padx=10, pady=(10, 5))
             
             # Output Folder Picker
-            output_folder_frame = ttk.Frame(self.settings_frame)
+            output_folder_frame = ttk.Frame(self.scrollable_settings_frame)
             output_folder_frame.pack(fill=tk.X, pady=0)
 
             self.output_folder_label = ttk.Label(
@@ -611,7 +650,7 @@ class FLPExporterUI:
 
             
             self.output_folder_info_label = ttk.Label(
-                self.settings_frame,
+                self.scrollable_settings_frame,
                 text="This is where your songs will be exported to.",
                 font=("Segoe UI", Settings_Info_Label_Size),
                 foreground="black"      
@@ -619,7 +658,7 @@ class FLPExporterUI:
             self.output_folder_info_label.pack(anchor="w", padx=5, pady=(2, 10))
 
             # FLP Projects Folder Picker (Multiple folders)
-            flp_folder_frame = ttk.Frame(self.settings_frame)
+            flp_folder_frame = ttk.Frame(self.scrollable_settings_frame)
             flp_folder_frame.pack(fill=tk.X, pady=0)
 
             self.flp_folder_label = ttk.Label(
@@ -643,7 +682,7 @@ class FLPExporterUI:
 
             # Add label underneath
             self.flp_folder_info_label = ttk.Label(
-                self.settings_frame,
+                self.scrollable_settings_frame,
                 text="This is where your FLP projects are, add the top folder.\nClick Browse to add multiple folders.",
                 font=("Segoe UI", Settings_Info_Label_Size),
                 foreground="black"
@@ -651,7 +690,7 @@ class FLPExporterUI:
             self.flp_folder_info_label.pack(anchor="w", padx=5, pady=(2, 10))
 
             # Project Order selection
-            order_frame = ttk.Frame(self.settings_frame)
+            order_frame = ttk.Frame(self.scrollable_settings_frame)
             order_frame.pack(fill=tk.X, pady=0)
 
             self.order_label = ttk.Label(
@@ -671,7 +710,7 @@ class FLPExporterUI:
             self.order_combobox.configure(font=("Segoe UI", 14))
 
             # Launch at Startup Toggle
-            startup_frame = ttk.Frame(self.settings_frame)
+            startup_frame = ttk.Frame(self.scrollable_settings_frame)
             startup_frame.pack(fill=tk.X, pady=10)
 
             self.startup_label = ttk.Label(
@@ -691,11 +730,11 @@ class FLPExporterUI:
             # Advanced
             #
             self.general_header = ttk.Label(
-                self.settings_frame, text="Advanced", font=("Segoe UI", 16, "bold"))
+                self.scrollable_settings_frame, text="Advanced", font=("Segoe UI", 16, "bold"))
             self.general_header.pack(anchor="w", padx=10, pady=(30, 5))
             
             # FL Studio Path Picker
-            fl_studio_frame = ttk.Frame(self.settings_frame)
+            fl_studio_frame = ttk.Frame(self.scrollable_settings_frame)
             fl_studio_frame.pack(fill=tk.X, pady=5)
 
             self.fl_studio_path_label = ttk.Label(
@@ -726,7 +765,7 @@ class FLPExporterUI:
 
             # Info label
             self.fl_studio_path_info_label = ttk.Label(
-                self.settings_frame,
+                self.scrollable_settings_frame,
                 text="Path to your FL Studio installation folder.\nEnsure this is the correct path as you will not be able to export if the path is incorrect.",
                 font=("Segoe UI", Settings_Info_Label_Size)
             )
@@ -734,7 +773,7 @@ class FLPExporterUI:
                 anchor="w", padx=5, pady=(0, 10))
             
             # Processor Type Dropdown
-            processor_frame = ttk.Frame(self.settings_frame)
+            processor_frame = ttk.Frame(self.scrollable_settings_frame)
             processor_frame.pack(fill=tk.X, pady=5)
 
             self.processor_label = ttk.Label(
@@ -758,7 +797,7 @@ class FLPExporterUI:
 
             # Info label
             self.processor_info_label = ttk.Label(
-                self.settings_frame,
+                self.scrollable_settings_frame,
                 text="Select FL64.exe (64-bit) or FL.exe (32-bit)",
                 font=("Segoe UI", 12),
                 foreground="gray"
@@ -766,7 +805,7 @@ class FLPExporterUI:
             self.processor_info_label.pack(anchor="w", padx=5, pady=(0, 10))
 
             # Output Subfolder Toggle and Entry
-            subfolder_frame = ttk.Frame(self.settings_frame)
+            subfolder_frame = ttk.Frame(self.scrollable_settings_frame)
             subfolder_frame.pack(fill=tk.X, pady=5)
 
             self.subfolder_toggle_var = tk.BooleanVar(
@@ -792,14 +831,14 @@ class FLPExporterUI:
 
             # Info label
             self.subfolder_info_label = ttk.Label(
-                self.settings_frame,
+                self.scrollable_settings_frame,
                 text="Creates a subfolder in your output directory for better organization. For example an album name.",
                 font=("Segoe UI", Settings_Info_Label_Size)
             )
             self.subfolder_info_label.pack(anchor="w", padx=5, pady=(0, 10))
             
                        # Mouse Scroll Speed Dropdown
-            scroll_frame = ttk.Frame(self.settings_frame)
+            scroll_frame = ttk.Frame(self.scrollable_settings_frame)
             scroll_frame.pack(fill=tk.X, pady=5)
 
             self.scroll_speed_label = ttk.Label(
@@ -836,7 +875,7 @@ class FLPExporterUI:
 
             # Info label showing speed descriptions
             self.scroll_info_label = ttk.Label(
-                self.settings_frame,
+                self.scrollable_settings_frame,
                 text="1 (Slow) - 2 (Medium) - 3 (Fast) - 4 (Very Fast)",
                 font=("Segoe UI", 12),
                 foreground="gray"
@@ -844,7 +883,7 @@ class FLPExporterUI:
             self.scroll_info_label.pack(anchor="w", padx=5, pady=(0, 10))
 
             # Add the FL Studio icon button below the folder picker
-        icon_button_frame = ttk.Frame(self.settings_frame)
+        icon_button_frame = ttk.Frame(self.scrollable_settings_frame)
         icon_button_frame.pack(fill=tk.X, pady=(0, 10))
 
         try:
@@ -883,19 +922,19 @@ class FLPExporterUI:
              # ABOUT
              #
             self.general_header = ttk.Label(
-                self.settings_frame, text="About", font=("Segoe UI", 16, "bold"))
+                self.scrollable_settings_frame, text="About", font=("Segoe UI", 16, "bold"))
             self.general_header.pack(anchor="w", padx=10, pady=(10, 5))
 
             # About Section
             self.about_header = ttk.Label(
-                self.settings_frame,
+                self.scrollable_settings_frame,
                 text="About",
                 font=("Segoe UI", 16, "bold")
             )
             self.about_header.pack(anchor="w", padx=10, pady=(10, 5))
 
             # Version Info
-            version_frame = ttk.Frame(self.settings_frame)
+            version_frame = ttk.Frame(self.scrollable_settings_frame)
             version_frame.pack(fill=tk.X, pady=(0, 10))
 
             self.version_label = ttk.Label(
@@ -907,7 +946,7 @@ class FLPExporterUI:
 
             # Warning Note
             self.warning_note = ttk.Label(
-                self.settings_frame,
+                self.scrollable_settings_frame,
                 text="Note: FL Studio must be closed before exporting song.\nMake sure to save your project.\nClicking export will automatically close FL Studio",
                 font=("Segoe UI", 12),
                 foreground="#FF6B6B",  # Light red color for warning
@@ -922,7 +961,7 @@ class FLPExporterUI:
             self.settings_button.config(text="Save Settings", image='')
             self.settings_open = True
 
-        else:
+        else:   
             # Save output path
             new_path = self.output_folder_entry.get().strip()
             if not os.path.isdir(new_path):
@@ -978,9 +1017,12 @@ class FLPExporterUI:
                     return
                 FL_Studio_Path = fl_studio_path
 
-            # Destroy settings UI
+             # Destroy settings UI
             self.settings_frame.destroy()
             self.settings_open = False
+
+            # Unbind mouse wheel
+            self.settings_canvas.unbind_all("<MouseWheel>")
 
             self.restore_header_and_ui()
 
@@ -1013,6 +1055,9 @@ class FLPExporterUI:
         self.settings_open = False
         self.settings_button.config(text="Settings", image=self.settings_icon)
         self.close_button.pack_forget()
+
+        # Unbind mouse wheel
+        self.settings_canvas.unbind_all("<MouseWheel>")
 
         self.restore_header_and_ui()
 
@@ -1609,6 +1654,16 @@ class FLPExporterUI:
                     "Error", "The specified FLP directory does not exist")
         else:
             messagebox.showerror("Error", "No FLP folders are set in settings")
+
+    def _on_mousewheel_settings(self, event):
+        """Handle mouse wheel scrolling for settings panel"""
+        if event.delta:
+            self.settings_canvas.yview_scroll(int(-1*(event.delta/120)), "units")
+        else:
+            if event.num == 5:
+                self.settings_canvas.yview_scroll(1, "unit")
+            elif event.num == 4:
+                self.settings_canvas.yview_scroll(-1, "unit")
 
 # === START APP ===
 if __name__ == "__main__":
