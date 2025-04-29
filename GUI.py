@@ -57,7 +57,7 @@ Launch_At_Startup = False
 # 
 # Colors
 #  
-Selected_Project_Background_Color = "#8b8a53" 
+Selected_Project_Background_Color = "#4c49ff" 
 Selected_Project_Text_Color = "black"
 Selected_Project_Window_Background_Color = "#77f190"
 
@@ -141,9 +141,9 @@ class FLPExporterUI:
     def __init__(self, root):
         self.root = root
         self.root.title(Application_Name)
-        self.root.geometry("900x900+30+20")
+        self.root.geometry("600x700+30+20")
         #self.root.geometry("600x700+30+20")
-        self.root.resizable(False, False)
+        self.root.resizable(True, True)
         self.root.title(Application_Name)
         transparent_icon = tk.PhotoImage(width=1, height=1)
         self.root.iconbitmap(r"Media/Icons/FL21 - Icon.ico")
@@ -596,11 +596,17 @@ class FLPExporterUI:
 
             # Create the scrollable frame that will hold all settings widgets
             self.scrollable_settings_frame = ttk.Frame(self.settings_canvas)
+            self.scrollable_settings_frame.pack(fill="both", expand=True)
 
-            # Configure the canvas
+            # Configure the canvas to expand
+            self.settings_canvas.pack(side="left", fill="both", expand=True)
+            self.settings_scrollbar.pack(side="right", fill="y")
+
+            # Configure the canvas  
             self.scrollable_settings_frame.bind(
                 "<Configure>",
                 lambda e: self.settings_canvas.configure(
+                    yscrollcommand=self.settings_scrollbar.set,
                     scrollregion=self.settings_canvas.bbox("all")
                 )
             )
@@ -620,8 +626,7 @@ class FLPExporterUI:
             self.settings_scrollbar.pack(side="right", fill="y")
 
             # Mouse wheel binding for scrolling
-            self.settings_canvas.bind_all(
-                "<MouseWheel>", self._on_mousewheel_settings)
+            self.settings_canvas.bind_all("<MouseWheel>", self._on_mousewheel_settings)
 
 
             
@@ -693,7 +698,7 @@ class FLPExporterUI:
             # Add label underneath
             self.flp_folder_info_label = ttk.Label(
                 self.scrollable_settings_frame,
-                text="This is where your FLP projects are, add the top folder.\nClick Browse to add multiple folders.",
+                text="This is where your FLP projects are, add the top folder.\nClick Browse to add multiple folders.\nExample - C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 25 - projects",
                 font=("Segoe UI", Settings_Info_Label_Size),
                 foreground="black"
             )
@@ -776,7 +781,7 @@ class FLPExporterUI:
             # Info label
             self.fl_studio_path_info_label = ttk.Label(
                 self.scrollable_settings_frame,
-                text="Path to your FL Studio installation folder.\nEnsure this is the correct path as you will not be able to export if the path is incorrect.",
+                text="Path to your FL Studio installation folder.\nEnsure this is the correct path as you will not be able to export if the path is incorrect.\nExample - C:\Program Files\Image-Line\FL Studio 21",
                 font=("Segoe UI", Settings_Info_Label_Size)
             )
             self.fl_studio_path_info_label.pack(
@@ -906,7 +911,7 @@ class FLPExporterUI:
                 self.scrollable_settings_frame,
                 text="Note: FL Studio must be closed before exporting song.\nMake sure to save your project.\nClicking export will automatically close FL Studio",
                 font=("Segoe UI", 12),
-                foreground="#FF6B6B",  # Light red color for warning
+                foreground="black",  # Light red color for warning
                 wraplength=400,  # Adjust based on your window width
                 justify=tk.LEFT
             )
