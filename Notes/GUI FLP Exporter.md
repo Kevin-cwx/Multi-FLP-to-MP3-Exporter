@@ -3,9 +3,10 @@
 
 
 ## **Other**
-- ✅ - Remove empty not a button below "Projects"
+-  - Remove empty not a button below "Projects"
 - ✅ - Test with flp project embedded in multiple levels, not a single sub folder 
-- Close folder, make it close per level, close all, close top subfolders
+- ❌ - Close folder, make it close per level, close all, close top subfolders
+    - What if there's a hundred top levels?
 - Make a decision, should user be able to search for a folder?
     - if yes, then build functionality, for when a folder is searched, they are able to open the folder and view ALL files within (non filtered / hidden projects)
     -  ✅ - if no, then make sure flp with same name as folder is still visible

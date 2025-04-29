@@ -435,6 +435,13 @@ class FLPExporterUI:
 
         # If search term is empty, restore original tree state
         if not search_term:
+            # First show all items
+            for item in self.tree.get_children():
+                self.show_item_and_children(item)
+                
+            # Then restore original state
+            if not self.original_tree_state:
+                self.store_tree_state()
             self.restore_tree_state()
             return
 
@@ -446,30 +453,26 @@ class FLPExporterUI:
         for item in self.tree.get_children():
             self.hide_item_and_children(item)
 
-        # Show only FLP files that match the search term
+        # Show matching FLP files and their parent folders
         for item_id, item_text in self.all_items.items():
-            # Only show items that are FLP files (have a path in path_map)
             if item_id in self.path_map and search_term in item_text.lower():
+                # Show the matching item and its parents
                 self.show_item_and_parents(item_id)
+                
+                # Also show siblings if parent folder matches
+                parent = self.tree.parent(item_id)
+                if parent:
+                    for sibling in self.tree.get_children(parent):
+                        if sibling in self.path_map:
+                            self.tree.reattach(sibling, parent, 'end')
 
-        # Additionally, show folders that contain matching FLP files
+        # Additionally show folders that contain matches
         for item_id in self.tree.get_children():
-            # Check if this folder has any children that are FLP files matching the search
-            has_matching_flp = False
-            for child in self.tree.get_children(item_id):
-                if child in self.path_map and search_term in self.all_items[
-                        child].lower():
-                    has_matching_flp = True
-                    break
-
-            if has_matching_flp:
+            if any(search_term in self.all_items[child].lower() 
+                for child in self.tree.get_children(item_id)
+                if child in self.path_map):
                 self.tree.reattach(item_id, self.tree.parent(item_id), 'end')
                 self.tree.item(item_id, open=True)
-                # Show all matching FLP files in this folder
-                for child in self.tree.get_children(item_id):
-                    if child in self.path_map and search_term in self.all_items[
-                            child].lower():
-                        self.tree.reattach(child, item_id, 'end')
 
     def store_tree_state(self):
         """Store the original expanded/collapsed state of all items."""
@@ -1074,6 +1077,8 @@ class FLPExporterUI:
                                          open=True)
             self.all_items[root_node] = root_name
             self.scan_directory(path, root_node)
+        
+        self.store_tree_state()
 
     def scan_directory(self, current_path, parent_node):
         """Scans directory and adds items to tree with proper ordering"""
