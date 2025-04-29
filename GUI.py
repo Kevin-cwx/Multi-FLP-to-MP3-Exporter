@@ -359,16 +359,6 @@ class FLPExporterUI:
             command=self.toggle_folders,
             bootstyle="outline-info")
 
-        self.sync_button = ttk.Button(self.top_bar,
-                                      image=self.sync_icon,
-                                      compound=tk.LEFT,
-                                      command=self.sync_projects,
-                                      bootstyle="outline-info")
-
-        self.sync_button.pack(side=tk.RIGHT, padx=(0, 10))
-        self.sync_tip = Hovertip(self.sync_button,
-                                 'Sync and update project tree')
-
         # Create the Music Output Folder button next to toggle button
         self.output_music_folder_button = ttk.Button(
             self.top_bar,
@@ -380,16 +370,28 @@ class FLPExporterUI:
         self.music_folder_tip = Hovertip(self.output_music_folder_button,
                                          'Open MP3 Output Folder')
 
+        self.sync_button = ttk.Button(self.top_bar,
+                                      image=self.sync_icon,
+                                      compound=tk.LEFT,
+                                      command=self.sync_projects,
+                                      bootstyle="outline-info")
+
+        self.sync_button.pack(side=tk.RIGHT, padx=(0, 10))
+        self.sync_tip = Hovertip(self.sync_button,
+                                 'Sync and update project tree')
+
         self.toggle_button_Close_Folders.pack(side=tk.RIGHT, padx=(0, 10))
         self.toggle_tip = Hovertip(self.toggle_button_Close_Folders,
                                    'Close folders')
 
+        
+        
         self.status_label = ttk.Label(
             self.right_frame,
             text="",
             font=(Font_Name, 11),
             bootstyle="success",
-            background=Background_Color  # Add this line
+            background=Background_Color  
         )
         self.status_label.pack(pady=(0, 10))
 
@@ -1038,7 +1040,7 @@ class FLPExporterUI:
         self.content_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=5)
         self.output_music_folder_button.pack(side=tk.RIGHT, padx=(0, 10))
         self.heading.config(text=f"🎵 {Application_Name}")
-        self.settings_button.config(text="Settings!@#",
+        self.settings_button.config(text="Settings",
                                     image=self.settings_icon)
         self.close_button.pack_forget()
         self.sync_button.pack(side=tk.RIGHT, padx=(0, 10))
@@ -1468,67 +1470,40 @@ class FLPExporterUI:
     def sync_projects(self):
         """Sync and update the project tree while preserving folder states"""
         try:
-            # Store the exact expanded state of all folders
-            expanded_state = self.get_all_folder_states()
-
             # Store current selection
             current_selection = set(self.selected_files)
 
             # Visual refresh - flash the frames
             self.flash_refresh()
 
-            # Clear the tree
+            # Clear and repopulate the tree
             self.tree.delete(*self.tree.get_children())
             self.path_map.clear()
             self.all_items.clear()
             self.selected_files.clear()
             self.cart_listbox.delete(0, tk.END)
-
-            # Repopulate the tree
             self.populate_tree(Dir_FLP_Projects)
 
-            # Restore expanded state exactly as it was
-            self.restore_all_folder_states(expanded_state)
+            # Force expand all folders using existing toggle mechanism
+            if not self.folders_expanded:
+                self.toggle_folders()  # Use existing toggle logic
+                
+            self.expand_all()  # Ensure all nodes are expanded
+            self.toggle_button_Close_Folders.config(image=self.minus_icon)
+            self.toggle_tip.text = 'Close folders'
 
             # Restore selection
             for path in current_selection:
                 for item_id, item_path in self.path_map.items():
                     if path == item_path:
                         self.selected_files.add(path)
-                        self.tree.item(item_id, tags=("selected", ))
+                        self.tree.item(item_id, tags=("selected",))
 
             self.refresh_cart()
-            self.status_label.config(text="Project tree synced",
-                                     bootstyle="success")
-            self.toggle_icon = self.minus_icon
+            self.status_label.config(text="Project tree synced", bootstyle="success")
+
         except Exception as e:
-            self.status_label.config(text=f"Sync failed: {str(e)}",
-                                     bootstyle="danger")
-
-    def get_all_folder_states(self):
-        """Returns a dictionary of all folder open/closed states"""
-        states = {}
-        for item in self.tree.get_children():
-            if not self.tree.exists(item):
-                continue
-            states[item] = self.tree.item(item)['open']
-            # Recursively get states of children
-            self._get_child_states(item, states)
-        return states
-
-    def _get_child_states(self, parent, states_dict):
-        """Helper method to recursively get child states"""
-        for item in self.tree.get_children(parent):
-            if not self.tree.exists(item):
-                continue
-            states_dict[item] = self.tree.item(item)['open']
-            self._get_child_states(item, states_dict)
-
-    def restore_all_folder_states(self, states):
-        """Restores all folder open/closed states from dictionary"""
-        for item, is_open in states.items():
-            if self.tree.exists(item):
-                self.tree.item(item, open=is_open)
+            self.status_label.config(text=f"Sync failed: {str(e)}", bootstyle="danger")
 
     def flash_refresh(self):
         """Visual effect to show refresh is happening"""
