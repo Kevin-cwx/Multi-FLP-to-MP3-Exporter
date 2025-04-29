@@ -268,9 +268,15 @@ class FLPExporterUI:
         )
         self.tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
+        self.anchor_item = None
+        self.last_direction = None
         self.tree.bind("<MouseWheel>", self.on_mousewheel)
         self.tree.bind("<Button-4>", self.on_mousewheel)
         self.tree.bind("<Button-5>", self.on_mousewheel)
+        self.tree.bind("<Control-Shift-Up>", self.on_ctrl_shift_arrow)
+        self.tree.bind("<Control-Shift-Down>", self.on_ctrl_shift_arrow)
+        self.tree.bind("<KeyRelease>", self.reset_anchor)
+
 
         scrollbar = ttk.Scrollbar(tree_frame,
                                   orient="vertical",
@@ -1062,6 +1068,7 @@ class FLPExporterUI:
                 else:
                     self.selected_files.add(file_path)
                     self.tree.item(item_id, tags=("selected", ))
+        self.anchor_item = None
         self.refresh_cart()
 
     def populate_tree(self, parent_paths, parent_node=""):
@@ -1179,7 +1186,9 @@ class FLPExporterUI:
             else:
                 self.selected_files.add(file_path)
                 self.tree.item(item_id, tags=("selected", ))
+        self.anchor_item = item_id
         self.refresh_cart()
+
 
     def select_range(self, new_item_id):
         if self.last_selected_item is None:
@@ -1285,6 +1294,8 @@ class FLPExporterUI:
         self.cart_listbox.delete(0, tk.END)
         self.status_label.config(text="Selection cleared.",
                                  bootstyle="primary")
+        self.anchor_item = None
+        
 
     def add_recent_projects(self):
         today = datetime.date.today()
@@ -1628,6 +1639,112 @@ class FLPExporterUI:
             elif event.num == 4:
                 self.settings_canvas.yview_scroll(-1, "unit")
 
+    def reset_anchor(self, event=None):
+        """Reset anchor when keys are released"""
+        self.anchor_item = None
+
+    def get_visible_tree_items(self):
+        """Get all visible items in treeview in display order (files + folders)"""
+        def _get_items(parent=''):
+            items = []
+            for item in self.tree.get_children(parent):
+                items.append(item)
+                if self.tree.item(item, 'open'):
+                    items.extend(_get_items(item))
+            return items
+        return _get_items()
+
+    def select_range(self, new_item_id):
+        """Selects items between last_selected_item and new_item_id based on visible order."""
+        if self.last_selected_item is None:
+            if new_item_id in self.path_map:
+                self.selected_files.add(self.path_map[new_item_id])
+                self.tree.item(new_item_id, tags=("selected",))
+                self.last_selected_item = new_item_id
+            return
+
+        visible_items = self.get_visible_items()
+        try:
+            start_idx = visible_items.index(self.last_selected_item)
+            end_idx = visible_items.index(new_item_id)
+        except ValueError:
+            return  # One of the items is not visible
+
+        for idx in range(min(start_idx, end_idx), max(start_idx, end_idx) + 1):
+            item_id = visible_items[idx]
+            if item_id in self.path_map:
+                self.selected_files.add(self.path_map[item_id])
+                self.tree.item(item_id, tags=("selected",))
+
+    def on_ctrl_shift_arrow(self, event):
+        """Handle extended multi-selection with arrow keys"""
+        direction = -1 if event.keysym == "Up" else 1
+        all_items = self.get_visible_tree_items()
+        
+        try:
+            current_index = all_items.index(self.tree.focus())
+        except ValueError:
+            current_index = 0
+
+        # Find next valid file item
+        new_item, new_index = self.find_next_file(current_index, direction)
+        if not new_item:
+            return "break"
+
+        # Set initial anchor if none exists
+        if not self.anchor_item or self.last_direction != direction:
+            self.anchor_item = self.tree.focus() if self.tree.focus() in self.path_map else new_item
+            self.last_direction = direction
+
+        # Update selection range
+        try:
+            anchor_index = all_items.index(self.anchor_item)
+        except ValueError:
+            anchor_index = new_index
+
+        start = min(anchor_index, new_index)
+        end = max(anchor_index, new_index)
+        selected_items = [all_items[i] for i in range(start, end+1) if all_items[i] in self.path_map]
+
+        # Update UI state
+        self.tree.focus(new_item)
+        self.tree.see(new_item)
+        for item in selected_items:
+            self.selected_files.add(self.path_map[item])
+            self.tree.item(item, tags=("selected",))
+            
+        self.refresh_cart()
+        return "break"
+
+    def get_range_items(self, start_item, end_item):
+        """Get items between two points in visible items list"""
+        visible = self.get_visible_items()
+        try:
+            start_idx = visible.index(start_item)
+            end_idx = visible.index(end_item)
+        except ValueError:
+            return []
+            
+        step = 1 if start_idx <= end_idx else -1
+        return [visible[i] for i in range(start_idx, end_idx + step, step)]
+
+    def on_key_release(self, event):
+        """Reset anchor when control/shift keys are released"""
+        if event.keysym in ('Control_L', 'Control_R', 'Shift_L', 'Shift_R'):
+            self.anchor_item = None
+            self.last_direction = None
+
+    def find_next_file(self, start_index, direction):
+        """Find next selectable file in given direction"""
+        all_items = self.get_visible_tree_items()
+        index = start_index + direction
+        
+        while 0 <= index < len(all_items):
+            item = all_items[index]
+            if item in self.path_map:
+                return item, index
+            index += direction
+        return None, index
 
 # === START APP ===
 if __name__ == "__main__":
