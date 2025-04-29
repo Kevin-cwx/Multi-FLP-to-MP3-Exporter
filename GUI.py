@@ -141,7 +141,7 @@ class FLPExporterUI:
     def __init__(self, root):
         self.root = root
         self.root.title(Application_Name)
-        self.root.geometry("600x600+30+20")
+        self.root.geometry("900x900+30+20")
         #self.root.geometry("600x700+30+20")
         self.root.resizable(False, False)
         self.root.title(Application_Name)
@@ -561,9 +561,8 @@ class FLPExporterUI:
             self.collapse_all_nodes(item)
 
     def open_settings(self):
-        global Output_Folder_Path
-        global Project_Order_By
-        global Dir_FLP_Projects  # Add this line to access the FLP projects directory variable
+        global Output_Folder_Path, Project_Order_By, Dir_FLP_Projects, Set_Output_Sub_Folder
+        global Output_Sub_Folder_Name, Mouse_Scroll_Speed, FL_Studio_Path
         Settings_Info_Label_Size = 10
         if not self.settings_open:
             if hasattr(self, 'settings_frame'):
@@ -808,9 +807,7 @@ class FLPExporterUI:
             subfolder_frame = ttk.Frame(self.scrollable_settings_frame)
             subfolder_frame.pack(fill=tk.X, pady=5)
             
-            Set_Output_Sub_Folder = ""
-            self.subfolder_toggle_var = tk.BooleanVar(
-                value=Set_Output_Sub_Folder)
+            self.subfolder_toggle_var = tk.BooleanVar(value=Set_Output_Sub_Folder)
             self.subfolder_toggle = ttk.Checkbutton(
                 subfolder_frame,
                 text="Enable output subfolder",
@@ -820,13 +817,6 @@ class FLPExporterUI:
             )
             self.subfolder_toggle.pack(side=tk.LEFT, padx=(0, 10))
 
-            self.subfolder_entry = ttk.Entry(
-                subfolder_frame,
-                width=20,
-                font=("Segoe UI", 12)
-            )
-            self.subfolder_entry.pack(side=tk.LEFT)
-            self.subfolder_entry.insert(0, Output_Sub_Folder_Name)
             self.subfolder_entry.config(
                 state=tk.NORMAL if Set_Output_Sub_Folder else tk.DISABLED)
 
@@ -877,21 +867,20 @@ class FLPExporterUI:
             # Info label showing speed descriptions
             self.scroll_info_label = ttk.Label(
                 self.scrollable_settings_frame,
-                text="1 (Slow) - 2 (Medium) - 3 (Fast) - 4 (Very Fast)",
-                font=("Segoe UI", 12),
-                foreground="gray"
+                text="1 slow\n2 Medium\n3 Fast\n4 Very Fast",
+                font=("Segoe UI", 12)
             )
             self.scroll_info_label.pack(anchor="w", padx=5, pady=(0, 10))
 
-                # Add the FL Studio icon button below the folder picker
-            icon_button_frame = ttk.Frame(self.scrollable_settings_frame)
-            icon_button_frame.pack(fill=tk.X, pady=(0, 10))
+            # Add the FL Studio icon button below the folder picker
+            FL_Input_button_frame = ttk.Frame(self.scrollable_settings_frame)
+            FL_Input_button_frame.pack(fill=tk.X, pady=(0, 10))
 
             
             self.fl_icon = tk.PhotoImage(
-                file="Media/Icons/FL21 - Icon.png").subsample(4, 4)
+                file="Media/Icons/FL21 - Icon.png").subsample(10, 10)
             self.fl_icon_button = ttk.Button(
-                icon_button_frame,
+                FL_Input_button_frame,
                 image=self.fl_icon,
                 command=self.open_first_flp_folder,
                 bootstyle="link",
@@ -900,22 +889,19 @@ class FLPExporterUI:
             self.fl_icon_button.pack(side=tk.LEFT, padx=(10, 0))
 
             # Add label next to icon
-            self.icon_button_label = ttk.Label(
-                icon_button_frame,
-                text="Open first FLP folder",
+            self.FL_input_icon_button_label = ttk.Label(
+                FL_Input_button_frame,
+                text="Open FLP folder",
                 font=("Segoe UI", 10)
             )
-            self.icon_button_label.pack(side=tk.LEFT, padx=(5, 0))
+            self.FL_input_icon_button_label.pack(side=tk.LEFT, padx=(5, 0))
 
             
 
                 # 
                 # ABOUT
                 #
-            self.general_header = ttk.Label(
-                self.scrollable_settings_frame, text="About", font=("Segoe UI", 16, "bold"))
-            self.general_header.pack(anchor="w", padx=10, pady=(10, 5))
-
+            
             # About Section
             self.about_header = ttk.Label(
                 self.scrollable_settings_frame,
