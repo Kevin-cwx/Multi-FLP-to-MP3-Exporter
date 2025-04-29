@@ -823,7 +823,7 @@ class FLPExporterUI:
             # Info label
             self.subfolder_info_label = ttk.Label(
                 self.scrollable_settings_frame,
-                text="Creates a subfolder in your output directory for better organization. For example an album name.",
+                text="Creates a subfolder in your output directory, to maintain a more organized output directory. For example an album name.",
                 font=("Segoe UI", Settings_Info_Label_Size)
             )
             self.subfolder_info_label.pack(anchor="w", padx=5, pady=(0, 10))
@@ -872,29 +872,7 @@ class FLPExporterUI:
             )
             self.scroll_info_label.pack(anchor="w", padx=5, pady=(0, 10))
 
-            # Add the FL Studio icon button below the folder picker
-            FL_Input_button_frame = ttk.Frame(self.scrollable_settings_frame)
-            FL_Input_button_frame.pack(fill=tk.X, pady=(0, 10))
-
             
-            self.fl_icon = tk.PhotoImage(
-                file="Media/Icons/FL21 - Icon.png").subsample(10, 10)
-            self.fl_icon_button = ttk.Button(
-                FL_Input_button_frame,
-                image=self.fl_icon,
-                command=self.open_first_flp_folder,
-                bootstyle="link",
-                padding=(2, 2)
-            )
-            self.fl_icon_button.pack(side=tk.LEFT, padx=(10, 0))
-
-            # Add label next to icon
-            self.FL_input_icon_button_label = ttk.Label(
-                FL_Input_button_frame,
-                text="Open FLP folder",
-                font=("Segoe UI", 10)
-            )
-            self.FL_input_icon_button_label.pack(side=tk.LEFT, padx=(5, 0))
 
             
 
