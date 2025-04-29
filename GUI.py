@@ -18,6 +18,7 @@ from tkinter import filedialog
 import winreg
 import sys
 from tkinter import PhotoImage
+import time
 
 global Output_Folder_Path
 global Project_Order_By
