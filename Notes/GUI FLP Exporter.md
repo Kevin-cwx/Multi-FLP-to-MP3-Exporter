@@ -35,7 +35,7 @@
     - User can open file and flp location folder via right click
 
 #### About
-- Add about section, with version name
+- ✅ - Add about section, with version name
     - And disclaimer text, FL Studio must be closed. Show disclaimer 2 times, FLstudio must be closed before exporting song
 
 
@@ -69,6 +69,8 @@
     - Set beahviour, when sync is clicked always open all folders
 3. ✅ - Original Sync button does not take same location once settings is clicked again
 4. ✅ - Add right click on folder also, to open folder location
+
+
 
 
 ## **Exporting**
