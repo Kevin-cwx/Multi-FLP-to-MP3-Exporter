@@ -30,7 +30,8 @@
 
 - If settings is empty (first time users), prompt user to run FL Studio, run code to get FL_Studio_Path and processes type, prompt user input fields for other values and store in json file
  - Save values for next run
-- Create button, go to input folder
+- ❌ - Create button, go to input folder
+    - User can open file and flp location folder via right click
 
 #### About
 - Add about section, with version name

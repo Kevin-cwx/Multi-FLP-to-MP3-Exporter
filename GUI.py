@@ -30,10 +30,10 @@ USE_DARK_MODE = False
 #Dir_FLP_Projects = r"C:\Users\foendoe.kevin\Documents\findusic - FLP Input"
 
 Dir_FLP_Projects = [
-    r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 12 - projects",
-    r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 20 - projects",
-    r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 21 - projects"
-    #r"C:\Users\foendoe.kevin\Documents\findusic - FLP Input"
+    #r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 12 - projects",
+    #r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 20 - projects",
+    #r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 21 - projects"
+    r"C:\Users\foendoe.kevin\Documents\findusic - FLP Input"
 ]
 Output_Folder_Path = r"C:\Users\Kfoen\Documents\Docs KF\FL SONGS MP3\Python_Audio_Output\A"
 FL_Studio_Path = r"C:\Program Files\Image-Line\FL Studio 21"
@@ -698,8 +698,11 @@ class FLPExporterUI:
             # Add label underneath
             self.flp_folder_info_label = ttk.Label(
                 self.scrollable_settings_frame,
-                text="This is where your FLP projects are, add the top folder.\nClick Browse to add multiple folders.\nExample - C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 25 - projects",
-                font=("Segoe UI", Settings_Info_Label_Size),
+                text = ("This is where your FLP projects are, add the top folder.\n"
+                        "Click Browse to add multiple folders.\n"
+                            "Example - C:\\Users\\Kfoen\\Documents\\Image-Line\\FL Studio\\Projects\\FL 25 - projects"
+                        )
+                        ,font=("Segoe UI", Settings_Info_Label_Size),
                 foreground="black"
             )
             self.flp_folder_info_label.pack(anchor="w", padx=5, pady=(2, 10))
@@ -746,7 +749,7 @@ class FLPExporterUI:
             #
             self.general_header = ttk.Label(
                 self.scrollable_settings_frame, text="Advanced", font=("Segoe UI", 16, "bold"))
-            self.general_header.pack(anchor="w", padx=10, pady=(30, 5))
+            self.general_header.pack(anchor="w", padx=10, pady=(60, 5))
             
             # FL Studio Path Picker
             fl_studio_frame = ttk.Frame(self.scrollable_settings_frame)
@@ -781,7 +784,7 @@ class FLPExporterUI:
             # Info label
             self.fl_studio_path_info_label = ttk.Label(
                 self.scrollable_settings_frame,
-                text="Path to your FL Studio installation folder.\nEnsure this is the correct path as you will not be able to export if the path is incorrect.\nExample - C:\Program Files\Image-Line\FL Studio 21",
+                text=("Path to your FL Studio installation folder.\nEnsure this is the correct path as you will not be able to export if the path is incorrect.\nExample - C:\\Program Files\\Image-Line\\FL Studio 21"),
                 font=("Segoe UI", Settings_Info_Label_Size)
             )
             self.fl_studio_path_info_label.pack(
@@ -797,6 +800,20 @@ class FLPExporterUI:
                 font=("Segoe UI", 14)
             )
             self.processor_label.pack(side=tk.LEFT, padx=(0, 10))
+
+            # Create a StringVar to store the selected value
+            self.processor_type = tk.StringVar(value="FL64.exe")  # Default value
+
+            # Create the Combobox dropdown
+            self.processor_dropdown = ttk.Combobox(
+                processor_frame,
+                textvariable=self.processor_type,
+                values=["FL64.exe", "FL.exe"],
+                font=("Segoe UI", 14),
+                state="readonly",  # Prevent manual text entry
+                width=15
+            )
+            self.processor_dropdown.pack(side=tk.LEFT)
 
             
 
@@ -830,7 +847,7 @@ class FLPExporterUI:
             # Info label
             self.subfolder_info_label = ttk.Label(
                 self.scrollable_settings_frame,
-                text="Creates a subfolder in your output directory, to maintain a more organized output directory. For example an album name.",
+                text=r"Creates a subfolder in your output directory, to maintain a more organized output directory.\nFor example an album name.",
                 font=("Segoe UI", Settings_Info_Label_Size)
             )
             self.subfolder_info_label.pack(anchor="w", padx=5, pady=(0, 10))
@@ -841,7 +858,7 @@ class FLPExporterUI:
 
             self.scroll_speed_label = ttk.Label(
                 scroll_frame,
-                text="Mouse Scroll Speed:",
+                text="Mouse Scroll Speed in Projects:",
                 font=("Segoe UI", 14)
             )
             self.scroll_speed_label.pack(side=tk.LEFT, padx=(0, 10))
@@ -874,7 +891,7 @@ class FLPExporterUI:
             # Info label showing speed descriptions
             self.scroll_info_label = ttk.Label(
                 self.scrollable_settings_frame,
-                text="1 slow\n2 Medium\n3 Fast\n4 Very Fast",
+                text="1 Slow\n2 Medium\n3 Fast\n4 Very Fast",
                 font=("Segoe UI", 12)
             )
             self.scroll_info_label.pack(anchor="w", padx=5, pady=(0, 10))
@@ -893,7 +910,7 @@ class FLPExporterUI:
                 text="About",
                 font=("Segoe UI", 16, "bold")
             )
-            self.about_header.pack(anchor="w", padx=10, pady=(10, 5))
+            self.about_header.pack(anchor="w", padx=10, pady=(60, 5))
 
             # Version Info
             version_frame = ttk.Frame(self.scrollable_settings_frame)
@@ -904,7 +921,7 @@ class FLPExporterUI:
                 text="Version 1.1",
                 font=("Segoe UI", 14)
             )
-            self.version_label.pack(side=tk.LEFT, padx=(0, 10))
+            self.version_label.pack(side=tk.LEFT, padx=(0, 10),)
 
             # Warning Note
             self.warning_note = ttk.Label(
@@ -915,7 +932,7 @@ class FLPExporterUI:
                 wraplength=400,  # Adjust based on your window width
                 justify=tk.LEFT
             )
-            self.warning_note.pack(anchor="w", padx=10, pady=(0, 20))
+            self.warning_note.pack(anchor="w", padx=10, pady=(0, 60)) # Added padding at bottom
 
             
             
@@ -956,9 +973,8 @@ class FLPExporterUI:
             if Set_Output_Sub_Folder:
                 subfolder_name = self.subfolder_entry.get().strip()
                 if not subfolder_name:
-                    messagebox.showerror(
-                        "Error", "Subfolder name cannot be empty when enabled.")
-                    return
+                   #Keep code, as if removd, it disbales writing in output sub folder
+                   return
                 Output_Sub_Folder_Name = subfolder_name
 
             # Save mouse scroll speed
