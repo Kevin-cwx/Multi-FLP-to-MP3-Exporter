@@ -19,10 +19,6 @@ import winreg
 import sys
 from tkinter import PhotoImage
 
-
-
-
-
 global Output_Folder_Path
 global Project_Order_By
 # === CONFIG ===
@@ -39,9 +35,8 @@ Output_Folder_Path = r"C:\Users\Kfoen\Documents\Docs KF\FL SONGS MP3\Python_Audi
 FL_Studio_Path = r"C:\Program Files\Image-Line\FL Studio 21"
 Processor_Type = "FL64.exe"
 
-
 Search_Placeholder_Text = "Search Projects"
-Project_Order_By = "name" #date, name
+Project_Order_By = "name"  #date, name
 global Set_Output_Sub_Folder
 Set_Output_Sub_Folder = True
 Output_Sub_Folder_Name = ""
@@ -50,23 +45,23 @@ Output_Audio_Format = "Emp3"
 Mouse_Scroll_Speed = 7
 Application_Name = "Multi FLP to MP3"
 Launch_At_Startup = False
+Font_Name = "Helvetica"
 # Emp3,ogg,wav
 #ogg does not work in powershell, FL might have disabled
 
-
-# 
+#
 # Colors
-#  
-Selected_Project_Background_Color = "#4c49ff" 
+#
+Selected_Project_Background_Color = "#2fbdff"
 Selected_Project_Text_Color = "black"
 Selected_Project_Window_Background_Color = "#77f190"
 
-Top_Title_Color ="black"
+Top_Title_Color = "black"
 Search_Placeholder_Text_Color = "black"
-Project_Color_Tree ="white"
+Project_Color_Tree = "white"
 Background_Color = "#cee4ff"
 Project_Tree_Background_Color = "white"
-Project_Tree_Text_Color="black"
+Project_Tree_Text_Color = "black"
 """
 #34b1eb
 #8a9296
@@ -90,11 +85,12 @@ def get_file_paths(root_directories):
                     file_paths[file_path] = modified_date
     return file_paths
 
+
 def close_fl_studio():
     try:
         # Method 1: Using taskkill with the process name
         os.system("taskkill /f /im FL64.exe")  # For 64-bit version
-        os.system("taskkill /f /im FL.exe")    # For 32-bit version
+        os.system("taskkill /f /im FL.exe")  # For 32-bit version
 
         # Alternative Method 2: Using psutil (more elegant)
         try:
@@ -108,7 +104,6 @@ def close_fl_studio():
         return True
     except Exception as e:
         return False
-
 
 
 def export_flp_to_mp3(file_path):
@@ -137,7 +132,9 @@ def export_flp_to_mp3(file_path):
     #print(Export_FLP_to_MP3)
     subprocess.call(Export_FLP_to_MP3, shell=True)
 
+
 class FLPExporterUI:
+
     def __init__(self, root):
         self.root = root
         self.root.title(Application_Name)
@@ -161,10 +158,14 @@ class FLPExporterUI:
         # Use the custom style
         self.top_bar = ttk.Frame(self.root, style='HotPink.TFrame')
         self.top_bar.pack(side=tk.TOP, fill=tk.X, padx=10, pady=5)
-        
+
         # Add heading to the top bar frame (left side)
-        self.heading = ttk.Label(self.top_bar, text=f"🎵 {Application_Name}",
-                                 font=("Segoe UI", 16, "bold"), bootstyle="info", foreground=Top_Title_Color, background=Background_Color)
+        self.heading = ttk.Label(self.top_bar,
+                                 text=f"🎵 {Application_Name}",
+                                 font=(Font_Name, 16, "bold"),
+                                 bootstyle="info",
+                                 foreground=Top_Title_Color,
+                                 background=Background_Color)
         self.heading.pack(side=tk.LEFT, pady=0)
 
         self.download_icon = self.load_icon("Media/Icons/download.png")
@@ -175,7 +176,6 @@ class FLPExporterUI:
         self.settings_icon = self.load_icon("Media/Icons/settings.png")
         self.music_folder_icon = self.load_icon("Media/Icons/musical-note.png")
         self.sync_icon = self.load_icon("Media/Icons/sync.png")
-
 
         self.selected_files = set()
         self.path_map = {}
@@ -190,22 +190,28 @@ class FLPExporterUI:
         self.left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
         # Add search frame
-        search_frame = ttk.Frame(self.left_frame, borderwidth=2, relief='solid')
+        search_frame = ttk.Frame(self.left_frame,
+                                 borderwidth=2,
+                                 relief='solid')
         search_frame.pack(fill=tk.X, padx=5, pady=(0, 0))
-        
+
         style = ttk.Style()
         style.configure("Search.TEntry", relief="flat")
 
         self.search_entry = ttk.Entry(search_frame, style="Search.TEntry")
-        self.search_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 0))
+        self.search_entry.pack(side=tk.LEFT,
+                               fill=tk.X,
+                               expand=True,
+                               padx=(0, 0))
 
         # Output Sub Folder
         if Set_Output_Sub_Folder:
             self.subfolder_frame = ttk.Frame(search_frame)
             self.subfolder_frame.pack(side=tk.LEFT, fill=tk.X, padx=(0, 0))
 
-            self.subfolder_label = ttk.Label(
-                self.subfolder_frame, text="Output Subfolder:", background="white")
+            self.subfolder_label = ttk.Label(self.subfolder_frame,
+                                             text="Output Subfolder:",
+                                             background="white")
             self.subfolder_label.pack(side=tk.LEFT, padx=(5, 2))
 
             self.subfolder_entry = ttk.Entry(self.subfolder_frame, width=15)
@@ -224,23 +230,20 @@ class FLPExporterUI:
             self.top_bar,
             text="Cancel",
             command=self.close_settings_without_saving,
-            bootstyle="outline-danger"
-        )
+            bootstyle="outline-danger")
 
         self.search_entry.bind("<KeyRelease>", self.filter_tree)
 
-        self.tree_label = ttk.Label(
-            self.left_frame,
-            text="Projects",
-            font=("Segoe UI", 11, "bold"),
-            background=Background_Color
-        )
+        self.tree_label = ttk.Label(self.left_frame,
+                                    text="Projects",
+                                    font=(Font_Name, 14, "bold"),
+                                    background=Background_Color)
         self.tree_label.pack(pady=(0, 0))
 
         self.instruction_label = ttk.Label(
             self.left_frame,
             text="Double click to select / unselect projects",
-            font=("Segoe UI", 9),
+            font=(Font_Name, 14),
             background=Background_Color  # Add this line
         )
         self.instruction_label.pack(pady=(1, 1))
@@ -250,86 +253,101 @@ class FLPExporterUI:
 
         # Increase size of projects
         #  rowheight=20
-        style.configure("Custom.Treeview",
-                        # Light gray (or any color you prefer)
-                        background=Project_Tree_Background_Color,
-                        fieldbackground="#f0f0f0",  # Match the background
-                        foreground=Project_Tree_Text_Color,  # Text color
-                        font=("Segoe UI", 9)
-                        )
+        style.configure(
+            "Custom.Treeview",
+            # Light gray (or any color you prefer)
+            background=Project_Tree_Background_Color,
+            fieldbackground="#f0f0f0",  # Match the background
+            foreground=Project_Tree_Text_Color,  # Text color
+            font=(Font_Name, 9))
         # Projects Left Side
         self.tree = ttk.Treeview(
-        tree_frame, 
-        selectmode="extended",
-        style="Custom.Treeview"  # Use the custom style
-)
+            tree_frame,
+            selectmode="extended",
+            style="Custom.Treeview"  # Use the custom style
+        )
         self.tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-
 
         self.tree.bind("<MouseWheel>", self.on_mousewheel)
         self.tree.bind("<Button-4>", self.on_mousewheel)
         self.tree.bind("<Button-5>", self.on_mousewheel)
 
-        scrollbar = ttk.Scrollbar(
-            tree_frame, orient="vertical", command=self.tree.yview)
+        scrollbar = ttk.Scrollbar(tree_frame,
+                                  orient="vertical",
+                                  command=self.tree.yview)
         scrollbar.pack(side=tk.RIGHT, fill="y")
         self.tree.config(yscrollcommand=scrollbar.set)
 
         self.tree.bind("<Double-1>", self.on_tree_double_click)
-        self.tree.tag_configure(
-            "selected", background=Selected_Project_Background_Color, foreground=Selected_Project_Text_Color)
-        
+        self.tree.tag_configure("selected",
+                                background=Selected_Project_Background_Color,
+                                foreground=Selected_Project_Text_Color)
+
         # Add right-click binding to the tree
         self.tree.bind("<Button-3>", self.on_right_click)
 
-        self.right_frame = ttk.Frame(self.content_frame, style='HotPink.TFrame')
+        self.right_frame = ttk.Frame(self.content_frame,
+                                     style='HotPink.TFrame')
         self.right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=False)
 
         self.cart_label = ttk.Label(
-        self.right_frame, 
-        text="Selected Projects", 
-        font=("Segoe UI", 11, "bold"),
-        background=Background_Color  # Add this line
+            self.right_frame,
+            text="Selected Projects",
+            font=(Font_Name, 12, "bold"),
+            background=Background_Color
         )
         self.cart_label.pack(pady=(0, 0))
-        
+
         self.cart_listbox = Listbox(
             self.right_frame,
             height=15,
             width=20,
             selectmode=tk.SINGLE,
             selectbackground="#fd4545",  # Light gray (match left tree)
-            fg="red",    # Text color
-            font=("Segoe UI", 10)
-        )
+            fg="red",  # Text color
+            font=(Font_Name, 10))
         self.cart_listbox.pack(fill=tk.X, padx=10, pady=(5, 10))
         self.cart_listbox.bind("<Double-Button-1>", self.on_cart_double_click)
 
-        self.export_button = ttk.Button(self.right_frame, text="Export", image=self.download_icon,
-                                        compound=tk.LEFT, command=self.export_selected, bootstyle="success")
+        self.export_button = ttk.Button(self.right_frame,
+                                        text="Export",
+                                        image=self.download_icon,
+                                        compound=tk.LEFT,
+                                        command=self.export_selected,
+                                        bootstyle="success")
         self.export_button.pack(pady=5, padx=20, fill=X)
 
-        self.enter_button = ttk.Button(self.right_frame, text="Select", image=self.plus_icon,
-                                       compound=tk.LEFT, command=lambda: self.on_enter_key(None), bootstyle="outline-info")
+        self.enter_button = ttk.Button(self.right_frame,
+                                       text="Select",
+                                       image=self.plus_icon,
+                                       compound=tk.LEFT,
+                                       command=lambda: self.on_enter_key(None),
+                                       bootstyle="outline-info")
         self.enter_button.pack(pady=5, padx=20, fill=X)
 
-        self.clear_button = ttk.Button(self.right_frame, text="Clear All", image=self.clear_icon,
-                                       compound=tk.LEFT, command=self.clear_selection, bootstyle="info-outline")
+        self.clear_button = ttk.Button(self.right_frame,
+                                       text="Clear All",
+                                       image=self.clear_icon,
+                                       compound=tk.LEFT,
+                                       command=self.clear_selection,
+                                       bootstyle="info-outline")
         self.clear_button.pack(pady=(0, 5), padx=20, fill=X)
 
-        self.add_today_button = ttk.Button(self.right_frame, text="Recent", image=self.recent_icon,
-                                           compound=tk.LEFT, command=self.add_recent_projects, bootstyle="outline-info")
+        self.add_today_button = ttk.Button(self.right_frame,
+                                           text="Recent",
+                                           image=self.recent_icon,
+                                           compound=tk.LEFT,
+                                           command=self.add_recent_projects,
+                                           bootstyle="outline-info")
         self.add_today_button.pack(pady=(5, 5), padx=20, fill=X)
         # outline-secondary
 
         # Settings button
-        self.settings_button = ttk.Button(
-            self.top_bar,
-            text="Settings",
-            image=self.settings_icon,
-            command=self.open_settings,
-            bootstyle="outline-info"
-        )
+        self.settings_button = ttk.Button(self.top_bar,
+                                          text="Settings",
+                                          image=self.settings_icon,
+                                          command=self.open_settings,
+                                          bootstyle="outline-info")
         self.settings_button.pack(side=tk.RIGHT)
         self.settings_tip = Hovertip(self.settings_button, 'Settings')
 
@@ -339,20 +357,17 @@ class FLPExporterUI:
             image=self.toggle_icon,
             compound=tk.LEFT,
             command=self.toggle_folders,
-            bootstyle="outline-info"
-        )
+            bootstyle="outline-info")
 
-        self.sync_button = ttk.Button(
-            self.top_bar,
-            image=self.sync_icon,
-            compound=tk.LEFT,
-            command=self.sync_projects,
-            bootstyle="outline-info"
-        )
+        self.sync_button = ttk.Button(self.top_bar,
+                                      image=self.sync_icon,
+                                      compound=tk.LEFT,
+                                      command=self.sync_projects,
+                                      bootstyle="outline-info")
 
         self.sync_button.pack(side=tk.RIGHT, padx=(0, 10))
-        self.sync_tip = Hovertip(self.sync_button, 'Sync and update project tree')
-
+        self.sync_tip = Hovertip(self.sync_button,
+                                 'Sync and update project tree')
 
         # Create the Music Output Folder button next to toggle button
         self.output_music_folder_button = ttk.Button(
@@ -360,20 +375,19 @@ class FLPExporterUI:
             image=self.music_folder_icon,
             compound=tk.LEFT,
             command=self.open_output_folder,
-            bootstyle="outline-info"
-        )
+            bootstyle="outline-info")
         self.output_music_folder_button.pack(side=tk.RIGHT, padx=(0, 10))
-        self.music_folder_tip = Hovertip(
-            self.output_music_folder_button, 'Open MP3 Output Folder')
+        self.music_folder_tip = Hovertip(self.output_music_folder_button,
+                                         'Open MP3 Output Folder')
 
         self.toggle_button_Close_Folders.pack(side=tk.RIGHT, padx=(0, 10))
-        self.toggle_tip = Hovertip(
-            self.toggle_button_Close_Folders, 'Close folders')
+        self.toggle_tip = Hovertip(self.toggle_button_Close_Folders,
+                                   'Close folders')
 
         self.status_label = ttk.Label(
             self.right_frame,
             text="",
-            font=("Segoe UI", 11),
+            font=(Font_Name, 11),
             bootstyle="success",
             background=Background_Color  # Add this line
         )
@@ -381,7 +395,7 @@ class FLPExporterUI:
 
         self.populate_tree(Dir_FLP_Projects)
         self.root.bind("<Return>", self.on_enter_key)
-    
+
     def on_search_focus_in(self, event):
         """Handle focus in event to remove placeholder text"""
         if self.placeholder_active:
@@ -441,7 +455,8 @@ class FLPExporterUI:
             # Check if this folder has any children that are FLP files matching the search
             has_matching_flp = False
             for child in self.tree.get_children(item_id):
-                if child in self.path_map and search_term in self.all_items[child].lower():
+                if child in self.path_map and search_term in self.all_items[
+                        child].lower():
                     has_matching_flp = True
                     break
 
@@ -450,7 +465,8 @@ class FLPExporterUI:
                 self.tree.item(item_id, open=True)
                 # Show all matching FLP files in this folder
                 for child in self.tree.get_children(item_id):
-                    if child in self.path_map and search_term in self.all_items[child].lower():
+                    if child in self.path_map and search_term in self.all_items[
+                            child].lower():
                         self.tree.reattach(child, item_id, 'end')
 
     def store_tree_state(self):
@@ -584,15 +600,18 @@ class FLPExporterUI:
 
             # Create the main settings container frame
             self.settings_frame = ttk.Frame(self.root)
-            self.settings_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=0)
+            self.settings_frame.pack(fill=tk.BOTH,
+                                     expand=True,
+                                     padx=10,
+                                     pady=0)
 
             # Create a canvas and vertical scrollbar
-            self.settings_canvas = tk.Canvas(self.settings_frame, highlightthickness=0)
+            self.settings_canvas = tk.Canvas(self.settings_frame,
+                                             highlightthickness=0)
             self.settings_scrollbar = ttk.Scrollbar(
-            self.settings_frame, 
-            orient="vertical", 
-            command=self.settings_canvas.yview
-             )
+                self.settings_frame,
+                orient="vertical",
+                command=self.settings_canvas.yview)
 
             # Create the scrollable frame that will hold all settings widgets
             self.scrollable_settings_frame = ttk.Frame(self.settings_canvas)
@@ -602,21 +621,15 @@ class FLPExporterUI:
             self.settings_canvas.pack(side="left", fill="both", expand=True)
             self.settings_scrollbar.pack(side="right", fill="y")
 
-            # Configure the canvas  
+            # Configure the canvas
             self.scrollable_settings_frame.bind(
-                "<Configure>",
-                lambda e: self.settings_canvas.configure(
+                "<Configure>", lambda e: self.settings_canvas.configure(
                     yscrollcommand=self.settings_scrollbar.set,
-                    scrollregion=self.settings_canvas.bbox("all")
-                )
-            )
+                    scrollregion=self.settings_canvas.bbox("all")))
 
             # Create window in canvas for scrollable frame
             self.settings_canvas.create_window(
-                (0, 0),
-                window=self.scrollable_settings_frame,
-                anchor="nw"
-            )
+                (0, 0), window=self.scrollable_settings_frame, anchor="nw")
 
             self.settings_canvas.configure(
                 yscrollcommand=self.settings_scrollbar.set)
@@ -626,63 +639,62 @@ class FLPExporterUI:
             self.settings_scrollbar.pack(side="right", fill="y")
 
             # Mouse wheel binding for scrolling
-            self.settings_canvas.bind_all("<MouseWheel>", self._on_mousewheel_settings)
+            self.settings_canvas.bind_all("<MouseWheel>",
+                                          self._on_mousewheel_settings)
 
-
-            
             #
             # General
             #
-            self.general_header = ttk.Label(
-                self.scrollable_settings_frame, text="General", font=("Segoe UI", 16, "bold"))
+            self.general_header = ttk.Label(self.scrollable_settings_frame,
+                                            text="General",
+                                            font=(Font_Name, 16, "bold"))
             self.general_header.pack(anchor="w", padx=10, pady=(10, 5))
-            
+
             # Output Folder Picker
             output_folder_frame = ttk.Frame(self.scrollable_settings_frame)
             output_folder_frame.pack(fill=tk.X, pady=0)
 
-            self.output_folder_label = ttk.Label(
-                output_folder_frame, font=("Segoe UI", 14)
-            )
-            self.output_folder_label.pack(side=tk.LEFT, padx=(0, 0), pady=5)
-
-            self.output_folder_label = ttk.Label(
-                output_folder_frame, text="Output Folder", font=("Segoe UI", 14))
+            self.output_folder_label = ttk.Label(output_folder_frame,
+                                                 text="Output Folder",
+                                                 font=(Font_Name, 14))
             self.output_folder_label.pack(side=tk.LEFT, padx=(0, 0), pady=5)
 
             self.output_folder_entry = ttk.Entry(output_folder_frame)
-            self.output_folder_entry.pack(
-                side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 5))
+            self.output_folder_entry.pack(side=tk.LEFT,
+                                          fill=tk.X,
+                                          expand=True,
+                                          padx=(0, 5))
             self.output_folder_entry.insert(0, Output_Folder_Path)
 
-            self.browse_button = ttk.Button(
-                output_folder_frame,
-                text="Browse",
-                command=self.browse_output_folder,
-                bootstyle="info"
-            )
+            self.browse_button = ttk.Button(output_folder_frame,
+                                            text="Browse",
+                                            command=self.browse_output_folder,
+                                            bootstyle="info")
             self.browse_button.pack(side=tk.LEFT)
 
-            
             self.output_folder_info_label = ttk.Label(
                 self.scrollable_settings_frame,
                 text="This is where your songs will be exported to.",
-                font=("Segoe UI", Settings_Info_Label_Size),
-                foreground="black"      
-            )
-            self.output_folder_info_label.pack(anchor="w", padx=5, pady=(2, 10))
+                font=(Font_Name, Settings_Info_Label_Size),
+                foreground="black")
+            self.output_folder_info_label.pack(anchor="w",
+                                               padx=5,
+                                               pady=(2, 10))
 
             # FLP Projects Folder Picker (Multiple folders)
             flp_folder_frame = ttk.Frame(self.scrollable_settings_frame)
             flp_folder_frame.pack(fill=tk.X, pady=0)
 
-            self.flp_folder_label = ttk.Label(
-                flp_folder_frame, text="FLP Projects Folders", font=("Segoe UI", 14))
+            self.flp_folder_label = ttk.Label(flp_folder_frame,
+                                              text="FLP Projects Folders",
+                                              font=(Font_Name, 14))
             self.flp_folder_label.pack(side=tk.LEFT, padx=(0, 0), pady=5)
 
             self.flp_folder_entry = ttk.Entry(flp_folder_frame)
-            self.flp_folder_entry.pack(
-                side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 5))
+            self.flp_folder_entry.pack(side=tk.LEFT,
+                                       fill=tk.X,
+                                       expand=True,
+                                       padx=(0, 5))
             # Display existing folders separated by semicolons if they exist
             if hasattr(self, 'Dir_FLP_Projects'):
                 self.flp_folder_entry.insert(0, "; ".join(Dir_FLP_Projects))
@@ -691,28 +703,29 @@ class FLPExporterUI:
                 flp_folder_frame,
                 text="Browse",
                 command=self.browse_flp_folders,
-                bootstyle="info"
-            )
+                bootstyle="info")
             self.browse_flp_button.pack(side=tk.LEFT)
 
             # Add label underneath
             self.flp_folder_info_label = ttk.Label(
                 self.scrollable_settings_frame,
-                text = ("This is where your FLP projects are, add the top folder.\n"
-                        "Click Browse to add multiple folders.\n"
-                            "Example - C:\\Users\\Kfoen\\Documents\\Image-Line\\FL Studio\\Projects\\FL 25 - projects"
-                        )
-                        ,font=("Segoe UI", Settings_Info_Label_Size),
-                foreground="black"
-            )
+                text=
+                ("This is where your FLP projects are, add the top folder.\n"
+                 "Click Browse to add multiple folders.\n"
+                 "Example - C:\\Users\\Kfoen\\Documents\\Image-Line\\FL Studio\\Projects\\FL 25 - projects"
+                 ),
+                font=(Font_Name, Settings_Info_Label_Size),
+                foreground="black")
             self.flp_folder_info_label.pack(anchor="w", padx=5, pady=(2, 10))
 
             # Project Order selection
             order_frame = ttk.Frame(self.scrollable_settings_frame)
             order_frame.pack(fill=tk.X, pady=0)
 
-            self.order_label = ttk.Label(
-                order_frame, text="Project Order:", font=("Segoe UI", 14), background="red")
+            self.order_label = ttk.Label(order_frame,
+                                         text="Project Order:",
+                                         font=(Font_Name, 14),
+                                         background="red")
             self.order_label.pack(side=tk.LEFT, padx=(0, 5))
 
             self.order_var = tk.StringVar(value=Project_Order_By)
@@ -722,53 +735,49 @@ class FLPExporterUI:
                 values=["date", "name"],
                 state="readonly",
                 width=10,
-                style="CustomCombobox.TCombobox"
-            )
+                style="CustomCombobox.TCombobox")
             self.order_combobox.pack(side=tk.LEFT)
-            self.order_combobox.configure(font=("Segoe UI", 14))
+            self.order_combobox.configure(font=(Font_Name, 14))
 
             # Launch at Startup Toggle
             startup_frame = ttk.Frame(self.scrollable_settings_frame)
             startup_frame.pack(fill=tk.X, pady=10)
 
             self.startup_label = ttk.Label(
-                startup_frame, text="Launch application at system startup:", font=("Segoe UI", 14))
+                startup_frame,
+                text="Launch application at system startup:",
+                font=(Font_Name, 14))
             self.startup_label.pack(side=tk.LEFT, padx=(0, 10))
 
             self.startup_var = tk.BooleanVar(value=self.check_startup_status())
-            self.startup_toggle = ttk.Checkbutton(
-                startup_frame,
-                variable=self.startup_var,
-                bootstyle="round-toggle",
-                command=self.toggle_startup
-            )
+            self.startup_toggle = ttk.Checkbutton(startup_frame,
+                                                  variable=self.startup_var,
+                                                  bootstyle="round-toggle",
+                                                  command=self.toggle_startup)
             self.startup_toggle.pack(side=tk.LEFT)
-            
+
             #
             # Advanced
             #
-            self.general_header = ttk.Label(
-                self.scrollable_settings_frame, text="Advanced", font=("Segoe UI", 16, "bold"))
+            self.general_header = ttk.Label(self.scrollable_settings_frame,
+                                            text="Advanced",
+                                            font=(Font_Name, 16, "bold"))
             self.general_header.pack(anchor="w", padx=10, pady=(60, 5))
-            
+
             # FL Studio Path Picker
             fl_studio_frame = ttk.Frame(self.scrollable_settings_frame)
             fl_studio_frame.pack(fill=tk.X, pady=5)
 
-            self.fl_studio_path_label = ttk.Label(
-                fl_studio_frame,
-                text="FL Studio Path",
-                font=("Segoe UI", 14)
-            )
+            self.fl_studio_path_label = ttk.Label(fl_studio_frame,
+                                                  text="FL Studio Path",
+                                                  font=(Font_Name, 14))
             self.fl_studio_path_label.pack(side=tk.LEFT, padx=(0, 5))
 
             self.fl_studio_path_entry = ttk.Entry(fl_studio_frame)
-            self.fl_studio_path_entry.pack(
-                side=tk.LEFT,
-                fill=tk.X,
-                expand=True,
-                padx=(0, 5)
-            )
+            self.fl_studio_path_entry.pack(side=tk.LEFT,
+                                           fill=tk.X,
+                                           expand=True,
+                                           padx=(0, 5))
             # Set current path if it exists
             if hasattr(self, 'FL_Studio_Path') and self.FL_Studio_Path:
                 self.fl_studio_path_entry.insert(0, self.FL_Studio_Path)
@@ -777,68 +786,64 @@ class FLPExporterUI:
                 fl_studio_frame,
                 text="Browse",
                 command=self.browse_fl_studio_path,
-                bootstyle="info"
-            )
+                bootstyle="info")
             self.browse_fl_studio_button.pack(side=tk.LEFT)
 
             # Info label
             self.fl_studio_path_info_label = ttk.Label(
                 self.scrollable_settings_frame,
-                text=("Path to your FL Studio installation folder.\nEnsure this is the correct path as you will not be able to export if the path is incorrect.\nExample - C:\\Program Files\\Image-Line\\FL Studio 21"),
-                font=("Segoe UI", Settings_Info_Label_Size)
-            )
-            self.fl_studio_path_info_label.pack(
-                anchor="w", padx=5, pady=(0, 10))
-            
+                text=
+                ("Path to your FL Studio installation folder.\nEnsure this is the correct path as you will not be able to export if the path is incorrect.\nExample - C:\\Program Files\\Image-Line\\FL Studio 21"
+                 ),
+                font=(Font_Name, Settings_Info_Label_Size))
+            self.fl_studio_path_info_label.pack(anchor="w",
+                                                padx=5,
+                                                pady=(0, 10))
+
             # Processor Type Dropdown
             processor_frame = ttk.Frame(self.scrollable_settings_frame)
             processor_frame.pack(fill=tk.X, pady=5)
 
-            self.processor_label = ttk.Label(
-                processor_frame,
-                text="Processor Type:",
-                font=("Segoe UI", 14)
-            )
+            self.processor_label = ttk.Label(processor_frame,
+                                             text="Processor Type:",
+                                             font=(Font_Name, 14))
             self.processor_label.pack(side=tk.LEFT, padx=(0, 10))
 
             # Create a StringVar to store the selected value
-            self.processor_type = tk.StringVar(value="FL64.exe")  # Default value
+            self.processor_type = tk.StringVar(
+                value="FL64.exe")  # Default value
 
             # Create the Combobox dropdown
             self.processor_dropdown = ttk.Combobox(
                 processor_frame,
                 textvariable=self.processor_type,
                 values=["FL64.exe", "FL.exe"],
-                font=("Segoe UI", 14),
+                font=(Font_Name, 14),
                 state="readonly",  # Prevent manual text entry
-                width=15
-            )
+                width=15)
             self.processor_dropdown.pack(side=tk.LEFT)
-
-            
 
             # Info label
             self.processor_info_label = ttk.Label(
                 self.scrollable_settings_frame,
                 text="Select FL64.exe (64-bit) or FL.exe (32-bit)",
-                font=("Segoe UI", 12)
-            )
+                font=(Font_Name, 12))
             self.processor_info_label.pack(anchor="w", padx=5, pady=(0, 10))
 
             # Output Subfolder Toggle and Entry
             subfolder_frame = ttk.Frame(self.scrollable_settings_frame)
             subfolder_frame.pack(fill=tk.X, pady=5)
-            style.configure('Large.TCheckbutton', font=(
-                'Segoe UI', 14))  # <<< NEW
+            style.configure('Large.TCheckbutton',
+                            font=('Segoe UI', 14))  # <<< NEW
 
-            self.subfolder_toggle_var = tk.BooleanVar(value=Set_Output_Sub_Folder)
+            self.subfolder_toggle_var = tk.BooleanVar(
+                value=Set_Output_Sub_Folder)
             self.subfolder_toggle = ttk.Checkbutton(
                 subfolder_frame,
                 text="Enable output subfolder",
                 variable=self.subfolder_toggle_var,
                 bootstyle="round-toggle",
-                command=self.toggle_subfolder_entry
-            )
+                command=self.toggle_subfolder_entry)
             self.subfolder_toggle.pack(side=tk.LEFT, padx=(0, 10))
 
             self.subfolder_entry.config(
@@ -847,29 +852,28 @@ class FLPExporterUI:
             # Info label
             self.subfolder_info_label = ttk.Label(
                 self.scrollable_settings_frame,
-                text=r"Creates a subfolder in your output directory, to maintain a more organized output directory.\nFor example an album name.",
-                font=("Segoe UI", Settings_Info_Label_Size)
-            )
+                text=
+                r"Creates a subfolder in your output directory, to maintain a more organized output directory.\nFor example an album name.",
+                font=(Font_Name, Settings_Info_Label_Size))
             self.subfolder_info_label.pack(anchor="w", padx=5, pady=(0, 10))
-            
-                       # Mouse Scroll Speed Dropdown
+
+            # Mouse Scroll Speed Dropdown
             scroll_frame = ttk.Frame(self.scrollable_settings_frame)
             scroll_frame.pack(fill=tk.X, pady=5)
 
             self.scroll_speed_label = ttk.Label(
                 scroll_frame,
                 text="Mouse Scroll Speed in Projects:",
-                font=("Segoe UI", 14)
-            )
+                font=(Font_Name, 14))
             self.scroll_speed_label.pack(side=tk.LEFT, padx=(0, 10))
 
             SCROLL_SPEED_MAPPING = {
-                1: 7,   # Slow
+                1: 7,  # Slow
                 2: 10,  # Medium (default)
                 3: 15,  # Fast
-                4: 19   # Very fast
+                4: 19  # Very fast
             }
-            
+
             # Find which key has our current value (reverse lookup)
             current_key = next(
                 (k for k, v in SCROLL_SPEED_MAPPING.items()
@@ -884,60 +888,51 @@ class FLPExporterUI:
                 values=list(SCROLL_SPEED_MAPPING.keys()),
                 state="readonly",
                 width=5,
-                font=("Segoe UI", 14)
-            )
+                font=(Font_Name, 14))
             self.scroll_combobox.pack(side=tk.LEFT)
 
             # Info label showing speed descriptions
             self.scroll_info_label = ttk.Label(
                 self.scrollable_settings_frame,
                 text="1 Slow\n2 Medium\n3 Fast\n4 Very Fast",
-                font=("Segoe UI", 12)
-            )
+                font=(Font_Name, 12))
             self.scroll_info_label.pack(anchor="w", padx=5, pady=(0, 10))
 
-            
+            #
+            # ABOUT
+            #
 
-            
-
-                # 
-                # ABOUT
-                #
-            
             # About Section
-            self.about_header = ttk.Label(
-                self.scrollable_settings_frame,
-                text="About",
-                font=("Segoe UI", 16, "bold")
-            )
+            self.about_header = ttk.Label(self.scrollable_settings_frame,
+                                          text="About",
+                                          font=(Font_Name, 16, "bold"))
             self.about_header.pack(anchor="w", padx=10, pady=(60, 5))
 
             # Version Info
             version_frame = ttk.Frame(self.scrollable_settings_frame)
             version_frame.pack(fill=tk.X, pady=(0, 10))
 
-            self.version_label = ttk.Label(
-                version_frame,
-                text="Version 1.1",
-                font=("Segoe UI", 14)
+            self.version_label = ttk.Label(version_frame,
+                                           text="Version 1.1",
+                                           font=(Font_Name, 14))
+            self.version_label.pack(
+                side=tk.LEFT,
+                padx=(0, 10),
             )
-            self.version_label.pack(side=tk.LEFT, padx=(0, 10),)
 
             # Warning Note
             self.warning_note = ttk.Label(
                 self.scrollable_settings_frame,
-                text="Note: FL Studio must be closed before exporting song.\nMake sure to save your project.\nClicking export will automatically close FL Studio",
-                font=("Segoe UI", 12),
+                text=
+                "Note: FL Studio must be closed before exporting song.\nMake sure to save your project.\nClicking export will automatically close FL Studio",
+                font=(Font_Name, 12),
                 foreground="black",  # Light red color for warning
                 wraplength=400,  # Adjust based on your window width
-                justify=tk.LEFT
-            )
-            self.warning_note.pack(anchor="w", padx=10, pady=(0, 60)) # Added padding at bottom
+                justify=tk.LEFT)
+            self.warning_note.pack(anchor="w", padx=10,
+                                   pady=(0, 60))  # Added padding at bottom
 
-            
-            
-
-        else:   
+        else:
             # Save output path
             new_path = self.output_folder_entry.get().strip()
             if not os.path.isdir(new_path):
@@ -949,12 +944,16 @@ class FLPExporterUI:
             # Save FLP projects folders
             flp_folders = self.flp_folder_entry.get().strip()
             if flp_folders:
-                Dir_FLP_Projects = [f.strip() for f in flp_folders.split(";") if f.strip()]
+                Dir_FLP_Projects = [
+                    f.strip() for f in flp_folders.split(";") if f.strip()
+                ]
                 # Validate each folder
                 for folder in Dir_FLP_Projects:
                     if not os.path.isdir(folder):
                         messagebox.showerror(
-                            "Error", f"The specified FLP directory does not exist: {folder}")
+                            "Error",
+                            f"The specified FLP directory does not exist: {folder}"
+                        )
                         return
 
             # Save project order
@@ -966,15 +965,13 @@ class FLPExporterUI:
             else:
                 self.remove_from_startup()
 
-            
-
             # Save subfolder settings
             Set_Output_Sub_Folder = self.subfolder_toggle_var.get()
             if Set_Output_Sub_Folder:
                 subfolder_name = self.subfolder_entry.get().strip()
                 if not subfolder_name:
-                   #Keep code, as if removd, it disbales writing in output sub folder
-                   return
+                    #Keep code, as if removd, it disbales writing in output sub folder
+                    return
                 Output_Sub_Folder_Name = subfolder_name
 
             # Save mouse scroll speed
@@ -987,11 +984,12 @@ class FLPExporterUI:
             if fl_studio_path:  # Only validate if path is provided
                 if not os.path.isdir(fl_studio_path):
                     messagebox.showerror(
-                        "Error", "The specified FL Studio directory does not exist.")
+                        "Error",
+                        "The specified FL Studio directory does not exist.")
                     return
                 FL_Studio_Path = fl_studio_path
 
-             # Destroy settings UI
+            # Destroy settings UI
             self.settings_frame.destroy()
             self.settings_open = False
 
@@ -1000,10 +998,10 @@ class FLPExporterUI:
 
             self.restore_header_and_ui()
 
-
     def browse_flp_folders(self):
         """Open a dialog to select multiple FLP project folders"""
-        folders = filedialog.askdirectory(mustexist=True, title="Select FLP Project Folders")
+        folders = filedialog.askdirectory(mustexist=True,
+                                          title="Select FLP Project Folders")
         if folders:
             # Get current folders from the entry
             current_folders = self.flp_folder_entry.get()
@@ -1040,7 +1038,8 @@ class FLPExporterUI:
         self.content_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=5)
         self.output_music_folder_button.pack(side=tk.RIGHT, padx=(0, 10))
         self.heading.config(text=f"🎵 {Application_Name}")
-        self.settings_button.config(text="Settings!@#", image=self.settings_icon)
+        self.settings_button.config(text="Settings!@#",
+                                    image=self.settings_icon)
         self.close_button.pack_forget()
         self.sync_button.pack(side=tk.RIGHT, padx=(0, 10))
         self.left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
@@ -1057,7 +1056,7 @@ class FLPExporterUI:
                     self.tree.item(item_id, tags=())
                 else:
                     self.selected_files.add(file_path)
-                    self.tree.item(item_id, tags=("selected",))
+                    self.tree.item(item_id, tags=("selected", ))
         self.refresh_cart()
 
     def populate_tree(self, parent_paths, parent_node=""):
@@ -1067,8 +1066,10 @@ class FLPExporterUI:
         # First pass: Create top-level nodes for each root directory
         for path in parent_paths:
             root_name = os.path.basename(path)
-            root_node = self.tree.insert(
-                parent_node, "end", text=root_name, open=True)
+            root_node = self.tree.insert(parent_node,
+                                         "end",
+                                         text=root_name,
+                                         open=True)
             self.all_items[root_node] = root_name
             self.scan_directory(path, root_node)
 
@@ -1103,8 +1104,10 @@ class FLPExporterUI:
             for item in sorted_dirs:
                 if len(item) >= 2:  # Ensure we have at least 2 elements
                     entry, full_path = item[0], item[1]
-                    node = self.tree.insert(
-                        parent_node, "end", text=entry, open=True)
+                    node = self.tree.insert(parent_node,
+                                            "end",
+                                            text=entry,
+                                            open=True)
                     self.all_items[node] = entry
                     self.scan_directory(full_path, node)
 
@@ -1114,21 +1117,25 @@ class FLPExporterUI:
             for item in sorted_files:
                 if len(item) >= 2:  # Ensure we have at least 2 elements
                     entry, full_path = item[0], item[1]
-                    clean_name = re.sub(r"\.flp$", "", entry, flags=re.IGNORECASE)
-                    item_id = self.tree.insert(
-                        parent_node, "end", text=clean_name, values=(full_path,))
+                    clean_name = re.sub(r"\.flp$",
+                                        "",
+                                        entry,
+                                        flags=re.IGNORECASE)
+                    item_id = self.tree.insert(parent_node,
+                                               "end",
+                                               text=clean_name,
+                                               values=(full_path, ))
                     self.all_items[item_id] = clean_name
                     self.path_map[item_id] = full_path
 
         except PermissionError:
             pass
 
-  
     def _sort_items(self, items, parent_path):
         """Sorts items based on Project_Order_By setting"""
         if not items:  # Return empty list if no items
             return []
-        
+
         if Project_Order_By == "date":
             # Sort by modification date (newest first)
             def get_mtime(item):
@@ -1139,11 +1146,12 @@ class FLPExporterUI:
                     except (OSError, AttributeError):
                         return 0  # Default value if can't get mtime
                 return 0
-            
+
             return sorted(items, key=get_mtime, reverse=True)
         else:
             # Default: sort by name (case-insensitive)
-            return sorted(items, key=lambda x: x[0].lower() if len(x) >= 1 else "")
+            return sorted(items,
+                          key=lambda x: x[0].lower() if len(x) >= 1 else "")
 
     def on_tree_double_click(self, event):
         region = self.tree.identify("region", event.x, event.y)
@@ -1163,13 +1171,13 @@ class FLPExporterUI:
                 self.toggle_select(item_id)
             else:
                 self.selected_files.add(file_path)
-                self.tree.item(item_id, tags=("selected",))
+                self.tree.item(item_id, tags=("selected", ))
         self.refresh_cart()
 
     def select_range(self, new_item_id):
         if self.last_selected_item is None:
             self.selected_files.add(self.path_map[new_item_id])
-            self.tree.item(new_item_id, tags=("selected",))
+            self.tree.item(new_item_id, tags=("selected", ))
             self.last_selected_item = new_item_id
             return
         start_idx = self.tree.index(self.last_selected_item)
@@ -1178,7 +1186,7 @@ class FLPExporterUI:
             item_id = self.tree.get_children()[idx]
             if item_id in self.path_map:
                 self.selected_files.add(self.path_map[item_id])
-                self.tree.item(item_id, tags=("selected",))
+                self.tree.item(item_id, tags=("selected", ))
         self.last_selected_item = new_item_id
 
     def toggle_select(self, item_id):
@@ -1188,7 +1196,7 @@ class FLPExporterUI:
             self.tree.item(item_id, tags=())
         else:
             self.selected_files.add(file_path)
-            self.tree.item(item_id, tags=("selected",))
+            self.tree.item(item_id, tags=("selected", ))
         self.last_selected_item = item_id
 
     def on_cart_double_click(self, event):
@@ -1199,7 +1207,10 @@ class FLPExporterUI:
         name = self.cart_listbox.get(index)
         file_to_remove = None
         for path in self.selected_files:
-            if re.sub(r"\.flp$", "", os.path.basename(path), flags=re.IGNORECASE) == name:
+            if re.sub(r"\.flp$",
+                      "",
+                      os.path.basename(path),
+                      flags=re.IGNORECASE) == name:
                 file_to_remove = path
                 break
         if file_to_remove:
@@ -1213,18 +1224,21 @@ class FLPExporterUI:
     def refresh_cart(self):
         self.cart_listbox.delete(0, tk.END)
         for path in sorted(self.selected_files):
-            name = re.sub(r"\.flp$", "", os.path.basename(
-                path), flags=re.IGNORECASE)
+            name = re.sub(r"\.flp$",
+                          "",
+                          os.path.basename(path),
+                          flags=re.IGNORECASE)
             self.cart_listbox.insert(tk.END, name)
 
     def export_selected(self):
-            # Clear the status completely and force GUI update
+        # Clear the status completely and force GUI update
         self.status_label.config(text="")
         self.status_label.update()
         self.root.update_idletasks()  # Force complete GUI refresh
 
         if not self.selected_files:
-            self.status_label.config(text="No files selected.", bootstyle="primary")
+            self.status_label.config(text="No files selected.",
+                                     bootstyle="primary")
             self.status_label.update()
             return
 
@@ -1253,9 +1267,8 @@ class FLPExporterUI:
             # Clear completely before error message
             self.status_label.config(text="")
             self.status_label.update()
-            self.status_label.config(
-                text=f"Export failed: {str(e)}",
-                bootstyle="danger")
+            self.status_label.config(text=f"Export failed: {str(e)}",
+                                     bootstyle="danger")
             self.status_label.update()
 
     def clear_selection(self):
@@ -1263,8 +1276,8 @@ class FLPExporterUI:
             self.tree.item(item_id, open=False, tags=())
         self.selected_files.clear()
         self.cart_listbox.delete(0, tk.END)
-        self.status_label.config(
-            text="Selection cleared.", bootstyle="primary")
+        self.status_label.config(text="Selection cleared.",
+                                 bootstyle="primary")
 
     def add_recent_projects(self):
         today = datetime.date.today()
@@ -1274,43 +1287,48 @@ class FLPExporterUI:
         # First count all today's files (regardless of selection status)
         total_today_files = 0
         for modified_date in file_paths.values():
-            if datetime.datetime.fromtimestamp(modified_date).strftime("%d-%m-%Y") == today_str:
+            if datetime.datetime.fromtimestamp(modified_date).strftime(
+                    "%d-%m-%Y") == today_str:
                 total_today_files += 1
 
         # Now count how many were actually added (not previously selected)
         added = 0
         for file_path, modified_date in file_paths.items():
-            if datetime.datetime.fromtimestamp(modified_date).strftime("%d-%m-%Y") == today_str:
+            if datetime.datetime.fromtimestamp(modified_date).strftime(
+                    "%d-%m-%Y") == today_str:
                 if file_path not in self.selected_files:
                     self.selected_files.add(file_path)
                     for item_id, path in self.path_map.items():
                         if path == file_path:
-                            self.tree.item(item_id, tags=("selected",))
+                            self.tree.item(item_id, tags=("selected", ))
                             break
                     added += 1
 
         self.refresh_cart()
 
         if total_today_files == 0:
-            self.status_label.config(
-                text="No files modified today.", bootstyle="primary")
+            self.status_label.config(text="No files modified today.",
+                                     bootstyle="primary")
         else:
             if added > 0:
                 # Show how many new files were added
                 Recent_Project_Label = "project" if added == 1 else "projects"
                 self.status_label.config(
-                    text=f"{added}\nrecent {Recent_Project_Label} added.", bootstyle="primary")
+                    text=f"{added}\nrecent {Recent_Project_Label} added.",
+                    bootstyle="primary")
             else:
                 # Show that all today's files were already selected
                 Recent_Project_Label = "project" if total_today_files == 1 else "projects"
                 #self.status_label.config(text=f"All {total_today_files} recent {Recent_Project_Label} already selected.", bootstyle="info")
                 self.status_label.config(
-                    text=f"{total_today_files} recent {Recent_Project_Label} added.", bootstyle="primary")
+                    text=
+                    f"{total_today_files} recent {Recent_Project_Label} added.",
+                    bootstyle="primary")
 
     def on_mousewheel(self, event):
         delta = -1 if event.delta > 0 else 1
         self.tree.yview_scroll(Mouse_Scroll_Speed * delta, "units")
-    
+
     # Right click opens the file
     def on_right_click(self, event):
         """Handle right-click to show context menu"""
@@ -1323,20 +1341,15 @@ class FLPExporterUI:
 
             # For FLP files (items in path_map)
             if item_id in self.path_map:
+                self.context_menu.add_command(label="Open File",
+                                              command=self.open_selected_file)
                 self.context_menu.add_command(
-                    label="Open File",
-                    command=self.open_selected_file
-                )
-                self.context_menu.add_command(
-                    label="Open Folder",
-                    command=self.open_containing_folder
-                )
+                    label="Open Folder", command=self.open_containing_folder)
             # For folders (items not in path_map)
             else:
                 self.context_menu.add_command(
                     label="Open Folder",
-                    command=lambda: self.open_folder(item_id)
-                )
+                    command=lambda: self.open_folder(item_id))
 
             # Show menu at cursor position if we added any items
             if self.context_menu.index(tk.END) is not None:
@@ -1357,12 +1370,12 @@ class FLPExporterUI:
                             os.startfile(dir_path)
                             return
                         else:
-                            messagebox.showerror(
-                                "Error", "Folder path does not exist")
+                            messagebox.showerror("Error",
+                                                 "Folder path does not exist")
                             return
 
-                messagebox.showerror(
-                    "Error", "Could not find matching root directory")
+                messagebox.showerror("Error",
+                                     "Could not find matching root directory")
                 return
 
             # For nested folders (original logic)
@@ -1397,7 +1410,8 @@ class FLPExporterUI:
                 else:
                     messagebox.showerror("Error", "Folder path does not exist")
             else:
-                messagebox.showerror("Error", "Could not determine folder path")
+                messagebox.showerror("Error",
+                                     "Could not determine folder path")
 
         except Exception as e:
             messagebox.showerror("Error", f"Could not open folder: {str(e)}")
@@ -1407,21 +1421,24 @@ class FLPExporterUI:
 
     def open_containing_folder(self):
         """Open the folder containing the selected file"""
-        if hasattr(self, 'context_item') and self.context_item in self.path_map:
+        if hasattr(self,
+                   'context_item') and self.context_item in self.path_map:
             file_path = self.path_map[self.context_item]
             folder_path = os.path.dirname(file_path)
 
             try:
                 os.startfile(folder_path)
             except Exception as e:
-                messagebox.showerror("Error", f"Could not open folder: {str(e)}")
+                messagebox.showerror("Error",
+                                     f"Could not open folder: {str(e)}")
             finally:
                 if hasattr(self, 'context_menu'):
                     self.context_menu.destroy()
 
     def open_selected_file(self):
         """Open the selected file directly"""
-        if hasattr(self, 'context_item') and self.context_item in self.path_map:
+        if hasattr(self,
+                   'context_item') and self.context_item in self.path_map:
             file_path = self.path_map[self.context_item]
             try:
                 os.startfile(file_path)
@@ -1434,10 +1451,11 @@ class FLPExporterUI:
 
     def open_containing_folder(self):
         """Open the folder containing the selected file"""
-        if hasattr(self, 'context_item') and self.context_item in self.path_map:
+        if hasattr(self,
+                   'context_item') and self.context_item in self.path_map:
             file_path = self.path_map[self.context_item]
             folder_path = os.path.dirname(file_path)
-            
+
             try:
                 os.startfile(folder_path)
                 #self.status_label.config( text="Folder opened successfully", bootstyle="success")
@@ -1477,15 +1495,15 @@ class FLPExporterUI:
                 for item_id, item_path in self.path_map.items():
                     if path == item_path:
                         self.selected_files.add(path)
-                        self.tree.item(item_id, tags=("selected",))
+                        self.tree.item(item_id, tags=("selected", ))
 
             self.refresh_cart()
-            self.status_label.config(
-                text="Project tree synced", bootstyle="success")
+            self.status_label.config(text="Project tree synced",
+                                     bootstyle="success")
             self.toggle_icon = self.minus_icon
         except Exception as e:
-            self.status_label.config(
-                text=f"Sync failed: {str(e)}", bootstyle="danger")
+            self.status_label.config(text=f"Sync failed: {str(e)}",
+                                     bootstyle="danger")
 
     def get_all_folder_states(self):
         """Returns a dictionary of all folder open/closed states"""
@@ -1498,7 +1516,6 @@ class FLPExporterUI:
             self._get_child_states(item, states)
         return states
 
-
     def _get_child_states(self, parent, states_dict):
         """Helper method to recursively get child states"""
         for item in self.tree.get_children(parent):
@@ -1507,13 +1524,11 @@ class FLPExporterUI:
             states_dict[item] = self.tree.item(item)['open']
             self._get_child_states(item, states_dict)
 
-
     def restore_all_folder_states(self, states):
         """Restores all folder open/closed states from dictionary"""
         for item, is_open in states.items():
             if self.tree.exists(item):
                 self.tree.item(item, open=is_open)
-
 
     def flash_refresh(self):
         """Visual effect to show refresh is happening"""
@@ -1527,12 +1542,11 @@ class FLPExporterUI:
         # Brief delay
         self.root.after(125, self._show_frames_after_flash)
 
-
     def _show_frames_after_flash(self):
         """Shows frames again after flash effect"""
         self.left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         self.right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=False)
-        
+
         ###
 
     def toggle_startup(self):
@@ -1541,7 +1555,7 @@ class FLPExporterUI:
             self.add_to_startup()
         else:
             self.remove_from_startup()
-        
+
     def add_to_startup(self):
         """Add the program to Windows startup"""
         if getattr(sys, 'frozen', False):
@@ -1550,37 +1564,31 @@ class FLPExporterUI:
         else:
             app_path = os.path.abspath(__file__)
 
-        key = winreg.OpenKey(
-            winreg.HKEY_CURRENT_USER,
-            r'Software\Microsoft\Windows\CurrentVersion\Run',
-            0, winreg.KEY_SET_VALUE
-        )
+        key = winreg.OpenKey(winreg.HKEY_CURRENT_USER,
+                             r'Software\Microsoft\Windows\CurrentVersion\Run',
+                             0, winreg.KEY_SET_VALUE)
         winreg.SetValueEx(key, "FLPManager", 0, winreg.REG_SZ, app_path)
         winreg.CloseKey(key)
-
 
     def remove_from_startup(self):
         """Remove the program from Windows startup"""
         try:
             key = winreg.OpenKey(
                 winreg.HKEY_CURRENT_USER,
-                r'Software\Microsoft\Windows\CurrentVersion\Run',
-                0, winreg.KEY_SET_VALUE
-            )
+                r'Software\Microsoft\Windows\CurrentVersion\Run', 0,
+                winreg.KEY_SET_VALUE)
             winreg.DeleteValue(key, "FLPManager")
             winreg.CloseKey(key)
         except WindowsError:
             pass  # Key didn't exist, which is fine
-
 
     def check_startup_status(self):
         """Check if the program is in Windows startup"""
         try:
             key = winreg.OpenKey(
                 winreg.HKEY_CURRENT_USER,
-                r'Software\Microsoft\Windows\CurrentVersion\Run',
-                0, winreg.KEY_READ
-            )
+                r'Software\Microsoft\Windows\CurrentVersion\Run', 0,
+                winreg.KEY_READ)
             winreg.QueryValueEx(key, "FLPManager")
             winreg.CloseKey(key)
             return True
@@ -1604,7 +1612,7 @@ class FLPExporterUI:
             self.subfolder_entry.config(state=tk.NORMAL)
         else:
             self.subfolder_entry.config(state=tk.DISABLED)
-    
+
     def apply_scroll_speed(self):
         """Apply the selected scroll speed to the application"""
         if hasattr(self, 'canvas'):  # If you have a canvas widget
@@ -1621,8 +1629,8 @@ class FLPExporterUI:
                 try:
                     os.startfile(first_folder)
                 except Exception as e:
-                    messagebox.showerror(
-                        "Error", f"Could not open folder: {str(e)}")
+                    messagebox.showerror("Error",
+                                         f"Could not open folder: {str(e)}")
             else:
                 messagebox.showerror(
                     "Error", "The specified FLP directory does not exist")
@@ -1632,12 +1640,14 @@ class FLPExporterUI:
     def _on_mousewheel_settings(self, event):
         """Handle mouse wheel scrolling for settings panel"""
         if event.delta:
-            self.settings_canvas.yview_scroll(int(-1*(event.delta/120)), "units")
+            self.settings_canvas.yview_scroll(int(-1 * (event.delta / 120)),
+                                              "units")
         else:
             if event.num == 5:
                 self.settings_canvas.yview_scroll(1, "unit")
             elif event.num == 4:
                 self.settings_canvas.yview_scroll(-1, "unit")
+
 
 # === START APP ===
 if __name__ == "__main__":
