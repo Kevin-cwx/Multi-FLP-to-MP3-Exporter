@@ -806,7 +806,9 @@ class FLPExporterUI:
             # Output Subfolder Toggle and Entry
             subfolder_frame = ttk.Frame(self.scrollable_settings_frame)
             subfolder_frame.pack(fill=tk.X, pady=5)
-            
+            style.configure('Large.TCheckbutton', font=(
+                'Segoe UI', 14))  # <<< NEW
+
             self.subfolder_toggle_var = tk.BooleanVar(value=Set_Output_Sub_Folder)
             self.subfolder_toggle = ttk.Checkbutton(
                 subfolder_frame,
