@@ -139,7 +139,7 @@ class FLPExporterUI:
     def __init__(self, root):
         self.root = root
         self.root.title(Application_Name)
-        self.root.geometry("570x700+30+20")
+        self.root.geometry("600x700+30+20")
         #self.root.geometry("600x700+30+20")
         self.root.resizable(True, True)
         self.root.title(Application_Name)
@@ -156,7 +156,12 @@ class FLPExporterUI:
         style.configure('HotPink.TFrame', background=Background_Color)
         style.configure('Settings.TFrame', background=Background_Color)
         style.configure('Settings.TEntry', fieldbackground=Background_Color)
+        style.configure('Settings.TLabel', background=Background_Color)
+        style.configure('Settings.TCheckbutton', background=Background_Color)
+        style.configure('Settings.TCombobox', fieldbackground=Background_Color)
 
+        self.root.config(bg=Background_Color)
+        self.root.update_idletasks()
         # 2. Apply the style to the top bar frame
         # Use the custom style
         self.top_bar = ttk.Frame(self.root, style='HotPink.TFrame')
@@ -609,7 +614,7 @@ class FLPExporterUI:
             self.settings_frame = ttk.Frame(self.root, style='Settings.TFrame')
             self.settings_frame.pack(fill=tk.BOTH,
                                      expand=True,
-                                     padx=10,
+                                     padx=0,
                                      pady=0)
 
             # Create a canvas and vertical scrollbar
@@ -628,24 +633,29 @@ class FLPExporterUI:
 
             # Configure the canvas to expand
             self.settings_canvas.pack(side="left", fill="both", expand=True)
-            self.settings_scrollbar.pack(side="right", fill="y")
+            self.settings_scrollbar.pack(side=tk.RIGHT, fill=tk.Y, padx=(0,0)) 
 
             # Configure the canvas
             self.scrollable_settings_frame.bind(
-                "<Configure>", lambda e: self.settings_canvas.configure(
-                    yscrollcommand=self.settings_scrollbar.set,
-                    scrollregion=self.settings_canvas.bbox("all")))
-
+    "<Configure>", 
+    lambda e: self.settings_canvas.configure(
+        scrollregion=self.settings_canvas.bbox("all"),
+        width=e.width  # Make canvas width match content
+    )
+)
             # Create window in canvas for scrollable frame
             self.settings_canvas.create_window(
-                (0, 0), window=self.scrollable_settings_frame, anchor="nw")
+                (0, 0), window=self.scrollable_settings_frame, anchor="nw",
+                 tags=("scroll_frame",))
+            # Add this binding to handle window resizing
+            self.settings_canvas.bind("<Configure>", self._on_canvas_resize)
 
             self.settings_canvas.configure(
                 yscrollcommand=self.settings_scrollbar.set)
 
             # Pack the canvas and scrollbar
             self.settings_canvas.pack(side="left", fill="both", expand=True)
-            self.settings_scrollbar.pack(side="right", fill="y")
+            self.settings_scrollbar.pack(side=tk.RIGHT, fill=tk.Y, padx=(0,0)) 
 
             # Mouse wheel binding for scrolling
             self.settings_canvas.bind_all("<MouseWheel>",
@@ -660,7 +670,7 @@ class FLPExporterUI:
             self.general_header.pack(anchor="w", padx=10, pady=(10, 5))
 
             # Output Folder Picker
-            output_folder_frame = ttk.Frame(self.scrollable_settings_frame)
+            output_folder_frame = ttk.Frame(self.scrollable_settings_frame, style='Settings.TFrame')
             output_folder_frame.pack(fill=tk.X, pady=0)
 
             self.output_folder_label = ttk.Label(output_folder_frame,
@@ -693,7 +703,7 @@ class FLPExporterUI:
                                                pady=(2, 10))
 
             # FLP Projects Folder Picker (Multiple folders)
-            flp_folder_frame = ttk.Frame(self.scrollable_settings_frame)
+            flp_folder_frame = ttk.Frame(self.scrollable_settings_frame, style='Settings.TFrame')
             flp_folder_frame.pack(fill=tk.X, pady=0)
 
             self.flp_folder_label = ttk.Label(flp_folder_frame,
@@ -730,7 +740,7 @@ class FLPExporterUI:
             self.flp_folder_info_label.pack(anchor="w", padx=5, pady=(2, 10))
 
             # Project Order selection
-            order_frame = ttk.Frame(self.scrollable_settings_frame)
+            order_frame = ttk.Frame(self.scrollable_settings_frame, style='Settings.TFrame')
             order_frame.pack(fill=tk.X, pady=0)
 
             self.order_label = ttk.Label(order_frame,
@@ -751,7 +761,7 @@ class FLPExporterUI:
             self.order_combobox.configure(font=(Font_Name, 14))
 
             # Launch at Startup Toggle
-            startup_frame = ttk.Frame(self.scrollable_settings_frame)
+            startup_frame = ttk.Frame(self.scrollable_settings_frame, style='Settings.TFrame')
             startup_frame.pack(fill=tk.X, pady=10)
 
             self.startup_label = ttk.Label(
@@ -776,7 +786,7 @@ class FLPExporterUI:
             self.general_header.pack(anchor="w", padx=10, pady=(60, 5))
 
             # FL Studio Path Picker
-            fl_studio_frame = ttk.Frame(self.scrollable_settings_frame)
+            fl_studio_frame = ttk.Frame(self.scrollable_settings_frame, style='Settings.TFrame')
             fl_studio_frame.pack(fill=tk.X, pady=5)
 
             self.fl_studio_path_label = ttk.Label(fl_studio_frame,
@@ -812,7 +822,7 @@ class FLPExporterUI:
                                                 pady=(0, 10))
 
             # Processor Type Dropdown
-            processor_frame = ttk.Frame(self.scrollable_settings_frame)
+            processor_frame = ttk.Frame(self.scrollable_settings_frame, style='Settings.TFrame')
             processor_frame.pack(fill=tk.X, pady=5)
 
             self.processor_label = ttk.Label(processor_frame,
@@ -870,7 +880,7 @@ class FLPExporterUI:
             self.subfolder_info_label.pack(anchor="w", padx=5, pady=(0, 10))
 
             # Mouse Scroll Speed Dropdown
-            scroll_frame = ttk.Frame(self.scrollable_settings_frame)
+            scroll_frame = ttk.Frame(self.scrollable_settings_frame, style='Settings.TFrame')
             scroll_frame.pack(fill=tk.X, pady=5)
 
             self.scroll_speed_label = ttk.Label(
@@ -921,7 +931,7 @@ class FLPExporterUI:
             self.about_header.pack(anchor="w", padx=10, pady=(60, 5))
 
             # Version Info
-            version_frame = ttk.Frame(self.scrollable_settings_frame)
+            version_frame = ttk.Frame(self.scrollable_settings_frame, style='Settings.TFrame')
             version_frame.pack(fill=tk.X, pady=(0, 10))
 
             self.version_label = ttk.Label(version_frame,
@@ -1751,6 +1761,11 @@ class FLPExporterUI:
                 return item, index
             index += direction
         return None, index
+
+    # Add this method to handle canvas resizing
+    def _on_canvas_resize(event):
+        canvas_width = event.width
+        self.settings_canvas.itemconfig("scroll_frame", width=canvas_width)
 
 
 # === START APP ===
