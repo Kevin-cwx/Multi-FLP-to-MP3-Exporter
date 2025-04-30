@@ -27,10 +27,10 @@ USE_DARK_MODE = False
 #Dir_FLP_Projects = r"C:\Users\foendoe.kevin\Documents\findusic - FLP Input"
 
 Dir_FLP_Projects = [
-    r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 12 - projects",
-    r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 20 - projects",
-    r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 21 - projects"
-    #r"C:\Users\foendoe.kevin\Documents\findusic - FLP Input"
+    #r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 12 - projects",
+    #r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 20 - projects",
+    #r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 21 - projects"
+    r"C:\Users\foendoe.kevin\Documents\findusic - FLP Input"
 ]
 Output_Folder_Path = r"C:\Users\Kfoen\Documents\Docs KF\FL SONGS MP3\Python_Audio_Output"
 FL_Studio_Path = r"C:\Program Files\Image-Line\FL Studio 21"
@@ -139,7 +139,7 @@ class FLPExporterUI:
     def __init__(self, root):
         self.root = root
         self.root.title(Application_Name)
-        self.root.geometry("600x700+30+20")
+        self.root.geometry("570x700+30+20")
         #self.root.geometry("600x700+30+20")
         self.root.resizable(True, True)
         self.root.title(Application_Name)
@@ -154,6 +154,8 @@ class FLPExporterUI:
         style.configure('success.TLabel', background=Background_Color)
         # Define hot pink background
         style.configure('HotPink.TFrame', background=Background_Color)
+        style.configure('Settings.TFrame', background=Background_Color)
+        style.configure('Settings.TEntry', fieldbackground=Background_Color)
 
         # 2. Apply the style to the top bar frame
         # Use the custom style
@@ -278,7 +280,6 @@ class FLPExporterUI:
         self.tree.bind("<Control-Shift-Down>", self.on_ctrl_shift_arrow)
         self.tree.bind("<KeyRelease>", self.reset_anchor)
 
-
         scrollbar = ttk.Scrollbar(tree_frame,
                                   orient="vertical",
                                   command=self.tree.yview)
@@ -297,12 +298,10 @@ class FLPExporterUI:
                                      style='HotPink.TFrame')
         self.right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=False)
 
-        self.cart_label = ttk.Label(
-            self.right_frame,
-            text="Selected Projects",
-            font=(Font_Name, 12, "bold"),
-            background=Background_Color
-        )
+        self.cart_label = ttk.Label(self.right_frame,
+                                    text="Selected Projects",
+                                    font=(Font_Name, 12, "bold"),
+                                    background=Background_Color)
         self.cart_label.pack(pady=(0, 0))
 
         self.cart_listbox = Listbox(
@@ -391,15 +390,11 @@ class FLPExporterUI:
         self.toggle_tip = Hovertip(self.toggle_button_Close_Folders,
                                    'Close folders')
 
-        
-        
-        self.status_label = ttk.Label(
-            self.right_frame,
-            text="",
-            font=(Font_Name, 11),
-            bootstyle="success",
-            background=Background_Color  
-        )
+        self.status_label = ttk.Label(self.right_frame,
+                                      text="",
+                                      font=(Font_Name, 11),
+                                      bootstyle="success",
+                                      background=Background_Color)
         self.status_label.pack(pady=(0, 10))
 
         self.populate_tree(Dir_FLP_Projects)
@@ -445,7 +440,7 @@ class FLPExporterUI:
             # First show all items
             for item in self.tree.get_children():
                 self.show_item_and_children(item)
-                
+
             # Then restore original state
             if not self.original_tree_state:
                 self.store_tree_state()
@@ -465,7 +460,7 @@ class FLPExporterUI:
             if item_id in self.path_map and search_term in item_text.lower():
                 # Show the matching item and its parents
                 self.show_item_and_parents(item_id)
-                
+
                 # Also show siblings if parent folder matches
                 parent = self.tree.parent(item_id)
                 if parent:
@@ -475,9 +470,9 @@ class FLPExporterUI:
 
         # Additionally show folders that contain matches
         for item_id in self.tree.get_children():
-            if any(search_term in self.all_items[child].lower() 
-                for child in self.tree.get_children(item_id)
-                if child in self.path_map):
+            if any(search_term in self.all_items[child].lower()
+                   for child in self.tree.get_children(item_id)
+                   if child in self.path_map):
                 self.tree.reattach(item_id, self.tree.parent(item_id), 'end')
                 self.tree.item(item_id, open=True)
 
@@ -611,7 +606,7 @@ class FLPExporterUI:
             self.settings_open = True
 
             # Create the main settings container frame
-            self.settings_frame = ttk.Frame(self.root)
+            self.settings_frame = ttk.Frame(self.root, style='Settings.TFrame')
             self.settings_frame.pack(fill=tk.BOTH,
                                      expand=True,
                                      padx=10,
@@ -619,14 +614,16 @@ class FLPExporterUI:
 
             # Create a canvas and vertical scrollbar
             self.settings_canvas = tk.Canvas(self.settings_frame,
-                                             highlightthickness=0)
+                                             highlightthickness=0,
+                                             bg=Background_Color)
             self.settings_scrollbar = ttk.Scrollbar(
                 self.settings_frame,
                 orient="vertical",
                 command=self.settings_canvas.yview)
 
             # Create the scrollable frame that will hold all settings widgets
-            self.scrollable_settings_frame = ttk.Frame(self.settings_canvas)
+            self.scrollable_settings_frame = ttk.Frame(self.settings_canvas,
+                                                       style='Settings.TFrame')
             self.scrollable_settings_frame.pack(fill="both", expand=True)
 
             # Configure the canvas to expand
@@ -683,6 +680,8 @@ class FLPExporterUI:
                                             command=self.browse_output_folder,
                                             bootstyle="info")
             self.browse_button.pack(side=tk.LEFT)
+            self.output_folder_entry = ttk.Entry(output_folder_frame,
+                                                 style='Settings.TEntry')
 
             self.output_folder_info_label = ttk.Label(
                 self.scrollable_settings_frame,
@@ -865,7 +864,8 @@ class FLPExporterUI:
             self.subfolder_info_label = ttk.Label(
                 self.scrollable_settings_frame,
                 text=
-                r"Creates a subfolder in your output directory, to maintain a more organized output directory.\nFor example an album name.",
+                ("Creates a subfolder in your output directory, to maintain a more organized output directory.\nFor example an album name."
+                 ),
                 font=(Font_Name, Settings_Info_Label_Size))
             self.subfolder_info_label.pack(anchor="w", padx=5, pady=(0, 10))
 
@@ -1050,8 +1050,7 @@ class FLPExporterUI:
         self.content_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=5)
         self.output_music_folder_button.pack(side=tk.RIGHT, padx=(0, 10))
         self.heading.config(text=f"🎵 {Application_Name}")
-        self.settings_button.config(text="Settings",
-                                    image=self.settings_icon)
+        self.settings_button.config(text="Settings", image=self.settings_icon)
         self.close_button.pack_forget()
         self.sync_button.pack(side=tk.RIGHT, padx=(0, 10))
         self.left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
@@ -1085,7 +1084,7 @@ class FLPExporterUI:
                                          open=True)
             self.all_items[root_node] = root_name
             self.scan_directory(path, root_node)
-        
+
         self.store_tree_state()
 
     def scan_directory(self, current_path, parent_node):
@@ -1189,7 +1188,6 @@ class FLPExporterUI:
                 self.tree.item(item_id, tags=("selected", ))
         self.anchor_item = item_id
         self.refresh_cart()
-
 
     def select_range(self, new_item_id):
         if self.last_selected_item is None:
@@ -1296,7 +1294,6 @@ class FLPExporterUI:
         self.status_label.config(text="Selection cleared.",
                                  bootstyle="primary")
         self.anchor_item = None
-        
 
     def add_recent_projects(self):
         today = datetime.date.today()
@@ -1504,7 +1501,7 @@ class FLPExporterUI:
             # Force expand all folders using existing toggle mechanism
             if not self.folders_expanded:
                 self.toggle_folders()  # Use existing toggle logic
-                
+
             self.expand_all()  # Ensure all nodes are expanded
             self.toggle_button_Close_Folders.config(image=self.minus_icon)
             self.toggle_tip.text = 'Close folders'
@@ -1514,13 +1511,15 @@ class FLPExporterUI:
                 for item_id, item_path in self.path_map.items():
                     if path == item_path:
                         self.selected_files.add(path)
-                        self.tree.item(item_id, tags=("selected",))
+                        self.tree.item(item_id, tags=("selected", ))
 
             self.refresh_cart()
-            self.status_label.config(text="Project tree synced", bootstyle="success")
+            self.status_label.config(text="Project tree synced",
+                                     bootstyle="success")
 
         except Exception as e:
-            self.status_label.config(text=f"Sync failed: {str(e)}", bootstyle="danger")
+            self.status_label.config(text=f"Sync failed: {str(e)}",
+                                     bootstyle="danger")
 
     def flash_refresh(self):
         """Visual effect to show refresh is happening"""
@@ -1646,6 +1645,7 @@ class FLPExporterUI:
 
     def get_visible_tree_items(self):
         """Get all visible items in treeview in display order (files + folders)"""
+
         def _get_items(parent=''):
             items = []
             for item in self.tree.get_children(parent):
@@ -1653,6 +1653,7 @@ class FLPExporterUI:
                 if self.tree.item(item, 'open'):
                     items.extend(_get_items(item))
             return items
+
         return _get_items()
 
     def select_range(self, new_item_id):
@@ -1660,7 +1661,7 @@ class FLPExporterUI:
         if self.last_selected_item is None:
             if new_item_id in self.path_map:
                 self.selected_files.add(self.path_map[new_item_id])
-                self.tree.item(new_item_id, tags=("selected",))
+                self.tree.item(new_item_id, tags=("selected", ))
                 self.last_selected_item = new_item_id
             return
 
@@ -1675,13 +1676,13 @@ class FLPExporterUI:
             item_id = visible_items[idx]
             if item_id in self.path_map:
                 self.selected_files.add(self.path_map[item_id])
-                self.tree.item(item_id, tags=("selected",))
+                self.tree.item(item_id, tags=("selected", ))
 
     def on_ctrl_shift_arrow(self, event):
         """Handle extended multi-selection with arrow keys"""
         direction = -1 if event.keysym == "Up" else 1
         all_items = self.get_visible_tree_items()
-        
+
         try:
             current_index = all_items.index(self.tree.focus())
         except ValueError:
@@ -1694,7 +1695,8 @@ class FLPExporterUI:
 
         # Set initial anchor if none exists
         if not self.anchor_item or self.last_direction != direction:
-            self.anchor_item = self.tree.focus() if self.tree.focus() in self.path_map else new_item
+            self.anchor_item = self.tree.focus() if self.tree.focus(
+            ) in self.path_map else new_item
             self.last_direction = direction
 
         # Update selection range
@@ -1705,15 +1707,18 @@ class FLPExporterUI:
 
         start = min(anchor_index, new_index)
         end = max(anchor_index, new_index)
-        selected_items = [all_items[i] for i in range(start, end+1) if all_items[i] in self.path_map]
+        selected_items = [
+            all_items[i] for i in range(start, end + 1)
+            if all_items[i] in self.path_map
+        ]
 
         # Update UI state
         self.tree.focus(new_item)
         self.tree.see(new_item)
         for item in selected_items:
             self.selected_files.add(self.path_map[item])
-            self.tree.item(item, tags=("selected",))
-            
+            self.tree.item(item, tags=("selected", ))
+
         self.refresh_cart()
         return "break"
 
@@ -1725,7 +1730,7 @@ class FLPExporterUI:
             end_idx = visible.index(end_item)
         except ValueError:
             return []
-            
+
         step = 1 if start_idx <= end_idx else -1
         return [visible[i] for i in range(start_idx, end_idx + step, step)]
 
@@ -1739,13 +1744,14 @@ class FLPExporterUI:
         """Find next selectable file in given direction"""
         all_items = self.get_visible_tree_items()
         index = start_index + direction
-        
+
         while 0 <= index < len(all_items):
             item = all_items[index]
             if item in self.path_map:
                 return item, index
             index += direction
         return None, index
+
 
 # === START APP ===
 if __name__ == "__main__":
