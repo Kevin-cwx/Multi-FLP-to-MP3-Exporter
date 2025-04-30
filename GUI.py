@@ -1763,7 +1763,7 @@ class FLPExporterUI:
         return None, index
 
     # Add this method to handle canvas resizing
-    def _on_canvas_resize(event):
+    def _on_canvas_resize(self,event):
         canvas_width = event.width
         self.settings_canvas.itemconfig("scroll_frame", width=canvas_width)
 
