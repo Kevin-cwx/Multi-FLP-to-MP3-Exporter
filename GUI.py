@@ -140,6 +140,7 @@ class FLPExporterUI:
         self.root = root
         self.root.title(Application_Name)
         self.root.geometry("600x700+30+20")
+        self.root.minsize(520, 1000)
         #self.root.geometry("600x700+30+20")
         self.root.resizable(True, True)
         self.root.title(Application_Name)
@@ -214,16 +215,17 @@ class FLPExporterUI:
 
         # Output Sub Folder
         if Set_Output_Sub_Folder:
-            self.subfolder_frame = ttk.Frame(search_frame)
-            self.subfolder_frame.pack(side=tk.LEFT, fill=tk.X, padx=(0, 0))
+            # Create a new frame below the search frame
+            self.subfolder_frame = ttk.Frame(self.left_frame)
+            self.subfolder_frame.pack(fill=tk.X, padx=5, pady=(5, 0))
 
             self.subfolder_label = ttk.Label(self.subfolder_frame,
                                              text="Output Subfolder:",
                                              background="white")
-            self.subfolder_label.pack(side=tk.LEFT, padx=(5, 2))
+            self.subfolder_label.pack(side=tk.LEFT, padx=(0, 5))
 
-            self.subfolder_entry = ttk.Entry(self.subfolder_frame, width=15)
-            self.subfolder_entry.pack(side=tk.LEFT, fill=tk.X)
+            self.subfolder_entry = ttk.Entry(self.subfolder_frame)
+            self.subfolder_entry.pack(side=tk.LEFT, fill=tk.X, expand=True)
             self.subfolder_entry.insert(0, Output_Sub_Folder_Name)
 
         # Add placeholder text and configure events
@@ -312,7 +314,7 @@ class FLPExporterUI:
         self.cart_listbox = Listbox(
             self.right_frame,
             height=15,
-            width=20,
+            width=40,
             selectmode=tk.SINGLE,
             selectbackground="#fd4545",  # Light gray (match left tree)
             fg="red",  # Text color
@@ -614,8 +616,8 @@ class FLPExporterUI:
             self.settings_frame = ttk.Frame(self.root, style='Settings.TFrame')
             self.settings_frame.pack(fill=tk.BOTH,
                                      expand=True,
-                                     padx=0,
-                                     pady=0)
+                                     padx=20,
+                                     pady=10)
 
             # Create a canvas and vertical scrollbar
             self.settings_canvas = tk.Canvas(self.settings_frame,
@@ -857,11 +859,16 @@ class FLPExporterUI:
             style.configure('Large.TCheckbutton',
                             font=('Segoe UI', 14))  # <<< NEW
 
+            self.enable_subfolder_label = ttk.Label(
+                startup_frame,
+                text="Enable output subfolder:",
+                font=(Font_Name, 14))
+            self.enable_subfolder_label.pack(side=tk.LEFT, padx=(0, 10), pady=10)
+
             self.subfolder_toggle_var = tk.BooleanVar(
                 value=Set_Output_Sub_Folder)
             self.subfolder_toggle = ttk.Checkbutton(
                 subfolder_frame,
-                text="Enable output subfolder",
                 variable=self.subfolder_toggle_var,
                 bootstyle="round-toggle",
                 command=self.toggle_subfolder_entry)
@@ -936,6 +943,7 @@ class FLPExporterUI:
 
             self.version_label = ttk.Label(version_frame,
                                            text="Version 1.1",
+                                           foreground="black",
                                            font=(Font_Name, 14))
             self.version_label.pack(
                 side=tk.LEFT,
@@ -947,9 +955,9 @@ class FLPExporterUI:
                 self.scrollable_settings_frame,
                 text=
                 "Note: FL Studio must be closed before exporting song.\nMake sure to save your project.\nClicking export will automatically close FL Studio",
-                font=(Font_Name, 12),
+                font=(Font_Name, 15),
                 foreground="black",  # Light red color for warning
-                wraplength=400,  # Adjust based on your window width
+                wraplength=1000,  # Adjust based on your window width
                 justify=tk.LEFT)
             self.warning_note.pack(anchor="w", padx=10,
                                    pady=(0, 60))  # Added padding at bottom
