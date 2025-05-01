@@ -42,6 +42,14 @@
     - And disclaimer text, FL Studio must be closed. Show disclaimer 2 times, FLstudio must be closed before exporting song
 
 
+## **First Time Setup**
+- Window with 
+    - FL input folder
+    - FL output folder
+    - FL Path
+    - Processor type
+- function to autofind info
+
 
 
 ## **Search**
