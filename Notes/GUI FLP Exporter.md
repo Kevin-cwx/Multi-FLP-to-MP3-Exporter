@@ -35,6 +35,8 @@
 - ❌ - Create button, go to input folder
     - User can open file and flp location folder via right click
 
+- Make advanced closable (default)
+
 #### About
 - ✅ - Add about section, with version name
     - And disclaimer text, FL Studio must be closed. Show disclaimer 2 times, FLstudio must be closed before exporting song
