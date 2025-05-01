@@ -14,6 +14,8 @@
     - Shift + Down Key
     - Ctrl + Down Key
     - No unselect
+- Define tab order
+- Predefined group songs - that can be added in selected project
 
 ## **Settings**
 #### General
@@ -80,7 +82,8 @@
     - Set beahviour, when sync is clicked always open all folders
 3. ✅ - Original Sync button does not take same location once settings is clicked again
 4. ✅ - Add right click on folder also, to open folder location
-
+5. Figure out how to prevent FLP from exporting pattern instead of full song
+    - If FLP is added to pattern it exports as pattern, if project is closed on song mode then it exports as song.
 
 
 

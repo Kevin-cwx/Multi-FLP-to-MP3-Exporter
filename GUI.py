@@ -1003,7 +1003,7 @@ class FLPExporterUI:
             # Warning Note
             self.warning_note = ttk.Label(
                 self.scrollable_settings_frame,
-                text="Note: FL Studio must be closed before exporting song.\nMake sure to save your project.\nClicking export will automatically close FL Studio",
+                text="Note: FL Studio must be closed before exporting song.\nMake sure to save your project.\nClicking export will automatically close FL Studio.\n\nIf your project has a popup (unlicensed vst, audio missing), we recommend buying the vst as FL intended, or replacing the missing audio.\nThe project will continue to export once you lick ok, or remove the popup.",
                 font=(Font_Name, 15),
                 foreground="black",  # Light red color for warning
                 wraplength=1000,  # Adjust based on your window width
