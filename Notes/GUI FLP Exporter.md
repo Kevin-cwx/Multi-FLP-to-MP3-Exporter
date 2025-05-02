@@ -18,6 +18,11 @@
 - Predefined group songs - that can be added in selected project
 - Increase size of checkbox
 
+- Save settings, so that on restart it uses previous stored settings
+- Package app
+- Test on other machine
+- Add themes functionality
+
 
 
 ## **Settings**
