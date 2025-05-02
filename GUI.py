@@ -1861,6 +1861,11 @@ class FLPExporterUI:
                 "bg": "#f5e6d3",
                 "fg": "#5c3a21",
                 "highlight": "#d4a76a"
+            },
+            "Purple Rain": {
+                "bg": "#AA336A",
+                "fg": "#E6E6FA",
+                "highlight": "#DA70D6"
             }
         }
 
