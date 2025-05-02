@@ -253,7 +253,7 @@ class FLPExporterUI:
                                     text="Projects",
                                     font=(Font_Name, 14, "bold"),
                                     background=Background_Color)
-        self.tree_label.pack(pady=(10, 0),anchor='w', fill='x',padx=0)
+        self.tree_label.pack(pady=(10, 0), anchor='w', fill='x', padx=0)
 
         self.instruction_label = ttk.Label(
             self.left_frame,
@@ -261,7 +261,7 @@ class FLPExporterUI:
             font=(Font_Name, 14),
             background=Background_Color  # Add this line
         )
-        self.instruction_label.pack(pady=(1, 1))
+        self.instruction_label.pack(pady=(1, 1), anchor='w', fill='x')
 
         tree_frame = ttk.Frame(self.left_frame)
         tree_frame.pack(fill=tk.BOTH, expand=True, padx=5, pady=(0, 10))
@@ -314,7 +314,7 @@ class FLPExporterUI:
                                     text="Selected Projects",
                                     font=(Font_Name, 12, "bold"),
                                     background=Background_Color)
-        self.cart_label.pack(pady=(0, 0),anchor='w', fill='x',padx=10)
+        self.cart_label.pack(pady=(0, 0), anchor='w', fill='x', padx=10)
 
         self.cart_listbox = Listbox(
             self.right_frame,
@@ -599,7 +599,7 @@ class FLPExporterUI:
         global Output_Folder_Path, Project_Order_By, Dir_FLP_Projects, Set_Output_Sub_Folder
         global Output_Sub_Folder_Name, Mouse_Scroll_Speed, FL_Studio_Path
         Settings_Info_Label_Size = 12
-      
+
         if not self.settings_open:
             if hasattr(self, 'settings_frame'):
                 self.settings_frame.destroy()
@@ -781,7 +781,7 @@ class FLPExporterUI:
                                                textvariable=self.theme_var,
                                                values=THEME_NAMES,
                                                state="readonly",
-                                               width=15, 
+                                               width=15,
                                                font=(Font_Name, 12))
             self.theme_combobox.pack(side=tk.LEFT)
 
@@ -887,12 +887,13 @@ class FLPExporterUI:
             self.startup_label.pack(side=tk.LEFT, padx=(0, 10))
 
             self.startup_var = tk.BooleanVar(value=self.check_startup_status())
-            self.startup_toggle = ttk.Checkbutton(startup_frame,
-                                                  variable=self.startup_var,
-                                                #   bootstyle="round-toggle",
-                                                style='Settings.TCheckbutton',
-                                                  command=self.toggle_startup)
-            self.startup_toggle.pack(side=tk.LEFT,padx=(0, 40))
+            self.startup_toggle = ttk.Checkbutton(
+                startup_frame,
+                variable=self.startup_var,
+                #   bootstyle="round-toggle",
+                style='Settings.TCheckbutton',
+                command=self.toggle_startup)
+            self.startup_toggle.pack(side=tk.LEFT, padx=(0, 40))
 
             # Enable Output Subfolder Toggle
             subfolder_toggle_frame = ttk.Frame(self.scrollable_settings_frame,
@@ -995,7 +996,7 @@ class FLPExporterUI:
             self.warning_note = ttk.Label(
                 self.scrollable_settings_frame,
                 text=
-                "Note: FL Studio must be closed before exporting song.\nMake sure to save your project.\nClicking export will automatically close FL Studio.\n\nIf your project has a popup (unlicensed vst, audio missing), we recommend buying the vst as FL intended, or replacing the missing audio.\nThe project will continue to export once you lick ok, or remove the popup.",
+                "Note: FL Studio must be closed before exporting song.\nMake sure to save your project.\nClicking export will automatically close FL Studio.\n\nIf your project has a popup, (unlicensed vst, audio missing) we recommend buying the vst as FL intends, or replacing the missing audio.\nThe project will continue to export once you click ok, or remove the popup.",
                 font=(Font_Name, 15),
                 foreground="black",  # Light red color for warning
                 wraplength=1000,  # Adjust based on your window width
@@ -1009,7 +1010,7 @@ class FLPExporterUI:
             # Save output path
             new_path = self.output_folder_entry.get().strip()
             if not os.path.isdir(new_path):
-                messagebox.showerror(
+                print(
                     "Error", "The specified directory does not exist.")
                 return
             Output_Folder_Path = new_path
@@ -1560,7 +1561,7 @@ class FLPExporterUI:
 
             self.refresh_cart()
             self.status_label.config(text="Project tree synced",
-                                     bootstyle="success")
+                                     bootstyle="dark")
 
         except Exception as e:
             self.status_label.config(text=f"Sync failed: {str(e)}",
@@ -1576,7 +1577,7 @@ class FLPExporterUI:
         self.root.update_idletasks()
 
         # Brief delay
-        self.root.after(125, self._show_frames_after_flash)
+        self.root.after(40, self._show_frames_after_flash)
 
     def _show_frames_after_flash(self):
         """Shows frames again after flash effect"""
@@ -1665,13 +1666,13 @@ class FLPExporterUI:
                 try:
                     os.startfile(first_folder)
                 except Exception as e:
-                    messagebox.showerror("Error",
+                   print("Error",
                                          f"Could not open folder: {str(e)}")
             else:
-                messagebox.showerror(
+               print(
                     "Error", "The specified FLP directory does not exist")
         else:
-            messagebox.showerror("Error", "No FLP folders are set in settings")
+            print("Error", "No FLP folders are set in settings")
 
     def _on_mousewheel_settings(self, event):
         """Handle mouse wheel scrolling for settings panel"""
