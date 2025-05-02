@@ -1002,16 +1002,18 @@ class FLPExporterUI:
             self.warning_note = ttk.Label(
                 self.scrollable_settings_frame,
                 text=
-                "Note: FL Studio must be closed before exporting song.\nMake sure to save your project.\nClicking export will automatically close FL Studio.\n\nIf your project has a popup, (unlicensed vst, audio missing) we recommend buying the vst as FL intends, or replacing the missing audio.\nThe project will continue to export once you click ok, or remove the popup." \
+                "Note: FL Studio must be closed before exporting song.\nMake sure to save your project.\nClicking export will automatically close FL Studio.\n\nIf your project has a popup, (unlicensed vst, audio missing) we recommend buying the vst as FL intends, or replacing the missing audio.\n" \
+                "The project will continue to export once you click ok, or remove the popup." \
                 "\n\nBackup projects are not shown, in order to reduce duplicates.",
                 font=(Font_Name, 15),
                 foreground="black",
-                wraplength=1000,
+                wraplength=1100,
                 justify=tk.LEFT)
             self.warning_note.pack(anchor="w", padx=20,
-                                   pady=(0, 60))  # Added padding at bottom
+                                   pady=(0, 60),fill='x')  # Added padding at bottom
             self.settings_canvas.configure(
                 scrollregion=self.settings_canvas.bbox("all"))
+            
 
         else:
             # Save output path
