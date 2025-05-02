@@ -146,7 +146,7 @@ class FLPExporterUI:
         self.root = root
         self.root.title(Application_Name)
         self.root.geometry("600x700+30+20")
-        self.root.minsize(520, 1000)
+        self.root.minsize(520, 550)
         #self.root.geometry("600x700+30+20")
         self.root.resizable(True, True)
         transparent_icon = tk.PhotoImage(width=1, height=1)
@@ -1495,22 +1495,6 @@ class FLPExporterUI:
         finally:
             if hasattr(self, 'context_menu'):
                 self.context_menu.destroy()
-
-    def open_containing_folder(self):
-        """Open the folder containing the selected file"""
-        if hasattr(self,
-                   'context_item') and self.context_item in self.path_map:
-            file_path = self.path_map[self.context_item]
-            folder_path = os.path.dirname(file_path)
-
-            try:
-                os.startfile(folder_path)
-            except Exception as e:
-                messagebox.showerror("Error",
-                                     f"Could not open folder: {str(e)}")
-            finally:
-                if hasattr(self, 'context_menu'):
-                    self.context_menu.destroy()
 
     def open_selected_file(self):
         """Open the selected file directly"""
