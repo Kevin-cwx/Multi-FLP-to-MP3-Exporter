@@ -1,7 +1,6 @@
 import os
 import re
 import subprocess
-import ttkbootstrap
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
 from ttkbootstrap import Style
@@ -147,12 +146,11 @@ class FLPExporterUI:
         self.root = root
         self.root.title(Application_Name)
         self.root.geometry("600x700+30+20")
-        self.root.minsize(520, 550)
+        self.root.minsize(600, 550)
         #self.root.geometry("600x700+30+20")
         self.root.resizable(True, True)
         transparent_icon = tk.PhotoImage(width=1, height=1)
         self.root.iconbitmap(r"Media/Icons/FL21 - Icon.ico")
-        # white
         self.root.configure(bg=Background_Color)
         self.folders_expanded = True
         self.settings_open = False
@@ -160,7 +158,7 @@ class FLPExporterUI:
         style.configure('TLabel', background=Background_Color)
         style.configure('success.TLabel', background=Background_Color)
         # Define hot pink background
-        style.configure('HotPink.TFrame', background=Background_Color)
+        style.configure('Default_Theme.TFrame', background=Background_Color)
         style.configure('Settings.TFrame', background=Background_Color)
         style.configure('Settings.TEntry', fieldbackground=Background_Color)
         style.configure('Settings.TLabel', background=Background_Color)
@@ -171,7 +169,7 @@ class FLPExporterUI:
         self.root.update_idletasks()
         # 2. Apply the style to the top bar frame
         # Use the custom style
-        self.top_bar = ttk.Frame(self.root, style='HotPink.TFrame')
+        self.top_bar = ttk.Frame(self.root, style='Default_Theme.TFrame')
         self.top_bar.pack(side=tk.TOP, fill=tk.X, padx=10, pady=5)
 
         # Add heading to the top bar frame (left side)
@@ -198,10 +196,10 @@ class FLPExporterUI:
         self.all_items = {}
         self.original_tree_state = {}
 
-        self.content_frame = ttk.Frame(self.root, style='HotPink.TFrame')
+        self.content_frame = ttk.Frame(self.root, style='Default_Theme.TFrame')
         self.content_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=5)
 
-        self.left_frame = ttk.Frame(self.content_frame, style='HotPink.TFrame')
+        self.left_frame = ttk.Frame(self.content_frame, style='Default_Theme.TFrame')
         self.left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
         # Add search frame
@@ -271,9 +269,9 @@ class FLPExporterUI:
         #  rowheight=20
         style.configure(
             "Custom.Treeview",
-            
+
             background=Project_Tree_Background_Color,
-            fieldbackground="#f0f0f0",  
+            fieldbackground="#f0f0f0",
             foreground=Project_Tree_Text_Color,  # Text color
             font=(Font_Name, 9))
         # Projects Left Side
@@ -308,12 +306,12 @@ class FLPExporterUI:
         self.tree.bind("<Button-3>", self.on_right_click)
 
         self.right_frame = ttk.Frame(self.content_frame,
-                                     style='HotPink.TFrame')
+                                     style='Default_Theme.TFrame')
         self.right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=False)
 
         self.cart_label = ttk.Label(self.right_frame,
                                     text="Selected Projects",
-                                    font=(Font_Name, 12, "bold"),
+                                    font=(Font_Name, 14, "bold"),
                                     background=Background_Color)
         self.cart_label.pack(pady=(0, 0), anchor='w', fill='x', padx=10)
 
@@ -982,7 +980,7 @@ class FLPExporterUI:
             self.about_header = ttk.Label(self.scrollable_settings_frame,
                                           text="About",
                                           font=(Font_Name, 18, "bold"))
-            self.about_header.pack(anchor="w", padx=30, pady=(60, 5))
+            self.about_header.pack(anchor="w", padx=0, pady=(60, 5))
 
             # Version Info
             version_frame = ttk.Frame(self.scrollable_settings_frame,
@@ -992,10 +990,10 @@ class FLPExporterUI:
             self.version_label = ttk.Label(version_frame,
                                            text="Version 1.1",
                                            foreground="black",
-                                           font=(Font_Name, 14))
+                                           font=(Font_Name, 14,"italic"))
             self.version_label.pack(
                 side=tk.LEFT,
-                padx=(30, 10),
+                padx=(20, 10),
             )
 
             # Warning Note
@@ -1005,7 +1003,7 @@ class FLPExporterUI:
                 "Note: FL Studio must be closed before exporting song.\nMake sure to save your project.\nClicking export will automatically close FL Studio.\n\nIf your project has a popup, (unlicensed vst, audio missing) we recommend buying the vst as FL intends, or replacing the missing audio.\n" \
                 "The project will continue to export once you click ok, or remove the popup." \
                 "\n\nBackup projects are not shown, in order to reduce duplicates.",
-                font=(Font_Name, 15),
+                font=(Font_Name, 15, ),
                 foreground="black",
                 wraplength=1100,
                 justify=tk.LEFT)
@@ -1013,7 +1011,7 @@ class FLPExporterUI:
                                    pady=(0, 60),fill='x')  # Added padding at bottom
             self.settings_canvas.configure(
                 scrollregion=self.settings_canvas.bbox("all"))
-            
+
 
         else:
             # Save output path
@@ -1675,11 +1673,11 @@ class FLPExporterUI:
                 try:
                     os.startfile(first_folder)
                 except Exception as e:
-                   print("Error",
-                                         f"Could not open folder: {str(e)}")
+                    print("Error",
+                                          f"Could not open folder: {str(e)}")
             else:
-               print(
-                    "Error", "The specified FLP directory does not exist")
+                print(
+                     "Error", "The specified FLP directory does not exist")
         else:
             print("Error", "No FLP folders are set in settings")
 
