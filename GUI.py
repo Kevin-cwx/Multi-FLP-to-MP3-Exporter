@@ -44,7 +44,7 @@ Output_Sub_Folder_Name = ""
 Output_Sub_Folder_Name = ""
 Output_Audio_Format = "Emp3"
 Mouse_Scroll_Speed = 7
-Application_Name = "Multi FLP to MP3"
+Application_Name = "Multi FLP to MP3 Exporter"
 Launch_At_Startup = False
 Font_Name = "Helvetica"
 # Emp3,ogg,wav
@@ -149,7 +149,6 @@ class FLPExporterUI:
         self.root.minsize(520, 1000)
         #self.root.geometry("600x700+30+20")
         self.root.resizable(True, True)
-        self.root.title(Application_Name)
         transparent_icon = tk.PhotoImage(width=1, height=1)
         self.root.iconbitmap(r"Media/Icons/FL21 - Icon.ico")
         # white
@@ -254,7 +253,7 @@ class FLPExporterUI:
                                     text="Projects",
                                     font=(Font_Name, 14, "bold"),
                                     background=Background_Color)
-        self.tree_label.pack(pady=(0, 0))
+        self.tree_label.pack(pady=(10, 0),anchor='w', fill='x',padx=0)
 
         self.instruction_label = ttk.Label(
             self.left_frame,
@@ -315,7 +314,7 @@ class FLPExporterUI:
                                     text="Selected Projects",
                                     font=(Font_Name, 12, "bold"),
                                     background=Background_Color)
-        self.cart_label.pack(pady=(0, 0))
+        self.cart_label.pack(pady=(0, 0),anchor='w', fill='x',padx=10)
 
         self.cart_listbox = Listbox(
             self.right_frame,
@@ -782,7 +781,7 @@ class FLPExporterUI:
                                                textvariable=self.theme_var,
                                                values=THEME_NAMES,
                                                state="readonly",
-                                               width=15,
+                                               width=15, 
                                                font=(Font_Name, 12))
             self.theme_combobox.pack(side=tk.LEFT)
 

@@ -16,6 +16,9 @@
     - No unselect
 - Define tab order
 - Predefined group songs - that can be added in selected project
+- Increase size of checkbox
+
+
 
 ## **Settings**
 #### General
