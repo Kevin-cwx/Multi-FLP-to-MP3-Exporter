@@ -157,7 +157,7 @@ class FLPExporterUI:
         style = ttk.Style()
         style.configure('TLabel', background=Background_Color)
         style.configure('success.TLabel', background=Background_Color)
-        # Define hot pink background
+     
         style.configure('Default_Theme.TFrame', background=Background_Color)
         style.configure('Settings.TFrame', background=Background_Color)
         style.configure('Settings.TEntry', fieldbackground=Background_Color)
@@ -202,7 +202,6 @@ class FLPExporterUI:
         self.left_frame = ttk.Frame(self.content_frame, style='Default_Theme.TFrame')
         self.left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
-        # Add search frame
         search_frame = ttk.Frame(self.left_frame,
                                  borderwidth=2,
                                  relief='solid')
@@ -217,7 +216,6 @@ class FLPExporterUI:
                                expand=True,
                                padx=(0, 0))
 
-        # Output Sub Folder
         if Set_Output_Sub_Folder:
             # Create a new frame below the search frame
             self.subfolder_frame = ttk.Frame(self.left_frame)
@@ -258,27 +256,25 @@ class FLPExporterUI:
             self.left_frame,
             text="Double click to select / unselect projects",
             font=(Font_Name, 14),
-            background=Background_Color  # Add this line
+            background=Background_Color 
         )
         self.instruction_label.pack(pady=(1, 1), anchor='w', fill='x')
 
         tree_frame = ttk.Frame(self.left_frame)
         tree_frame.pack(fill=tk.BOTH, expand=True, padx=5, pady=(0, 10))
 
-        # Increase size of projects
-        #  rowheight=20
         style.configure(
             "Custom.Treeview",
 
             background=Project_Tree_Background_Color,
             fieldbackground="#f0f0f0",
-            foreground=Project_Tree_Text_Color,  # Text color
+            foreground=Project_Tree_Text_Color, 
             font=(Font_Name, 9))
         # Projects Left Side
         self.tree = ttk.Treeview(
             tree_frame,
             selectmode="extended",
-            style="Custom.Treeview"  # Use the custom style
+            style="Custom.Treeview" 
         )
         self.tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
@@ -321,7 +317,7 @@ class FLPExporterUI:
             width=40,
             selectmode=tk.SINGLE,
             selectbackground="#fd4545",  # Light gray (match left tree)
-            fg="red",  # Text color
+            fg="red",
             font=(Font_Name, 10))
         self.cart_listbox.pack(fill=tk.X, padx=10, pady=(5, 10))
         self.cart_listbox.bind("<Double-Button-1>", self.on_cart_double_click)
@@ -410,11 +406,6 @@ class FLPExporterUI:
 
         self.populate_tree(Dir_FLP_Projects)
         self.root.bind("<Return>", self.on_enter_key)
-
-        # Taskbar_Image = Image.open('Media/Icons/a.jpg')
-        # Taskbar_Image.save('Media/a.ico', format='ICO', sizes=[(32, 32), (64, 64)])
-        # # Set taskbar icon (works for Windows)
-        # self.root.iconbitmap('Media/a.ico')  # Add this line
 
     def on_search_focus_in(self, event):
         """Handle focus in event to remove placeholder text"""
@@ -740,7 +731,7 @@ class FLPExporterUI:
             self.flp_folder_info_label = ttk.Label(
                 self.scrollable_settings_frame,
                 text=
-                ("This is where your FLP projects are, add the top folder.\n"
+                ("This is where your FLP projects are. Add the top folder.\n"
                  "Click Browse to add multiple folders.\n"
                  "Example - C:\\Users\\Kfoen\\Documents\\Image-Line\\FL Studio\\Projects\\FL 25 - projects"
                  ),
@@ -942,10 +933,10 @@ class FLPExporterUI:
             self.scroll_speed_label.pack(side=tk.LEFT, padx=(10, 10))
 
             SCROLL_SPEED_MAPPING = {
-                1: 7,  # Slow
+                1: 7,   # Slow
                 2: 10,  # Medium (default)
                 3: 15,  # Fast
-                4: 19  # Very fast
+                4: 19   # Very fast
             }
 
             # Find which key has our current value (reverse lookup)
@@ -996,8 +987,7 @@ class FLPExporterUI:
                 padx=(20, 10),
             )
 
-            # Warning Note
-            self.warning_note = ttk.Label(
+            self.about_info = ttk.Label(
                 self.scrollable_settings_frame,
                 text=
                 "Note: FL Studio must be closed before exporting song.\nMake sure to save your project.\nClicking export will automatically close FL Studio.\n\nIf your project has a popup, (unlicensed vst, audio missing) we recommend buying the vst as FL intends, or replacing the missing audio.\n" \
@@ -1007,8 +997,8 @@ class FLPExporterUI:
                 foreground="black",
                 wraplength=1100,
                 justify=tk.LEFT)
-            self.warning_note.pack(anchor="w", padx=20,
-                                   pady=(0, 60),fill='x')  # Added padding at bottom
+            self.about_info.pack(anchor="w", padx=20,
+                                   pady=(0, 60),fill='x') 
             self.settings_canvas.configure(
                 scrollregion=self.settings_canvas.bbox("all"))
 
@@ -1031,13 +1021,12 @@ class FLPExporterUI:
                 # Validate each folder
                 for folder in Dir_FLP_Projects:
                     if not os.path.isdir(folder):
-                        messagebox.showerror(
+                        print(
                             "Error",
                             f"The specified FLP directory does not exist: {folder}"
                         )
                         return
 
-            # Save project order
             Project_Order_By = self.order_var.get()
 
             # Handle startup setting
@@ -1064,19 +1053,16 @@ class FLPExporterUI:
             fl_studio_path = self.fl_studio_path_entry.get().strip()
             if fl_studio_path:  # Only validate if path is provided
                 if not os.path.isdir(fl_studio_path):
-                    messagebox.showerror(
+                    print(
                         "Error",
                         "The specified FL Studio directory does not exist.")
                     return
                 FL_Studio_Path = fl_studio_path
 
-            # Destroy settings UI
             self.settings_frame.destroy()
             self.settings_open = False
 
-            # Unbind mouse wheel
             self.settings_canvas.unbind_all("<MouseWheel>")
-
             self.restore_header_and_ui()
 
     def browse_flp_folders(self):
@@ -1103,7 +1089,6 @@ class FLPExporterUI:
             self.output_folder_entry.insert(0, folder_selected)
 
     def close_settings_without_saving(self):
-        # Close settings without saving
         self.settings_frame.destroy()
         self.settings_open = False
         self.settings_button.config(text="Settings", image=self.settings_icon)
@@ -1111,11 +1096,9 @@ class FLPExporterUI:
 
         # Unbind mouse wheel
         self.settings_canvas.unbind_all("<MouseWheel>")
-
         self.restore_header_and_ui()
 
     def restore_header_and_ui(self):
-        # Restore header and UI
         self.content_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=5)
         self.output_music_folder_button.pack(side=tk.RIGHT, padx=(0, 10))
         self.heading.config(text=f"🎵 {Application_Name}")
@@ -1455,11 +1438,11 @@ class FLPExporterUI:
                             os.startfile(dir_path)
                             return
                         else:
-                            messagebox.showerror("Error",
+                            print("Error",
                                                  "Folder path does not exist")
                             return
 
-                messagebox.showerror("Error",
+                print("Error",
                                      "Could not find matching root directory")
                 return
 
@@ -1493,13 +1476,13 @@ class FLPExporterUI:
                 if os.path.isdir(full_path):
                     os.startfile(full_path)
                 else:
-                    messagebox.showerror("Error", "Folder path does not exist")
+                    print("Error", "Folder path does not exist")
             else:
-                messagebox.showerror("Error",
+                print("Error",
                                      "Could not determine folder path")
 
         except Exception as e:
-            messagebox.showerror("Error", f"Could not open folder: {str(e)}")
+            print("Error", f"Could not open folder: {str(e)}")
         finally:
             if hasattr(self, 'context_menu'):
                 self.context_menu.destroy()
@@ -1579,10 +1562,8 @@ class FLPExporterUI:
         # Temporarily hide frames
         self.left_frame.pack_forget()
         self.right_frame.pack_forget()
-
         # Update the UI immediately
         self.root.update_idletasks()
-
         # Brief delay
         self.root.after(5, self._show_frames_after_flash)
 
@@ -1590,8 +1571,6 @@ class FLPExporterUI:
         """Shows frames again after flash effect"""
         self.left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         self.right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=False)
-
-        ###
 
     def toggle_startup(self):
         """Handle the startup toggle button"""
@@ -1644,7 +1623,7 @@ class FLPExporterUI:
         path = filedialog.askdirectory(
             mustexist=True,
             title="Select FL Studio Installation Folder",
-            initialdir="C:\\Program Files"  # Common installation location
+            initialdir="C:\\Program Files"  
         )
         if path:
             self.fl_studio_path_entry.delete(0, tk.END)
