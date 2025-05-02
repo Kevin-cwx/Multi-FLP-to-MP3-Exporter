@@ -27,10 +27,10 @@ USE_DARK_MODE = False
 #Dir_FLP_Projects = r"C:\Users\foendoe.kevin\Documents\findusic - FLP Input"
 
 Dir_FLP_Projects = [
-    r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 12 - projects",
-    r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 20 - projects",
-    r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 21 - projects"
-    #r"C:\Users\foendoe.kevin\Documents\findusic - FLP Input"
+    # r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 12 - projects",
+    # r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 20 - projects",
+    # r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 21 - projects"
+    r"C:\Users\foendoe.kevin\Documents\findusic - FLP Input"
 ]
 Output_Folder_Path = r"C:\Users\Kfoen\Documents\Docs KF\FL SONGS MP3\Python_Audio_Output"
 FL_Studio_Path = r"C:\Program Files\Image-Line\FL Studio 21"
@@ -71,15 +71,10 @@ Project_Tree_Text_Color = "black"
 
 # === THEMES ===
 THEME_NAMES = [
-    "Dark Mode",
-    "Cherry",
-    "Sky Blue",
-    "Default",
-    "FL Skin",
-    "Barbie",
-    "Forest Green",
-    "Brazil Tan"
+    "Dark Mode", "Cherry", "Sky Blue", "Default", "FL Skin", "Barbie",
+    "Forest Green", "Brazil Tan"
 ]
+
 
 def get_file_paths(root_directories):
     file_paths = {}
@@ -604,7 +599,8 @@ class FLPExporterUI:
     def open_settings(self):
         global Output_Folder_Path, Project_Order_By, Dir_FLP_Projects, Set_Output_Sub_Folder
         global Output_Sub_Folder_Name, Mouse_Scroll_Speed, FL_Studio_Path
-        Settings_Info_Label_Size = 10
+        Settings_Info_Label_Size = 12
+      
         if not self.settings_open:
             if hasattr(self, 'settings_frame'):
                 self.settings_frame.destroy()
@@ -626,14 +622,14 @@ class FLPExporterUI:
             # Create the main settings container frame
             self.settings_frame = ttk.Frame(self.root, style='Settings.TFrame')
             self.settings_frame.pack(fill=tk.BOTH,
-                                    expand=True,
-                                    padx=20,
-                                    pady=10)
+                                     expand=True,
+                                     padx=20,
+                                     pady=10)
 
             # Create a canvas and vertical scrollbar
             self.settings_canvas = tk.Canvas(self.settings_frame,
-                                            highlightthickness=0,
-                                            bg=Background_Color)
+                                             highlightthickness=0,
+                                             bg=Background_Color)
             self.settings_scrollbar = ttk.Scrollbar(
                 self.settings_frame,
                 orient="vertical",
@@ -641,25 +637,18 @@ class FLPExporterUI:
 
             # Create the scrollable frame that will hold all settings widgets
             self.scrollable_settings_frame = ttk.Frame(self.settings_canvas,
-                                                    style='Settings.TFrame')
-            self.scrollable_settings_frame.pack(fill="both", expand=True)
-
-            # Configure the canvas to expand
-            self.settings_canvas.pack(side="left", fill="both", expand=True)
-            self.settings_scrollbar.pack(side=tk.RIGHT, fill=tk.Y, padx=(0, 0))
-
-            # Configure the canvas
+                                                       style='Settings.TFrame')
+            # Do NOT pack the scrollable frame; it's managed by the canvas
             self.scrollable_settings_frame.bind(
-                "<Configure>",
-                lambda e: self.settings_canvas.configure(
-                    scrollregion=self.settings_canvas.bbox("all"),
-                    width=e.width  # Make canvas width match content
-                )
-            )
+                "<Configure>", lambda e: self.settings_canvas.configure(
+                    scrollregion=self.settings_canvas.bbox("all")))
+
             # Create window in canvas for scrollable frame
             self.settings_canvas.create_window(
-                (0, 0), window=self.scrollable_settings_frame, anchor="nw",
-                tags=("scroll_frame",))
+                (0, 0),
+                window=self.scrollable_settings_frame,
+                anchor="nw",
+                tags=("scroll_frame", ))
             # Add this binding to handle window resizing
             self.settings_canvas.bind("<Configure>", self._on_canvas_resize)
 
@@ -673,7 +662,7 @@ class FLPExporterUI:
 
             # Mouse wheel binding for scrolling
             self.settings_canvas.bind_all("<MouseWheel>",
-                                        self._on_mousewheel_settings)
+                                          self._on_mousewheel_settings)
 
             #
             # General
@@ -684,20 +673,21 @@ class FLPExporterUI:
             self.general_header.pack(anchor="w", padx=10, pady=(10, 5))
 
             # Output Folder Picker
-            output_folder_frame = ttk.Frame(
-                self.scrollable_settings_frame, style='Settings.TFrame')
+            output_folder_frame = ttk.Frame(self.scrollable_settings_frame,
+                                            style='Settings.TFrame')
             output_folder_frame.pack(fill=tk.X, pady=0)
 
             self.output_folder_label = ttk.Label(output_folder_frame,
-                                                text="Output Folder",
-                                                font=(Font_Name, 14))
+                                                 text="Output Folder",
+                                                 font=(Font_Name, 14),
+                                                 style='Settings.TLabel')
             self.output_folder_label.pack(side=tk.LEFT, padx=(0, 0), pady=5)
 
             self.output_folder_entry = ttk.Entry(output_folder_frame)
             self.output_folder_entry.pack(side=tk.LEFT,
-                                        fill=tk.X,
-                                        expand=True,
-                                        padx=(0, 5))
+                                          fill=tk.X,
+                                          expand=True,
+                                          padx=(0, 5))
             self.output_folder_entry.insert(0, Output_Folder_Path)
 
             self.browse_button = ttk.Button(output_folder_frame,
@@ -706,7 +696,7 @@ class FLPExporterUI:
                                             bootstyle="info")
             self.browse_button.pack(side=tk.LEFT)
             self.output_folder_entry = ttk.Entry(output_folder_frame,
-                                                style='Settings.TEntry')
+                                                 style='Settings.TEntry')
 
             self.output_folder_info_label = ttk.Label(
                 self.scrollable_settings_frame,
@@ -714,24 +704,24 @@ class FLPExporterUI:
                 font=(Font_Name, Settings_Info_Label_Size),
                 foreground="black")
             self.output_folder_info_label.pack(anchor="w",
-                                            padx=5,
-                                            pady=(2, 10))
+                                               padx=5,
+                                               pady=(2, 10))
 
             # FLP Projects Folder Picker (Multiple folders)
-            flp_folder_frame = ttk.Frame(
-                self.scrollable_settings_frame, style='Settings.TFrame')
+            flp_folder_frame = ttk.Frame(self.scrollable_settings_frame,
+                                         style='Settings.TFrame')
             flp_folder_frame.pack(fill=tk.X, pady=0)
 
             self.flp_folder_label = ttk.Label(flp_folder_frame,
-                                            text="FLP Projects Folders",
-                                            font=(Font_Name, 14))
+                                              text="FLP Projects Folders",
+                                              font=(Font_Name, 14))
             self.flp_folder_label.pack(side=tk.LEFT, padx=(0, 0), pady=5)
 
             self.flp_folder_entry = ttk.Entry(flp_folder_frame)
             self.flp_folder_entry.pack(side=tk.LEFT,
-                                    fill=tk.X,
-                                    expand=True,
-                                    padx=(0, 5))
+                                       fill=tk.X,
+                                       expand=True,
+                                       padx=(0, 5))
             # Display existing folders separated by semicolons if they exist
             if hasattr(self, 'Dir_FLP_Projects'):
                 self.flp_folder_entry.insert(0, "; ".join(Dir_FLP_Projects))
@@ -746,23 +736,24 @@ class FLPExporterUI:
             # Add label underneath
             self.flp_folder_info_label = ttk.Label(
                 self.scrollable_settings_frame,
-                text=("This is where your FLP projects are, add the top folder.\n"
-                    "Click Browse to add multiple folders.\n"
-                    "Example - C:\\Users\\Kfoen\\Documents\\Image-Line\\FL Studio\\Projects\\FL 25 - projects"
-                    ),
+                text=
+                ("This is where your FLP projects are, add the top folder.\n"
+                 "Click Browse to add multiple folders.\n"
+                 "Example - C:\\Users\\Kfoen\\Documents\\Image-Line\\FL Studio\\Projects\\FL 25 - projects"
+                 ),
                 font=(Font_Name, Settings_Info_Label_Size),
                 foreground="black")
             self.flp_folder_info_label.pack(anchor="w", padx=5, pady=(2, 10))
 
             # Project Order selection
-            order_frame = ttk.Frame(
-                self.scrollable_settings_frame, style='Settings.TFrame')
+            order_frame = ttk.Frame(self.scrollable_settings_frame,
+                                    style='Settings.TFrame')
             order_frame.pack(fill=tk.X, pady=0)
 
             self.order_label = ttk.Label(order_frame,
-                                        text="Project Order:",
-                                        font=(Font_Name, 14),
-                                        background=Background_Color)
+                                         text="Project Order",
+                                         font=(Font_Name, 14),
+                                         background=Background_Color)
             self.order_label.pack(side=tk.LEFT, padx=(0, 5))
 
             self.order_var = tk.StringVar(value=Project_Order_By)
@@ -776,31 +767,30 @@ class FLPExporterUI:
             self.order_combobox.pack(side=tk.LEFT)
             self.order_combobox.configure(font=(Font_Name, 14))
 
-
             # Theme selection
             theme_frame = ttk.Frame(self.scrollable_settings_frame,
                                     style='Settings.TFrame')
             theme_frame.pack(fill=tk.X, pady=10)
 
             self.theme_label = ttk.Label(theme_frame,
-                                        text="Theme:",
-                                        font=(Font_Name, 14))
+                                         text="Theme",
+                                         font=(Font_Name, 14))
             self.theme_label.pack(side=tk.LEFT, padx=(0, 10))
 
             self.theme_var = tk.StringVar(value="Default")  # Default selection
-            self.theme_combobox = ttk.Combobox(
-                theme_frame,
-                textvariable=self.theme_var,
-                values=THEME_NAMES,
-                state="readonly",
-                width=15,
-                font=(Font_Name, 12))
+            self.theme_combobox = ttk.Combobox(theme_frame,
+                                               textvariable=self.theme_var,
+                                               values=THEME_NAMES,
+                                               state="readonly",
+                                               width=15,
+                                               font=(Font_Name, 12))
             self.theme_combobox.pack(side=tk.LEFT)
 
             # Info label
             self.theme_info_label = ttk.Label(
                 self.scrollable_settings_frame,
-                text="Change the application's color scheme. Requires restart to apply.",
+                text=
+                "Change the application's color scheme. Requires restart to apply.",
                 font=(Font_Name, Settings_Info_Label_Size))
             self.theme_info_label.pack(anchor="w", padx=5, pady=(0, 10))
 
@@ -813,20 +803,20 @@ class FLPExporterUI:
             self.general_header.pack(anchor="w", padx=10, pady=(60, 5))
 
             # FL Studio Path Picker
-            fl_studio_frame = ttk.Frame(
-                self.scrollable_settings_frame, style='Settings.TFrame')
+            fl_studio_frame = ttk.Frame(self.scrollable_settings_frame,
+                                        style='Settings.TFrame')
             fl_studio_frame.pack(fill=tk.X, pady=5)
 
             self.fl_studio_path_label = ttk.Label(fl_studio_frame,
-                                                text="FL Studio Path",
-                                                font=(Font_Name, 14))
+                                                  text="FL Studio Path",
+                                                  font=(Font_Name, 14))
             self.fl_studio_path_label.pack(side=tk.LEFT, padx=(0, 5))
 
             self.fl_studio_path_entry = ttk.Entry(fl_studio_frame)
             self.fl_studio_path_entry.pack(side=tk.LEFT,
-                                        fill=tk.X,
-                                        expand=True,
-                                        padx=(0, 5))
+                                           fill=tk.X,
+                                           expand=True,
+                                           padx=(0, 5))
             # Set current path if it exists
             if hasattr(self, 'FL_Studio_Path') and self.FL_Studio_Path:
                 self.fl_studio_path_entry.insert(0, self.FL_Studio_Path)
@@ -841,21 +831,22 @@ class FLPExporterUI:
             # Info label
             self.fl_studio_path_info_label = ttk.Label(
                 self.scrollable_settings_frame,
-                text=("Path to your FL Studio installation folder.\nEnsure this is the correct path as you will not be able to export if the path is incorrect.\nExample - C:\\Program Files\\Image-Line\\FL Studio 21"
-                    ),
+                text=
+                ("Path to your FL Studio installation folder.\nEnsure this is the correct path as you will not be able to export if the path is incorrect.\nExample - C:\\Program Files\\Image-Line\\FL Studio 21"
+                 ),
                 font=(Font_Name, Settings_Info_Label_Size))
             self.fl_studio_path_info_label.pack(anchor="w",
                                                 padx=5,
                                                 pady=(0, 10))
 
             # Processor Type Dropdown
-            processor_frame = ttk.Frame(
-                self.scrollable_settings_frame, style='Settings.TFrame')
+            processor_frame = ttk.Frame(self.scrollable_settings_frame,
+                                        style='Settings.TFrame')
             processor_frame.pack(fill=tk.X, pady=5)
 
             self.processor_label = ttk.Label(processor_frame,
-                                            text="Processor Type:",
-                                            font=(Font_Name, 14))
+                                             text="Processor Type",
+                                             font=(Font_Name, 14))
             self.processor_label.pack(side=tk.LEFT, padx=(0, 10))
 
             # Create a StringVar to store the selected value
@@ -885,34 +876,36 @@ class FLPExporterUI:
             style.configure('Large.TCheckbutton',
                             font=('Segoe UI', 14))  # <<< NEW
 
-            # Launch at Startup Toggle - MOVED TO ADVANCED SECTION
-            startup_frame = ttk.Frame(
-                self.scrollable_settings_frame, style='Settings.TFrame')
+            # Launch at Startup Toggle
+            startup_frame = ttk.Frame(self.scrollable_settings_frame,
+                                      style='Settings.TFrame')
             startup_frame.pack(fill=tk.X, pady=10)
 
             self.startup_label = ttk.Label(
                 startup_frame,
-                text="Launch application at system startup:",
+                text="Launch application at system startup",
                 font=(Font_Name, 14))
             self.startup_label.pack(side=tk.LEFT, padx=(0, 10))
 
             self.startup_var = tk.BooleanVar(value=self.check_startup_status())
             self.startup_toggle = ttk.Checkbutton(startup_frame,
-                                                variable=self.startup_var,
-                                                bootstyle="round-toggle",
-                                                command=self.toggle_startup)
-            self.startup_toggle.pack(side=tk.LEFT)
+                                                  variable=self.startup_var,
+                                                #   bootstyle="round-toggle",
+                                                style='Settings.TCheckbutton',
+                                                  command=self.toggle_startup)
+            self.startup_toggle.pack(side=tk.LEFT,padx=(0, 40))
 
-            # Enable Output Subfolder Toggle - FIXED POSITION
-            subfolder_toggle_frame = ttk.Frame(
-                self.scrollable_settings_frame, style='Settings.TFrame')
-            subfolder_toggle_frame.pack(fill=tk.X, pady=10)
+            # Enable Output Subfolder Toggle
+            subfolder_toggle_frame = ttk.Frame(self.scrollable_settings_frame,
+                                               style='Settings.TFrame')
+            subfolder_toggle_frame.pack(fill=tk.X, pady=10, padx=0)
 
             self.enable_subfolder_label = ttk.Label(
                 subfolder_toggle_frame,
-                text="Enable output subfolder:",
-                font=(Font_Name, 14))
-            self.enable_subfolder_label.pack(side=tk.LEFT, padx=(0, 10))
+                text="Enable output subfolder",
+                font=(Font_Name, 14),
+                style='Settings.TLabel')
+            self.enable_subfolder_label.pack(side=tk.LEFT, padx=(0, 20))
 
             self.subfolder_toggle_var = tk.BooleanVar(
                 value=Set_Output_Sub_Folder)
@@ -920,23 +913,22 @@ class FLPExporterUI:
                 subfolder_toggle_frame,
                 variable=self.subfolder_toggle_var,
                 bootstyle="round-toggle",
-                command=self.toggle_subfolder_entry)
+                command=self.toggle_subfolder_entry,
+                style='Settings.TCheckbutton')
+            self.subfolder_toggle.pack(side=tk.LEFT)
             self.subfolder_toggle.pack(side=tk.LEFT, padx=(0, 10))
-
-            self.subfolder_entry.config(
-                state=tk.NORMAL if Set_Output_Sub_Folder else tk.DISABLED)
-
             # Info label
             self.subfolder_info_label = ttk.Label(
                 self.scrollable_settings_frame,
-                text=("Creates a subfolder in your output directory, to maintain a more organized output directory.\nFor example an album name."
-                    ),
+                text=
+                ("Creates a subfolder in your output directory, to maintain a more organized output directory.\nFor example an album name."
+                 ),
                 font=(Font_Name, Settings_Info_Label_Size))
             self.subfolder_info_label.pack(anchor="w", padx=5, pady=(0, 10))
 
             # Mouse Scroll Speed Dropdown
-            scroll_frame = ttk.Frame(
-                self.scrollable_settings_frame, style='Settings.TFrame')
+            scroll_frame = ttk.Frame(self.scrollable_settings_frame,
+                                     style='Settings.TFrame')
             scroll_frame.pack(fill=tk.X, pady=5)
 
             self.scroll_speed_label = ttk.Label(
@@ -955,7 +947,7 @@ class FLPExporterUI:
             # Find which key has our current value (reverse lookup)
             current_key = next(
                 (k for k, v in SCROLL_SPEED_MAPPING.items()
-                if v == Mouse_Scroll_Speed),
+                 if v == Mouse_Scroll_Speed),
                 2  # Default to medium if not found
             )
 
@@ -982,19 +974,19 @@ class FLPExporterUI:
 
             # About Section
             self.about_header = ttk.Label(self.scrollable_settings_frame,
-                                        text="About",
-                                        font=(Font_Name, 16, "bold"))
+                                          text="About",
+                                          font=(Font_Name, 16, "bold"))
             self.about_header.pack(anchor="w", padx=10, pady=(60, 5))
 
             # Version Info
-            version_frame = ttk.Frame(
-                self.scrollable_settings_frame, style='Settings.TFrame')
+            version_frame = ttk.Frame(self.scrollable_settings_frame,
+                                      style='Settings.TFrame')
             version_frame.pack(fill=tk.X, pady=(0, 10))
 
             self.version_label = ttk.Label(version_frame,
-                                        text="Version 1.1",
-                                        foreground="black",
-                                        font=(Font_Name, 14))
+                                           text="Version 1.1",
+                                           foreground="black",
+                                           font=(Font_Name, 14))
             self.version_label.pack(
                 side=tk.LEFT,
                 padx=(0, 10),
@@ -1003,13 +995,16 @@ class FLPExporterUI:
             # Warning Note
             self.warning_note = ttk.Label(
                 self.scrollable_settings_frame,
-                text="Note: FL Studio must be closed before exporting song.\nMake sure to save your project.\nClicking export will automatically close FL Studio.\n\nIf your project has a popup (unlicensed vst, audio missing), we recommend buying the vst as FL intended, or replacing the missing audio.\nThe project will continue to export once you lick ok, or remove the popup.",
+                text=
+                "Note: FL Studio must be closed before exporting song.\nMake sure to save your project.\nClicking export will automatically close FL Studio.\n\nIf your project has a popup (unlicensed vst, audio missing), we recommend buying the vst as FL intended, or replacing the missing audio.\nThe project will continue to export once you lick ok, or remove the popup.",
                 font=(Font_Name, 15),
                 foreground="black",  # Light red color for warning
                 wraplength=1000,  # Adjust based on your window width
                 justify=tk.LEFT)
             self.warning_note.pack(anchor="w", padx=10,
-                                pady=(0, 60))  # Added padding at bottom
+                                   pady=(0, 60))  # Added padding at bottom
+            self.settings_canvas.configure(
+                scrollregion=self.settings_canvas.bbox("all"))
 
         else:
             # Save output path
@@ -1705,7 +1700,6 @@ class FLPExporterUI:
                 self.settings_canvas.yview_scroll(1, "unit")
             elif event.num == 4:
                 self.settings_canvas.yview_scroll(-1, "unit")
-    
 
     def reset_anchor(self, event=None):
         """Reset anchor when keys are released"""
@@ -1821,10 +1815,10 @@ class FLPExporterUI:
         return None, index
 
     # Add this method to handle canvas resizing
-    def _on_canvas_resize(self,event):
+    def _on_canvas_resize(self, event):
         canvas_width = event.width
         self.settings_canvas.itemconfig("scroll_frame", width=canvas_width)
-    
+
     def apply_theme(self, theme_name):
         """Apply the selected theme"""
         # Map your theme names to actual color values
@@ -1876,7 +1870,9 @@ class FLPExporterUI:
         # Apply colors to main elements
         self.root.config(bg=colors["bg"])
         style.configure('.', background=colors["bg"], foreground=colors["fg"])
-        style.configure('TLabel', background=colors["bg"], foreground=colors["fg"])
+        style.configure('TLabel',
+                        background=colors["bg"],
+                        foreground=colors["fg"])
         style.configure('TFrame', background=colors["bg"])
         style.configure('TButton', background=colors["highlight"])
 
@@ -1894,6 +1890,7 @@ class FLPExporterUI:
 
         # Force update all widgets
         self.root.update_idletasks()
+
 
 # === START APP ===
 if __name__ == "__main__":
