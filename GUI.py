@@ -257,9 +257,11 @@ def get_fl_studio_info():
 
 def first_run_setup():
     """Show first-run configuration dialog"""
-    setup_root = tk.Tk()  
+    setup_root = tk.Toplevel()
     setup_root.title("First Run Setup")
     setup_root.geometry("600x500")
+    setup_root.grab_set() 
+    setup_root.transient()
     setup_completed = False
 
     # Create style for indicators
@@ -418,6 +420,18 @@ def first_run_setup():
     ttk.Combobox(processor_frame, textvariable=processor_type, values=[
                  "FL64.exe", "FL.exe"], state="readonly").pack(side=tk.LEFT)
 
+    # Add a frame for the status indicators at the bottom
+    status_frame = ttk.Frame(setup_root)
+    status_frame.pack(fill="x", padx=20, pady=(20, 10))
+
+    # Add legend for the indicators
+    ttk.Label(status_frame, text="Status:", font=(
+        Font_Name, 12)).pack(side=tk.LEFT)
+    ttk.Label(status_frame, text=f"{CHECK_ICON} = Completed",
+              font=(Font_Name, 12), style="Green.TLabel").pack(side=tk.LEFT, padx=(10, 20))
+    ttk.Label(status_frame, text=f"{EMPTY_ICON} = Needs input",
+              font=(Font_Name, 12), style="Gray.TLabel").pack(side=tk.LEFT)
+
     # Validation function
     def validate():
         if not all([output_folder.get(), flp_folder.get()]):
@@ -440,8 +454,10 @@ def first_run_setup():
         return True
 
     def on_ok():
+        print("in on ok")
         nonlocal setup_completed
         if validate():
+            print("in validatee")
             # Set the global variables
             global Output_Folder_Path, Dir_FLP_Projects, FL_Studio_Path, Processor_Type
             Output_Folder_Path = output_folder.get()
@@ -451,33 +467,40 @@ def first_run_setup():
             detected_fl_path = fl_studio_path.get()
             if detected_fl_path:
                 FL_Studio_Path = detected_fl_path
+                print("a")
+                
             else:
+                print("b")
                 # Try to auto-detect if user didn't provide path
                 fl_path, processor = get_fl_studio_info()
                 if fl_path:
+                    print("c")
                     FL_Studio_Path = fl_path
                     Processor_Type = processor
+
                 else:
+                    print("d")
                     messagebox.showerror(
                         "Error", "Could not detect FL Studio path")
                     return
 
             Processor_Type = processor_type.get()
-
-            # Save to config file
             save_config()
-
-            # Close the setup window
             setup_completed = True
-            #setup_root.quit()
             setup_root.destroy()
             return True
-
+        print("not in validate")
         return False
+    print("w")
 
     ttk.Button(setup_root, text="OK", command=on_ok).pack(pady=20)
-    update_indicators()
+    #update_indicators()
+    #setup_root.mainloop()
     setup_root.mainloop()
+
+    #setup_root.destroy()
+    return bool(Output_Folder_Path and Dir_FLP_Projects and FL_Studio_Path)
+
 
     if setup_completed:
         root = tk.Tk()
@@ -485,17 +508,9 @@ def first_run_setup():
         app = FLPExporterUI(root)
         root.mainloop()
 
-    # Add a frame for the status indicators at the bottom
-    status_frame = ttk.Frame(root)
-    status_frame.pack(fill="x", padx=20, pady=(20, 10))
+    return setup_completed
 
-    # Add legend for the indicators
-    ttk.Label(status_frame, text="Status:", font=(
-        Font_Name, 12)).pack(side=tk.LEFT)
-    ttk.Label(status_frame, text=f"{CHECK_ICON} = Completed",
-              font=(Font_Name, 12), style="Green.TLabel").pack(side=tk.LEFT, padx=(10, 20))
-    ttk.Label(status_frame, text=f"{EMPTY_ICON} = Needs input",
-              font=(Font_Name, 12), style="Gray.TLabel").pack(side=tk.LEFT)
+    
 
 
     # Start checking FL Studio status
@@ -1155,7 +1170,7 @@ class FLPExporterUI:
             self.theme_info_label = ttk.Label(
                 self.scrollable_settings_frame,
                 text=
-                "Change the application's color scheme. Requires restart to apply.",
+                "Change the application's color scheme.",
                 font=(Font_Name, Settings_Info_Label_Size))
             self.theme_info_label.pack(anchor="w", padx=20, pady=(0, 10))
 
@@ -2301,13 +2316,18 @@ if __name__ == "__main__":
     FL_Studio_Path = ""
     Processor_Type = "FL64.exe"
 
+    # Create the root window early but keep it withdrawn
+    root = tk.Tk()
+    root.withdraw()
+
     # Try to load config
     if os.path.exists(CONFIG_FILE):
         load_config()
     else:
         # Run first-time setup
-        first_run_setup()
-        # Reload config after setup
+        if not first_run_setup():  # This will show the setup window
+            sys.exit(0)  # Exit if setup wasn't completed
+        # Reload config after setup is complete
         load_config()
 
     # Verify required paths are set
@@ -2315,8 +2335,14 @@ if __name__ == "__main__":
         messagebox.showerror("Error", "Required paths not configured")
         sys.exit(1)
 
-    # Now create the main application
-    root = tk.Tk()
-    style = Style("pulse" if USE_DARK_MODE else "flatly")
+    # Now show the main application window
+    root.deiconify()  # Show the hidden root window
+
+    # Apply ttkbootstrap style
+    try:
+        style = Style("pulse" if USE_DARK_MODE else "flatly")
+    except tk.TclError:
+        style = Style()
+
     app = FLPExporterUI(root)
     root.mainloop()
