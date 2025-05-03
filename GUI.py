@@ -56,10 +56,10 @@ Application_Name = "Multi FLP to MP3 Exporter"
 Launch_At_Startup = False
 Font_Name = "Meiryo"
 
-CHECK_ICON = "✓"
-EMPTY_ICON = "○"
+CHECK_ICON = "🗹"
+EMPTY_ICON = "O"
 GREEN = "#2ecc71"
-GRAY = "#95a5a6"
+GRAY = "black"
 
 # Emp3,ogg,wav
 #ogg does not work in powershell, FL might have disabled
@@ -257,10 +257,10 @@ def get_fl_studio_info():
 
 def first_run_setup():
     """Show first-run configuration dialog"""
-    root = tk.Tk()
-    root.title("First Run Setup")
-    # Increased height to accommodate FL Studio status
-    root.geometry("600x500")
+    setup_root = tk.Tk()  
+    setup_root.title("First Run Setup")
+    setup_root.geometry("600x500")
+    setup_completed = False
 
     # Create style for indicators
     style = ttk.Style()
@@ -281,11 +281,11 @@ def first_run_setup():
 
     # FL Studio status label
     fl_status_label = ttk.Label(
-        root, text="QAQ", font=(Font_Name, 10))
+        setup_root, text="QAQ", font=(Font_Name, 10))
     fl_status_label.pack(pady=(10, 0))
 
     # FL Studio path info label
-    fl_path_label = ttk.Label(root, text="", font=(Font_Name, 10))
+    fl_path_label = ttk.Label(setup_root, text="", font=(Font_Name, 10))
     fl_path_label.pack(pady=(0, 10))
 
     def update_indicators():
@@ -318,14 +318,14 @@ def first_run_setup():
                     break
         else:
             fl_status_label.config(
-                text="Manually open FL Studio", foreground="red")
+                text="Manually open FL Studio", foreground="red", font=(Font_Name, 20))
             fl_path_label.config(text="")
             # Reset indicators if FL Studio is closed
             fl_studio_indicator.set(EMPTY_ICON)
             processor_indicator.set(EMPTY_ICON)
 
         # Check again after 1 second
-        root.after(500, check_fl_studio_status)
+        setup_root.after(500, check_fl_studio_status)
 
     # Track variables to update indicators
     output_folder.trace_add("write", lambda *args: update_indicators())
@@ -337,11 +337,11 @@ def first_run_setup():
     check_fl_studio_status()
 
     # Create widgets
-    ttk.Label(root, text="First Run Configuration",
+    ttk.Label(setup_root, text="First Run Configuration",
               font=(Font_Name, 16, "bold")).pack(pady=10)
 
     # Output Folder
-    output_frame = ttk.Frame(root)
+    output_frame = ttk.Frame(setup_root)
     output_frame.pack(fill="x", padx=20, pady=(10, 0))
     
     # Add indicator label
@@ -357,8 +357,13 @@ def first_run_setup():
         update_indicators()
     ]).pack(side=tk.LEFT)
 
+    # Add label underneath output folder
+    ttk.Label(setup_root,
+              text="This is where your songs will be exported to.",
+              font=(Font_Name, 10)).pack(anchor="w", padx=40, pady=(0, 5))
+
     # FLP Projects Folder
-    flp_frame = ttk.Frame(root)
+    flp_frame = ttk.Frame(setup_root)
     flp_frame.pack(fill="x", padx=20, pady=(10, 0))
 
     flp_indicator = ttk.Label(flp_frame, textvariable=flp_folder_indicator,
@@ -373,8 +378,12 @@ def first_run_setup():
         update_indicators()
     ]).pack(side=tk.LEFT)
 
+    ttk.Label(setup_root,
+              text="Indicate where your FLP projects are stored.",
+              font=(Font_Name, 10)).pack(anchor="w", padx=40, pady=(0, 5))
+
     # FL Studio Path
-    fl_path_frame = ttk.Frame(root)
+    fl_path_frame = ttk.Frame(setup_root)
     fl_path_frame.pack(fill="x", padx=20, pady=(10, 0))
 
     # Add indicator label
@@ -391,8 +400,12 @@ def first_run_setup():
         update_indicators()
     ]).pack(side=tk.LEFT)
 
+    ttk.Label(setup_root,
+              text=r"Example - C:\Program Files\Image-Line\FL Studio 21",
+              font=(Font_Name, 10)).pack(anchor="w", padx=40, pady=(0, 5))
+
     # Processor Type
-    processor_frame = ttk.Frame(root)
+    processor_frame = ttk.Frame(setup_root)
     processor_frame.pack(fill="x", padx=20, pady=(10, 0))
 
     # Add indicator label
@@ -427,6 +440,7 @@ def first_run_setup():
         return True
 
     def on_ok():
+        nonlocal setup_completed
         if validate():
             # Set the global variables
             global Output_Folder_Path, Dir_FLP_Projects, FL_Studio_Path, Processor_Type
@@ -454,13 +468,22 @@ def first_run_setup():
             save_config()
 
             # Close the setup window
-            root.destroy()
+            setup_completed = True
+            #setup_root.quit()
+            setup_root.destroy()
+            return True
 
-            # Start the main application
-            style = Style("pulse" if USE_DARK_MODE else "flatly")
-            main_root = style.master
-            app = FLPExporterUI(main_root)
-            main_root.mainloop()
+        return False
+
+    ttk.Button(setup_root, text="OK", command=on_ok).pack(pady=20)
+    update_indicators()
+    setup_root.mainloop()
+
+    if setup_completed:
+        root = tk.Tk()
+        style = Style("flatly")
+        app = FLPExporterUI(root)
+        root.mainloop()
 
     # Add a frame for the status indicators at the bottom
     status_frame = ttk.Frame(root)
@@ -468,20 +491,18 @@ def first_run_setup():
 
     # Add legend for the indicators
     ttk.Label(status_frame, text="Status:", font=(
-        Font_Name, 20)).pack(side=tk.LEFT)
+        Font_Name, 12)).pack(side=tk.LEFT)
     ttk.Label(status_frame, text=f"{CHECK_ICON} = Completed",
-              font=(Font_Name, 20), style="Green.TLabel").pack(side=tk.LEFT, padx=(10, 20))
+              font=(Font_Name, 12), style="Green.TLabel").pack(side=tk.LEFT, padx=(10, 20))
     ttk.Label(status_frame, text=f"{EMPTY_ICON} = Needs input",
-              font=(Font_Name, 20), style="Gray.TLabel").pack(side=tk.LEFT)
+              font=(Font_Name, 12), style="Gray.TLabel").pack(side=tk.LEFT)
 
-    ttk.Button(root, text="OK", command=on_ok).pack(pady=20)
 
     # Start checking FL Studio status
     check_fl_studio_status()
 
     # Initial update of indicators
-    update_indicators()
-    root.mainloop()
+    
 
 def is_fl_studio_running():
     """Check if FL Studio is running"""
@@ -2274,14 +2295,28 @@ class FLPExporterUI:
 
 # === START APP ===
 if __name__ == "__main__":
-    if check_first_run():
-        first_run_setup()
-    else:
-        # Try to load config, if it fails run first-time setup
-        if not load_config():
-            first_run_setup()
+    # Initialize default values
+    Output_Folder_Path = ""
+    Dir_FLP_Projects = []
+    FL_Studio_Path = ""
+    Processor_Type = "FL64.exe"
 
+    # Try to load config
+    if os.path.exists(CONFIG_FILE):
+        load_config()
+    else:
+        # Run first-time setup
+        first_run_setup()
+        # Reload config after setup
+        load_config()
+
+    # Verify required paths are set
+    if not Output_Folder_Path or not Dir_FLP_Projects or not FL_Studio_Path:
+        messagebox.showerror("Error", "Required paths not configured")
+        sys.exit(1)
+
+    # Now create the main application
+    root = tk.Tk()
     style = Style("pulse" if USE_DARK_MODE else "flatly")
-    root = style.master
     app = FLPExporterUI(root)
     root.mainloop()
