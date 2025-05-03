@@ -27,10 +27,10 @@ USE_DARK_MODE = False
 #Dir_FLP_Projects = r"C:\Users\foendoe.kevin\Documents\findusic - FLP Input"
 
 Dir_FLP_Projects = [
-    # r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 12 - projects",
-    # r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 20 - projects",
-    # r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 21 - projects"
-    r"C:\Users\foendoe.kevin\Documents\findusic - FLP Input"
+     r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 12 - projects",
+     r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 20 - projects",
+     r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 21 - projects"
+    #r"C:\Users\foendoe.kevin\Documents\findusic - FLP Input"
 ]
 Output_Folder_Path = r"C:\Users\Kfoen\Documents\Docs KF\FL SONGS MP3\Python_Audio_Output"
 FL_Studio_Path = r"C:\Program Files\Image-Line\FL Studio 21"
@@ -1565,7 +1565,7 @@ class FLPExporterUI:
         # Update the UI immediately
         self.root.update_idletasks()
         # Brief delay
-        self.root.after(5, self._show_frames_after_flash)
+        self.root.after(50, self._show_frames_after_flash)
 
     def _show_frames_after_flash(self):
         """Shows frames again after flash effect"""
