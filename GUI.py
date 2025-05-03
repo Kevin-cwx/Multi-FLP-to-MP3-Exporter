@@ -18,6 +18,8 @@ import winreg
 import sys
 from tkinter import PhotoImage
 import time
+import configparser
+from pathlib import Path
 
 
 global Output_Folder_Path
@@ -26,15 +28,21 @@ global Project_Order_By
 USE_DARK_MODE = False
 #Dir_FLP_Projects = r"C:\Users\foendoe.kevin\Documents\findusic - FLP Input"
 
-Dir_FLP_Projects = [
-     r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 12 - projects",
-     r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 20 - projects",
-     r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 21 - projects"
-    #r"C:\Users\foendoe.kevin\Documents\findusic - FLP Input"
-]
-Output_Folder_Path = r"C:\Users\Kfoen\Documents\Docs KF\FL SONGS MP3\Python_Audio_Output"
-FL_Studio_Path = r"C:\Program Files\Image-Line\FL Studio 21"
-Processor_Type = "FL64.exe"
+#Dir_FLP_Projects = [
+#    r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 12 - projects",
+#     r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 20 - projects",
+#     r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 21 - projects"
+#    #r"C:\Users\foendoe.kevin\Documents\findusic - FLP Input"
+#]
+#Output_Folder_Path = r"C:\Users\Kfoen\Documents\Docs KF\FL SONGS MP3\Python_Audio_Output"
+#FL_Studio_Path = r"C:\Program Files\Image-Line\FL Studio 21"
+#Processor_Type = "FL64.exe"
+CONFIG_FILE = os.path.join(os.path.expanduser('~'), r'Multi_FLP_To_MP3\flp_exporter_config.ini')
+os.makedirs(os.path.join(os.path.expanduser('~'),
+            r'Multi_FLP_To_MP3'), exist_ok=True)
+open(os.path.join(os.path.expanduser('~'),
+     r'Multi_FLP_To_MP3\do not delete.txt'), 'w').write('')
+
 
 Search_Placeholder_Text = "Search Projects"
 Project_Order_By = "name"  #date, name
@@ -46,7 +54,13 @@ Output_Audio_Format = "Emp3"
 Mouse_Scroll_Speed = 7
 Application_Name = "Multi FLP to MP3 Exporter"
 Launch_At_Startup = False
-Font_Name = "Helvetica"
+Font_Name = "Meiryo"
+
+CHECK_ICON = "✓"
+EMPTY_ICON = "○"
+GREEN = "#2ecc71"
+GRAY = "#95a5a6"
+
 # Emp3,ogg,wav
 #ogg does not work in powershell, FL might have disabled
 
@@ -139,6 +153,342 @@ def export_flp_to_mp3(file_path):
     #print(Export_FLP_to_MP3)
     subprocess.call(Export_FLP_to_MP3, shell=True)
 
+
+def save_config():
+    """Save current settings to config file"""
+    config = configparser.ConfigParser()
+
+    config['PATHS'] = {
+        'Output_Folder_Path': Output_Folder_Path,
+        # Store multiple paths separated by ;
+        'Dir_FLP_Projects': ';'.join(Dir_FLP_Projects),
+        'FL_Studio_Path': FL_Studio_Path
+    }
+
+    config['SETTINGS'] = {
+            'Processor_Type': Processor_Type,
+            'Project_Order_By': Project_Order_By,
+            'Set_Output_Sub_Folder': str(Set_Output_Sub_Folder),
+            'Output_Sub_Folder_Name': Output_Sub_Folder_Name,
+            'Output_Audio_Format': Output_Audio_Format,
+            'Mouse_Scroll_Speed': str(Mouse_Scroll_Speed),
+            'Application_Name': Application_Name,
+            'Launch_At_Startup': str(Launch_At_Startup),
+            'Font_Name': Font_Name,
+            'USE_DARK_MODE': str(USE_DARK_MODE)
+        }
+        
+    os.makedirs(os.path.dirname(CONFIG_FILE), exist_ok=True)
+    with open(CONFIG_FILE, 'w') as configfile:
+        config.write(configfile)
+
+
+def load_config():
+    """Load settings from config file"""
+    global Output_Folder_Path, Dir_FLP_Projects, FL_Studio_Path, Processor_Type
+    global Project_Order_By, Set_Output_Sub_Folder, Output_Sub_Folder_Name
+    global Output_Audio_Format, Mouse_Scroll_Speed, Application_Name
+    global Launch_At_Startup, Font_Name, USE_DARK_MODE
+
+    if not os.path.exists(CONFIG_FILE):
+        return False
+
+    config = configparser.ConfigParser()
+    config.read(CONFIG_FILE)
+
+    try:
+        # Load paths
+        Output_Folder_Path = config['PATHS']['Output_Folder_Path']
+        Dir_FLP_Projects = [x.strip() for x in config['PATHS']
+                            ['Dir_FLP_Projects'].split(';') if x.strip()]
+        FL_Studio_Path = config['PATHS']['FL_Studio_Path']
+
+        # Load settings
+        Processor_Type = config['SETTINGS']['Processor_Type']
+        Project_Order_By = config['SETTINGS']['Project_Order_By']
+        Set_Output_Sub_Folder = config['SETTINGS'].getboolean(
+            'Set_Output_Sub_Folder')
+        Output_Sub_Folder_Name = config['SETTINGS']['Output_Sub_Folder_Name']
+        Output_Audio_Format = config['SETTINGS']['Output_Audio_Format']
+        Mouse_Scroll_Speed = int(config['SETTINGS']['Mouse_Scroll_Speed'])
+        Application_Name = config['SETTINGS']['Application_Name']
+        Launch_At_Startup = config['SETTINGS'].getboolean('Launch_At_Startup')
+        Font_Name = config['SETTINGS']['Font_Name']
+        USE_DARK_MODE = config['SETTINGS'].getboolean('USE_DARK_MODE')
+
+        return True
+    except (KeyError, ValueError) as e:
+        print(f"Error loading config: {e}")
+        return False
+    
+
+def check_first_run():
+    """Check if this is the first run by checking for config file"""
+    return not os.path.exists(CONFIG_FILE)
+
+
+def get_fl_studio_info():
+    """Try to automatically detect FL Studio path and processor type"""
+    fl_path = None
+    processor = None
+
+    # Try to find FL Studio in common installation paths
+    common_paths = [
+        r"C:\Program Files\Image-Line\FL Studio 21",
+        r"C:\Program Files\Image-Line\FL Studio 20",
+        r"C:\Program Files (x86)\Image-Line\FL Studio 20",
+        # Add more common paths as needed
+    ]
+
+    for path in common_paths:
+        if os.path.exists(path):
+            # Check for both FL64.exe and FL.exe
+            if os.path.exists(os.path.join(path, "FL64.exe")):
+                fl_path = path
+                processor = "FL64.exe"
+                break
+            elif os.path.exists(os.path.join(path, "FL.exe")):
+                fl_path = path
+                processor = "FL.exe"
+                break
+
+    return fl_path, processor
+
+
+def first_run_setup():
+    """Show first-run configuration dialog"""
+    root = tk.Tk()
+    root.title("First Run Setup")
+    # Increased height to accommodate FL Studio status
+    root.geometry("600x500")
+
+    # Create style for indicators
+    style = ttk.Style()
+    style.configure("Green.TLabel", foreground=GREEN)
+    style.configure("Gray.TLabel", foreground=GRAY)
+
+    # Create variables
+    output_folder = tk.StringVar()
+    flp_folder = tk.StringVar()
+    fl_studio_path = tk.StringVar(value="")
+    processor_type = tk.StringVar(value="")
+
+    # Create indicator variables
+    output_folder_indicator = tk.StringVar(value=EMPTY_ICON)
+    flp_folder_indicator = tk.StringVar(value=EMPTY_ICON)
+    fl_studio_indicator = tk.StringVar(value=EMPTY_ICON)
+    processor_indicator = tk.StringVar(value=EMPTY_ICON)
+
+    # FL Studio status label
+    fl_status_label = ttk.Label(
+        root, text="QAQ", font=(Font_Name, 10))
+    fl_status_label.pack(pady=(10, 0))
+
+    # FL Studio path info label
+    fl_path_label = ttk.Label(root, text="", font=(Font_Name, 10))
+    fl_path_label.pack(pady=(0, 10))
+
+    def update_indicators():
+        """Update all field indicators based on current values"""
+        fields = [
+            (output_folder, output_folder_indicator),
+            (flp_folder, flp_folder_indicator),
+            (fl_studio_path, fl_studio_indicator),
+            (processor_type, processor_indicator)
+        ]
+        for field, indicator in fields:
+            indicator.set(CHECK_ICON if field.get() else EMPTY_ICON)
+
+    def check_fl_studio_status():
+        """Check FL Studio status and update UI"""
+        if is_fl_studio_running():
+            # Try to get FL Studio path from running process
+            for process in psutil.process_iter(['pid', 'name', 'exe']):
+                if process.info['name'].lower() in ['fl64.exe', 'fl.exe']:
+                    fl_path = os.path.dirname(process.info['exe'])
+                    fl_studio_path.set(fl_path)
+                    processor_type.set(process.info['name'])
+                    fl_status_label.config(
+                        text="FL Studio status: Running", foreground="green")
+                    fl_path_label.config(
+                        text=f"Detected path: {fl_path}\nProcessor: {process.info['name']}")
+                    # Update indicators
+                    fl_studio_indicator.set(CHECK_ICON)
+                    processor_indicator.set(CHECK_ICON)
+                    break
+        else:
+            fl_status_label.config(
+                text="Manually open FL Studio", foreground="red")
+            fl_path_label.config(text="")
+            # Reset indicators if FL Studio is closed
+            fl_studio_indicator.set(EMPTY_ICON)
+            processor_indicator.set(EMPTY_ICON)
+
+        # Check again after 1 second
+        root.after(500, check_fl_studio_status)
+
+    # Track variables to update indicators
+    output_folder.trace_add("write", lambda *args: update_indicators())
+    flp_folder.trace_add("write", lambda *args: update_indicators())
+    fl_studio_path.trace_add("write", lambda *args: update_indicators())
+    processor_type.trace_add("write", lambda *args: update_indicators())
+
+    # Start checking FL Studio status
+    check_fl_studio_status()
+
+    # Create widgets
+    ttk.Label(root, text="First Run Configuration",
+              font=(Font_Name, 16, "bold")).pack(pady=10)
+
+    # Output Folder
+    output_frame = ttk.Frame(root)
+    output_frame.pack(fill="x", padx=20, pady=(10, 0))
+    
+    # Add indicator label
+    output_indicator = ttk.Label(output_frame, textvariable=output_folder_indicator, 
+                                font=(Font_Name, 14), style="Gray.TLabel")
+    output_indicator.pack(side=tk.LEFT, padx=(0, 5))
+    
+    ttk.Label(output_frame, text="Output Folder for MP3 files:").pack(side=tk.LEFT)
+    ttk.Entry(output_frame, textvariable=output_folder).pack(
+        side=tk.LEFT, fill=tk.X, expand=True, padx=(5, 5))
+    ttk.Button(output_frame, text="Browse", command=lambda: [
+        output_folder.set(filedialog.askdirectory()),
+        update_indicators()
+    ]).pack(side=tk.LEFT)
+
+    # FLP Projects Folder
+    flp_frame = ttk.Frame(root)
+    flp_frame.pack(fill="x", padx=20, pady=(10, 0))
+
+    flp_indicator = ttk.Label(flp_frame, textvariable=flp_folder_indicator,
+                              font=(Font_Name, 14), style="Gray.TLabel")
+    flp_indicator.pack(side=tk.LEFT, padx=(0, 5))
+
+    ttk.Label(flp_frame, text="FLP Projects Folder:").pack(side=tk.LEFT)
+    ttk.Entry(flp_frame, textvariable=flp_folder).pack(
+        side=tk.LEFT, fill=tk.X, expand=True, padx=(5, 5))
+    ttk.Button(flp_frame, text="Browse", command=lambda: [
+        flp_folder.set(filedialog.askdirectory()),
+        update_indicators()
+    ]).pack(side=tk.LEFT)
+
+    # FL Studio Path
+    fl_path_frame = ttk.Frame(root)
+    fl_path_frame.pack(fill="x", padx=20, pady=(10, 0))
+
+    # Add indicator label
+    fl_studio_indicator_label = ttk.Label(fl_path_frame, textvariable=fl_studio_indicator,
+                                          font=(Font_Name, 14), style="Gray.TLabel")
+    fl_studio_indicator_label.pack(side=tk.LEFT, padx=(0, 5))
+
+    ttk.Label(fl_path_frame, text="FL Studio Installation Path:").pack(
+        side=tk.LEFT)
+    ttk.Entry(fl_path_frame, textvariable=fl_studio_path).pack(
+        side=tk.LEFT, fill=tk.X, expand=True, padx=(5, 5))
+    ttk.Button(fl_path_frame, text="Browse", command=lambda: [
+        fl_studio_path.set(filedialog.askdirectory()),
+        update_indicators()
+    ]).pack(side=tk.LEFT)
+
+    # Processor Type
+    processor_frame = ttk.Frame(root)
+    processor_frame.pack(fill="x", padx=20, pady=(10, 0))
+
+    # Add indicator label
+    processor_indicator_label = ttk.Label(processor_frame, textvariable=processor_indicator,
+                                          font=(Font_Name, 14), style="Gray.TLabel")
+    processor_indicator_label.pack(side=tk.LEFT, padx=(0, 5))
+
+    ttk.Label(processor_frame, text="FL Studio Processor Type:").pack(
+        side=tk.LEFT)
+    ttk.Combobox(processor_frame, textvariable=processor_type, values=[
+                 "FL64.exe", "FL.exe"], state="readonly").pack(side=tk.LEFT)
+
+    # Validation function
+    def validate():
+        if not all([output_folder.get(), flp_folder.get()]):
+            messagebox.showerror("Error", "All fields are required!")
+            return False
+
+        if not os.path.isdir(output_folder.get()):
+            messagebox.showerror("Error", "Output folder does not exist!")
+            return False
+
+        if not os.path.isdir(flp_folder.get()):
+            messagebox.showerror("Error", "FLP folder does not exist!")
+            return False
+
+        # FL Studio path is optional since we try to detect it automatically
+        if fl_studio_path.get() and not os.path.isdir(fl_studio_path.get()):
+            messagebox.showerror("Error", "FL Studio path does not exist!")
+            return False
+
+        return True
+
+    def on_ok():
+        if validate():
+            # Set the global variables
+            global Output_Folder_Path, Dir_FLP_Projects, FL_Studio_Path, Processor_Type
+            Output_Folder_Path = output_folder.get()
+            Dir_FLP_Projects = [flp_folder.get()]
+
+            # Use detected path if available, otherwise use user input
+            detected_fl_path = fl_studio_path.get()
+            if detected_fl_path:
+                FL_Studio_Path = detected_fl_path
+            else:
+                # Try to auto-detect if user didn't provide path
+                fl_path, processor = get_fl_studio_info()
+                if fl_path:
+                    FL_Studio_Path = fl_path
+                    Processor_Type = processor
+                else:
+                    messagebox.showerror(
+                        "Error", "Could not detect FL Studio path")
+                    return
+
+            Processor_Type = processor_type.get()
+
+            # Save to config file
+            save_config()
+
+            # Close the setup window
+            root.destroy()
+
+            # Start the main application
+            style = Style("pulse" if USE_DARK_MODE else "flatly")
+            main_root = style.master
+            app = FLPExporterUI(main_root)
+            main_root.mainloop()
+
+    # Add a frame for the status indicators at the bottom
+    status_frame = ttk.Frame(root)
+    status_frame.pack(fill="x", padx=20, pady=(20, 10))
+
+    # Add legend for the indicators
+    ttk.Label(status_frame, text="Status:", font=(
+        Font_Name, 20)).pack(side=tk.LEFT)
+    ttk.Label(status_frame, text=f"{CHECK_ICON} = Completed",
+              font=(Font_Name, 20), style="Green.TLabel").pack(side=tk.LEFT, padx=(10, 20))
+    ttk.Label(status_frame, text=f"{EMPTY_ICON} = Needs input",
+              font=(Font_Name, 20), style="Gray.TLabel").pack(side=tk.LEFT)
+
+    ttk.Button(root, text="OK", command=on_ok).pack(pady=20)
+
+    # Start checking FL Studio status
+    check_fl_studio_status()
+
+    # Initial update of indicators
+    update_indicators()
+    root.mainloop()
+
+def is_fl_studio_running():
+    """Check if FL Studio is running"""
+    for process in psutil.process_iter(attrs=['pid', 'name']):
+        if process.info['name'].lower() in ['fl64.exe', 'fl.exe']:
+            return True
+    return False
 
 class FLPExporterUI:
 
@@ -1059,6 +1409,7 @@ class FLPExporterUI:
                     return
                 FL_Studio_Path = fl_studio_path
 
+            self.save_settings()
             self.settings_frame.destroy()
             self.settings_open = False
 
@@ -1866,9 +2217,70 @@ class FLPExporterUI:
         # Force update all widgets
         self.root.update_idletasks()
 
+    def save_settings(self):
+        """Save current settings to config file"""
+        global Output_Folder_Path, Dir_FLP_Projects, FL_Studio_Path, Processor_Type
+        global Project_Order_By, Set_Output_Sub_Folder, Output_Sub_Folder_Name
+        global Output_Audio_Format, Mouse_Scroll_Speed, Application_Name
+        global Launch_At_Startup, Font_Name, USE_DARK_MODE
+
+        # Update globals from UI if in settings mode
+        if hasattr(self, 'settings_open') and self.settings_open:
+            Output_Folder_Path = self.output_folder_entry.get().strip()
+            Dir_FLP_Projects = [
+                f.strip() for f in self.flp_folder_entry.get().strip().split(";") if f.strip()]
+            Project_Order_By = self.order_var.get()
+            FL_Studio_Path = self.fl_studio_path_entry.get().strip()
+            Processor_Type = self.processor_type.get()
+            Set_Output_Sub_Folder = self.subfolder_toggle_var.get()
+            Output_Sub_Folder_Name = self.subfolder_entry.get().strip()
+
+            # Mouse scroll speed
+            SCROLL_SPEED_MAPPING = {1: 7, 2: 10, 3: 15, 4: 19}
+            selected_key = self.scroll_speed_var.get()
+            Mouse_Scroll_Speed = SCROLL_SPEED_MAPPING.get(selected_key, 10)
+
+        save_config()
+
+    def get_fl_studio_location_from_running_process(self):
+        """Get FL Studio location from running process and update UI status"""
+        if not is_fl_studio_running():
+            self.status_label.config(
+                text="Please manually open FL Studio", bootstyle="warning")
+            return None, None
+
+        # If FL Studio is running, get the standard info
+        fl_studio_full_location = None
+        for process in psutil.process_iter(['pid', 'name', 'exe']):
+            if process.info['name'].lower() in ['fl64.exe', 'fl.exe']:
+                fl_studio_full_location = process.info['exe']
+                break
+
+        if fl_studio_full_location:
+            processor = os.path.basename(fl_studio_full_location)
+            fl_path = os.path.dirname(fl_studio_full_location)
+            self.status_label.config(
+                text=f"FL Studio found at: {fl_path}\nProcessor: {processor}",
+                bootstyle="success"
+            )
+            return fl_path, processor
+
+        self.status_label.config(
+            text="FL Studio process not found", bootstyle="danger")
+        return None, None
+
+
+    
 
 # === START APP ===
 if __name__ == "__main__":
+    if check_first_run():
+        first_run_setup()
+    else:
+        # Try to load config, if it fails run first-time setup
+        if not load_config():
+            first_run_setup()
+
     style = Style("pulse" if USE_DARK_MODE else "flatly")
     root = style.master
     app = FLPExporterUI(root)
