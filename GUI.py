@@ -26,18 +26,19 @@ global Output_Folder_Path
 global Project_Order_By
 # === CONFIG ===
 USE_DARK_MODE = False
-#Dir_FLP_Projects = r"C:\Users\foendoe.kevin\Documents\findusic - FLP Input"
+# Dir_FLP_Projects = r"C:\Users\foendoe.kevin\Documents\findusic - FLP Input"
 
-#Dir_FLP_Projects = [
+# Dir_FLP_Projects = [
 #    r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 12 - projects",
 #     r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 20 - projects",
 #     r"C:\Users\Kfoen\Documents\Image-Line\FL Studio\Projects\FL 21 - projects"
 #    #r"C:\Users\foendoe.kevin\Documents\findusic - FLP Input"
-#]
-#Output_Folder_Path = r"C:\Users\Kfoen\Documents\Docs KF\FL SONGS MP3\Python_Audio_Output"
-#FL_Studio_Path = r"C:\Program Files\Image-Line\FL Studio 21"
-#Processor_Type = "FL64.exe"
-CONFIG_FILE = os.path.join(os.path.expanduser('~'), r'Multi_FLP_To_MP3\flp_exporter_config.ini')
+# ]
+# Output_Folder_Path = r"C:\Users\Kfoen\Documents\Docs KF\FL SONGS MP3\Python_Audio_Output"
+# FL_Studio_Path = r"C:\Program Files\Image-Line\FL Studio 21"
+# Processor_Type = "FL64.exe"
+CONFIG_FILE = os.path.join(os.path.expanduser(
+    '~'), r'Multi_FLP_To_MP3\flp_exporter_config.ini')
 os.makedirs(os.path.join(os.path.expanduser('~'),
             r'Multi_FLP_To_MP3'), exist_ok=True)
 open(os.path.join(os.path.expanduser('~'),
@@ -45,7 +46,7 @@ open(os.path.join(os.path.expanduser('~'),
 
 
 Search_Placeholder_Text = "Search Projects"
-Project_Order_By = "name"  #date, name
+Project_Order_By = "name"  # date, name
 global Set_Output_Sub_Folder
 Set_Output_Sub_Folder = False
 Output_Sub_Folder_Name = ""
@@ -62,20 +63,29 @@ GREEN = "#2ecc71"
 GRAY = "black"
 
 # Emp3,ogg,wav
-#ogg does not work in powershell, FL might have disabled
+# ogg does not work in powershell, FL might have disabled
 
 #
 # Colors
 #
-Selected_Project_Background_Color = "#2fbdff"
+
+def darken_color(hex_color, factor=0.9):
+    """Darken a HEX color by a given factor (0–1)."""
+    hex_color = hex_color.lstrip('#')
+    rgb = [int(hex_color[i:i+2], 16) for i in (0, 2, 4)]
+    darker_rgb = [max(0, int(c * factor)) for c in rgb]
+    return "#{:02x}{:02x}{:02x}".format(*darker_rgb)
+
+Background_Color = "#cee4ff"
+Darker_Background_Color = darken_color(Background_Color, factor=0.98)
+User_Selected_Project_Background_Color = "#2fbdff"
 Selected_Project_Text_Color = "black"
-Selected_Project_Window_Background_Color = "#77f190"
+Selected_Project_Window_Background_Color = Darker_Background_Color
 
 Top_Title_Color = "black"
 Search_Placeholder_Text_Color = "black"
-Project_Color_Tree = "white"
-Background_Color = "#cee4ff"
-Project_Tree_Background_Color = "white"
+Project_Color_Tree = "red"
+Project_Tree_Background_Color = Background_Color
 Project_Tree_Text_Color = "black"
 """
 #34b1eb
@@ -88,6 +98,8 @@ THEME_NAMES = [
     "Dark Mode", "Cherry", "Sky Blue", "Default", "FL Skin", "Barbie",
     "Forest Green", "Brazil Tan"
 ]
+
+
 
 
 def get_file_paths(root_directories):
@@ -150,7 +162,7 @@ def export_flp_to_mp3(file_path):
         full_output_path = Output_Folder_Path
 
     Export_FLP_to_MP3 = f'cd "{FL_Studio_Path}" & {Processor_Type} /R /{Output_Audio_Format} "{file_path}" /O"{full_output_path}"'
-    #print(Export_FLP_to_MP3)
+    # print(Export_FLP_to_MP3)
     subprocess.call(Export_FLP_to_MP3, shell=True)
 
 
@@ -166,18 +178,18 @@ def save_config():
     }
 
     config['SETTINGS'] = {
-            'Processor_Type': Processor_Type,
-            'Project_Order_By': Project_Order_By,
-            'Set_Output_Sub_Folder': str(Set_Output_Sub_Folder),
-            'Output_Sub_Folder_Name': Output_Sub_Folder_Name,
-            'Output_Audio_Format': Output_Audio_Format,
-            'Mouse_Scroll_Speed': str(Mouse_Scroll_Speed),
-            'Application_Name': Application_Name,
-            'Launch_At_Startup': str(Launch_At_Startup),
-            'Font_Name': Font_Name,
-            'USE_DARK_MODE': str(USE_DARK_MODE)
-        }
-        
+        'Processor_Type': Processor_Type,
+        'Project_Order_By': Project_Order_By,
+        'Set_Output_Sub_Folder': str(Set_Output_Sub_Folder),
+        'Output_Sub_Folder_Name': Output_Sub_Folder_Name,
+        'Output_Audio_Format': Output_Audio_Format,
+        'Mouse_Scroll_Speed': str(Mouse_Scroll_Speed),
+        'Application_Name': Application_Name,
+        'Launch_At_Startup': str(Launch_At_Startup),
+        'Font_Name': Font_Name,
+        'USE_DARK_MODE': str(USE_DARK_MODE)
+    }
+
     os.makedirs(os.path.dirname(CONFIG_FILE), exist_ok=True)
     with open(CONFIG_FILE, 'w') as configfile:
         config.write(configfile)
@@ -220,7 +232,7 @@ def load_config():
     except (KeyError, ValueError) as e:
         print(f"Error loading config: {e}")
         return False
-    
+
 
 def check_first_run():
     """Check if this is the first run by checking for config file"""
@@ -260,7 +272,7 @@ def first_run_setup():
     setup_root = tk.Toplevel()
     setup_root.title("First Run Setup")
     setup_root.geometry("600x500")
-    setup_root.grab_set() 
+    setup_root.grab_set()
     setup_root.transient()
     setup_completed = False
 
@@ -345,13 +357,14 @@ def first_run_setup():
     # Output Folder
     output_frame = ttk.Frame(setup_root)
     output_frame.pack(fill="x", padx=20, pady=(10, 0))
-    
+
     # Add indicator label
-    output_indicator = ttk.Label(output_frame, textvariable=output_folder_indicator, 
-                                font=(Font_Name, 14), style="Gray.TLabel")
+    output_indicator = ttk.Label(output_frame, textvariable=output_folder_indicator,
+                                 font=(Font_Name, 14), style="Gray.TLabel")
     output_indicator.pack(side=tk.LEFT, padx=(0, 5))
-    
-    ttk.Label(output_frame, text="Output Folder for MP3 files:").pack(side=tk.LEFT)
+
+    ttk.Label(output_frame, text="Output Folder for MP3 files:").pack(
+        side=tk.LEFT)
     ttk.Entry(output_frame, textvariable=output_folder).pack(
         side=tk.LEFT, fill=tk.X, expand=True, padx=(5, 5))
     ttk.Button(output_frame, text="Browse", command=lambda: [
@@ -468,7 +481,7 @@ def first_run_setup():
             if detected_fl_path:
                 FL_Studio_Path = detected_fl_path
                 print("a")
-                
+
             else:
                 print("b")
                 # Try to auto-detect if user didn't provide path
@@ -494,13 +507,12 @@ def first_run_setup():
     print("w")
 
     ttk.Button(setup_root, text="OK", command=on_ok).pack(pady=20)
-    #update_indicators()
-    #setup_root.mainloop()
+    # update_indicators()
+    # setup_root.mainloop()
     setup_root.mainloop()
 
-    #setup_root.destroy()
+    # setup_root.destroy()
     return bool(Output_Folder_Path and Dir_FLP_Projects and FL_Studio_Path)
-
 
     if setup_completed:
         root = tk.Tk()
@@ -510,14 +522,11 @@ def first_run_setup():
 
     return setup_completed
 
-    
-
-
     # Start checking FL Studio status
     check_fl_studio_status()
 
     # Initial update of indicators
-    
+
 
 def is_fl_studio_running():
     """Check if FL Studio is running"""
@@ -526,6 +535,7 @@ def is_fl_studio_running():
             return True
     return False
 
+
 class FLPExporterUI:
 
     def __init__(self, root):
@@ -533,7 +543,7 @@ class FLPExporterUI:
         self.root.title(Application_Name)
         self.root.geometry("600x700+30+20")
         self.root.minsize(600, 550)
-        #self.root.geometry("600x700+30+20")
+        # self.root.geometry("600x700+30+20")
         self.root.resizable(True, True)
         transparent_icon = tk.PhotoImage(width=1, height=1)
         self.root.iconbitmap(r"Media/Icons/FL21 - Icon.ico")
@@ -543,7 +553,6 @@ class FLPExporterUI:
         style = ttk.Style()
         style.configure('TLabel', background=Background_Color)
         style.configure('success.TLabel', background=Background_Color)
-     
         style.configure('Default_Theme.TFrame', background=Background_Color)
         style.configure('Settings.TFrame', background=Background_Color)
         style.configure('Settings.TEntry', fieldbackground=Background_Color)
@@ -585,7 +594,8 @@ class FLPExporterUI:
         self.content_frame = ttk.Frame(self.root, style='Default_Theme.TFrame')
         self.content_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=5)
 
-        self.left_frame = ttk.Frame(self.content_frame, style='Default_Theme.TFrame')
+        self.left_frame = ttk.Frame(
+            self.content_frame, style='Default_Theme.TFrame')
         self.left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
         search_frame = ttk.Frame(self.left_frame,
@@ -635,14 +645,14 @@ class FLPExporterUI:
         self.tree_label = ttk.Label(self.left_frame,
                                     text="Projects",
                                     font=(Font_Name, 14, "bold"),
-                                    background=Background_Color)
+                                    background=Background_Color )
         self.tree_label.pack(pady=(10, 0), anchor='w', fill='x', padx=0)
 
         self.instruction_label = ttk.Label(
             self.left_frame,
             text="Double click to select / unselect projects",
             font=(Font_Name, 14),
-            background=Background_Color 
+            background=Background_Color
         )
         self.instruction_label.pack(pady=(1, 1), anchor='w', fill='x')
 
@@ -651,16 +661,15 @@ class FLPExporterUI:
 
         style.configure(
             "Custom.Treeview",
-
             background=Project_Tree_Background_Color,
             fieldbackground="#f0f0f0",
-            foreground=Project_Tree_Text_Color, 
+            foreground=Project_Tree_Text_Color,
             font=(Font_Name, 9))
         # Projects Left Side
         self.tree = ttk.Treeview(
             tree_frame,
             selectmode="extended",
-            style="Custom.Treeview" 
+            style="Custom.Treeview"
         )
         self.tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
@@ -681,14 +690,14 @@ class FLPExporterUI:
 
         self.tree.bind("<Double-1>", self.on_tree_double_click)
         self.tree.tag_configure("selected",
-                                background=Selected_Project_Background_Color,
+                                background=User_Selected_Project_Background_Color,
                                 foreground=Selected_Project_Text_Color)
 
         # Add right-click binding to the tree
         self.tree.bind("<Button-3>", self.on_right_click)
 
-        self.right_frame = ttk.Frame(self.content_frame,
-                                     style='Default_Theme.TFrame')
+        self.right_frame = ttk.Frame(
+            self.content_frame, style='Default_Theme.TFrame')
         self.right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=False)
 
         self.cart_label = ttk.Label(self.right_frame,
@@ -702,11 +711,14 @@ class FLPExporterUI:
             height=15,
             width=40,
             selectmode=tk.SINGLE,
-            selectbackground="#fd4545",  # Light gray (match left tree)
-            fg="red",
             font=(Font_Name, 10))
         self.cart_listbox.pack(fill=tk.X, padx=10, pady=(5, 10))
         self.cart_listbox.bind("<Double-Button-1>", self.on_cart_double_click)
+        # Force listbox color
+        self.cart_listbox.configure(
+            bg=Selected_Project_Window_Background_Color, fg=Project_Tree_Text_Color, highlightthickness=2,                # Border thickness
+    highlightbackground="black",         # Border color when not focused
+    highlightcolor="black"    )
 
         self.export_button = ttk.Button(self.right_frame,
                                         text="Export",
@@ -1116,11 +1128,10 @@ class FLPExporterUI:
             # Add label underneath
             self.flp_folder_info_label = ttk.Label(
                 self.scrollable_settings_frame,
-                text=
-                ("This is where your FLP projects are. Add the top folder.\n"
-                 "Click Browse to add multiple folders.\n"
-                 "Example - C:\\Users\\Kfoen\\Documents\\Image-Line\\FL Studio\\Projects\\FL 25 - projects"
-                 ),
+                text=("This is where your FLP projects are. Add the top folder.\n"
+                      "Click Browse to add multiple folders.\n"
+                      "Example - C:\\Users\\Kfoen\\Documents\\Image-Line\\FL Studio\\Projects\\FL 25 - projects"
+                      ),
                 font=(Font_Name, Settings_Info_Label_Size),
                 foreground="black")
             self.flp_folder_info_label.pack(anchor="w", padx=20, pady=(2, 10))
@@ -1169,8 +1180,7 @@ class FLPExporterUI:
             # Info label
             self.theme_info_label = ttk.Label(
                 self.scrollable_settings_frame,
-                text=
-                "Change the application's color scheme.",
+                text="Change the application's color scheme.",
                 font=(Font_Name, Settings_Info_Label_Size))
             self.theme_info_label.pack(anchor="w", padx=20, pady=(0, 10))
 
@@ -1211,9 +1221,8 @@ class FLPExporterUI:
             # Info label
             self.fl_studio_path_info_label = ttk.Label(
                 self.scrollable_settings_frame,
-                text=
-                ("Path to your FL Studio installation folder.\nEnsure this is the correct path as you will not be able to export if the path is incorrect.\nExample - C:\\Program Files\\Image-Line\\FL Studio 21"
-                 ),
+                text=("Path to your FL Studio installation folder.\nEnsure this is the correct path as you will not be able to export if the path is incorrect.\nExample - C:\\Program Files\\Image-Line\\FL Studio 21"
+                      ),
                 font=(Font_Name, Settings_Info_Label_Size))
             self.fl_studio_path_info_label.pack(anchor="w",
                                                 padx=20,
@@ -1301,9 +1310,8 @@ class FLPExporterUI:
             # Info label
             self.subfolder_info_label = ttk.Label(
                 self.scrollable_settings_frame,
-                text=
-                ("Creates a subfolder in your output directory, to maintain a more organized output directory.\nFor example an album name."
-                 ),
+                text=("Creates a subfolder in your output directory, to maintain a more organized output directory.\nFor example an album name."
+                      ),
                 font=(Font_Name, Settings_Info_Label_Size))
             self.subfolder_info_label.pack(anchor="w", padx=20, pady=(0, 10))
 
@@ -1367,7 +1375,7 @@ class FLPExporterUI:
             self.version_label = ttk.Label(version_frame,
                                            text="Version 1.1",
                                            foreground="black",
-                                           font=(Font_Name, 14,"italic"))
+                                           font=(Font_Name, 14, "italic"))
             self.version_label.pack(
                 side=tk.LEFT,
                 padx=(20, 10),
@@ -1375,19 +1383,17 @@ class FLPExporterUI:
 
             self.about_info = ttk.Label(
                 self.scrollable_settings_frame,
-                text=
-                "Note: FL Studio must be closed before exporting song.\nMake sure to save your project.\nClicking export will automatically close FL Studio.\n\nIf your project has a popup, (unlicensed vst, audio missing) we recommend buying the vst as FL intends, or replacing the missing audio.\n" \
-                "The project will continue to export once you click ok, or remove the popup." \
+                text="Note: FL Studio must be closed before exporting song.\nMake sure to save your project.\nClicking export will automatically close FL Studio.\n\nIf your project has a popup, (unlicensed vst, audio missing) we recommend buying the vst as FL intends, or replacing the missing audio.\n"
+                "The project will continue to export once you click ok, or remove the popup."
                 "\n\nBackup projects are not shown, in order to reduce duplicates.",
                 font=(Font_Name, 15, ),
                 foreground="black",
                 wraplength=1100,
                 justify=tk.LEFT)
             self.about_info.pack(anchor="w", padx=20,
-                                   pady=(0, 60),fill='x') 
+                                 pady=(0, 60), fill='x')
             self.settings_canvas.configure(
                 scrollregion=self.settings_canvas.bbox("all"))
-
 
         else:
             # Save output path
@@ -1774,10 +1780,9 @@ class FLPExporterUI:
             else:
                 # Show that all today's files were already selected
                 Recent_Project_Label = "project" if total_today_files == 1 else "projects"
-                #self.status_label.config(text=f"All {total_today_files} recent {Recent_Project_Label} already selected.", bootstyle="info")
+                # self.status_label.config(text=f"All {total_today_files} recent {Recent_Project_Label} already selected.", bootstyle="info")
                 self.status_label.config(
-                    text=
-                    f"{total_today_files} recent {Recent_Project_Label} added.",
+                    text=f"{total_today_files} recent {Recent_Project_Label} added.",
                     bootstyle="primary")
 
     def on_mousewheel(self, event):
@@ -1826,11 +1831,11 @@ class FLPExporterUI:
                             return
                         else:
                             print("Error",
-                                                 "Folder path does not exist")
+                                  "Folder path does not exist")
                             return
 
                 print("Error",
-                                     "Could not find matching root directory")
+                      "Could not find matching root directory")
                 return
 
             # For nested folders (original logic)
@@ -1866,7 +1871,7 @@ class FLPExporterUI:
                     print("Error", "Folder path does not exist")
             else:
                 print("Error",
-                                     "Could not determine folder path")
+                      "Could not determine folder path")
 
         except Exception as e:
             print("Error", f"Could not open folder: {str(e)}")
@@ -1881,9 +1886,9 @@ class FLPExporterUI:
             file_path = self.path_map[self.context_item]
             try:
                 os.startfile(file_path)
-                #self.status_label.config(text="File opened successfully", bootstyle="success")
+                # self.status_label.config(text="File opened successfully", bootstyle="success")
             except Exception as e:
-                #self.status_label.config( text=f"Error opening file: {str(e)}", bootstyle="danger")
+                # self.status_label.config( text=f"Error opening file: {str(e)}", bootstyle="danger")
                 pass
             finally:
                 self.context_menu.destroy()
@@ -1897,9 +1902,9 @@ class FLPExporterUI:
 
             try:
                 os.startfile(folder_path)
-                #self.status_label.config( text="Folder opened successfully", bootstyle="success")
+                # self.status_label.config( text="Folder opened successfully", bootstyle="success")
             except Exception as e:
-                #self.status_label.config(text=f"Error opening folder: {str(e)}", bootstyle="danger")
+                # self.status_label.config(text=f"Error opening folder: {str(e)}", bootstyle="danger")
                 pass
             finally:
                 self.context_menu.destroy()
@@ -2010,7 +2015,7 @@ class FLPExporterUI:
         path = filedialog.askdirectory(
             mustexist=True,
             title="Select FL Studio Installation Folder",
-            initialdir="C:\\Program Files"  
+            initialdir="C:\\Program Files"
         )
         if path:
             self.fl_studio_path_entry.delete(0, tk.END)
@@ -2040,10 +2045,10 @@ class FLPExporterUI:
                     os.startfile(first_folder)
                 except Exception as e:
                     print("Error",
-                                          f"Could not open folder: {str(e)}")
+                          f"Could not open folder: {str(e)}")
             else:
                 print(
-                     "Error", "The specified FLP directory does not exist")
+                    "Error", "The specified FLP directory does not exist")
         else:
             print("Error", "No FLP folders are set in settings")
 
@@ -2304,7 +2309,6 @@ class FLPExporterUI:
         self.status_label.config(
             text="FL Studio process not found", bootstyle="danger")
         return None, None
-
 
     
 

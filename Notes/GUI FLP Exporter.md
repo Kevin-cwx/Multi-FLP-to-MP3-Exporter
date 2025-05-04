@@ -22,6 +22,8 @@
 - Package app
 - Test on other machine
 - Add themes functionality
+- Add settings functionality, save and get values from ini file
+- Change background color of selected project section
 
 
 
@@ -46,6 +48,8 @@
     - User can open file and flp location folder via right click
 
 - Make advanced closable (default)
+- Add change font size for projects and selected projects (padding must also be changed in background)
+
 
 #### About
 - ✅ - Add about section, with version name
@@ -53,12 +57,12 @@
 
 
 ## **First Time Setup**
-- Window with 
+- ✅ - Window with 
     - FL input folder
     - FL output folder
     - FL Path
     - Processor type
-- function to autofind info
+- ✅ - function to autofind info
 
 
 
