@@ -16,14 +16,13 @@
     - No unselect
 - Define tab order
 - Predefined group songs - that can be added in selected project
-- Increase size of checkbox
+- Increase size of checkbox in settings
 
-- Save settings, so that on restart it uses previous stored settings
 - Package app
 - Test on other machine
 - Add themes functionality
 - Add settings functionality, save and get values from ini file
-- Change background color of selected project section
+- ✅ - Change background color of selected project section
 
 
 
