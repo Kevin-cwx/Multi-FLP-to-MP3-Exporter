@@ -92,6 +92,8 @@
 4. ✅ - Add right click on folder also, to open folder location
 5. Figure out how to prevent FLP from exporting pattern instead of full song
     - If FLP is added to pattern it exports as pattern, if project is closed on song mode then it exports as song.
+6. First time user - Setup works, values are saved in ini file
+    - However once ok is clicked, program does not open main window
 
 
 

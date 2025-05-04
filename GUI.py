@@ -57,7 +57,7 @@ Launch_At_Startup = False
 Font_Name = "Meiryo"
 
 CHECK_ICON = "🗹"
-EMPTY_ICON = "O"
+EMPTY_ICON = "▢"
 GREEN = "#2ecc71"
 GRAY = "black"
 
@@ -2275,7 +2275,7 @@ class FLPExporterUI:
             SCROLL_SPEED_MAPPING = {1: 7, 2: 10, 3: 15, 4: 19}
             selected_key = self.scroll_speed_var.get()
             Mouse_Scroll_Speed = SCROLL_SPEED_MAPPING.get(selected_key, 10)
-
+            Launch_At_Startup = self.startup_var.get()
         save_config()
 
     def get_fl_studio_location_from_running_process(self):
