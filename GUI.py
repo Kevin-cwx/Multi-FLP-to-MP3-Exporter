@@ -53,6 +53,7 @@ Output_Sub_Folder_Name = ""
 Output_Sub_Folder_Name = ""
 Output_Audio_Format = "Emp3"
 Mouse_Scroll_Speed = 7
+Projects_Font_Size = 14
 Application_Name = "Multi FLP to MP3 Exporter"
 Launch_At_Startup = False
 Font_Name = "Meiryo"
@@ -187,7 +188,8 @@ def save_config():
         'Application_Name': Application_Name,
         'Launch_At_Startup': str(Launch_At_Startup),
         'Font_Name': Font_Name,
-        'USE_DARK_MODE': str(USE_DARK_MODE)
+        'USE_DARK_MODE': str(USE_DARK_MODE),
+        'Projects_Font_Size': str(Projects_Font_Size)
     }
 
     os.makedirs(os.path.dirname(CONFIG_FILE), exist_ok=True)
@@ -199,7 +201,7 @@ def load_config():
     """Load settings from config file"""
     global Output_Folder_Path, Dir_FLP_Projects, FL_Studio_Path, Processor_Type
     global Project_Order_By, Set_Output_Sub_Folder, Output_Sub_Folder_Name
-    global Output_Audio_Format, Mouse_Scroll_Speed, Application_Name
+    global Output_Audio_Format, Mouse_Scroll_Speed, Application_Name,Projects_Font_Size  
     global Launch_At_Startup, Font_Name, USE_DARK_MODE
 
     if not os.path.exists(CONFIG_FILE):
@@ -227,6 +229,7 @@ def load_config():
         Launch_At_Startup = config['SETTINGS'].getboolean('Launch_At_Startup')
         Font_Name = config['SETTINGS']['Font_Name']
         USE_DARK_MODE = config['SETTINGS'].getboolean('USE_DARK_MODE')
+        Projects_Font_Size = int(config['SETTINGS'].get('Projects_Font_Size', 14))
 
         return True
     except (KeyError, ValueError) as e:
@@ -665,7 +668,7 @@ class FLPExporterUI:
             background=Project_Tree_Background_Color,
             fieldbackground="#f0f0f0",
             foreground=Project_Tree_Text_Color,
-            font=(Font_Name, 9))
+            font=(Font_Name, Projects_Font_Size))
         # Projects Left Side
         self.tree = ttk.Treeview(
             tree_frame,
@@ -709,10 +712,10 @@ class FLPExporterUI:
 
         self.cart_listbox = Listbox(
             self.right_frame,
-            height=15,
+            height=13,
             width=40,
             selectmode=tk.SINGLE,
-            font=(Font_Name, 10))
+            font=(Font_Name, Projects_Font_Size))
         self.cart_listbox.pack(fill=tk.X, padx=10, pady=(5, 10))
         self.cart_listbox.bind("<Double-Button-1>", self.on_cart_double_click)
         # Force listbox color
@@ -991,7 +994,7 @@ class FLPExporterUI:
 
     def open_settings(self):
         global Output_Folder_Path, Project_Order_By, Dir_FLP_Projects, Set_Output_Sub_Folder
-        global Output_Sub_Folder_Name, Mouse_Scroll_Speed, FL_Studio_Path
+        global Output_Sub_Folder_Name, Mouse_Scroll_Speed, FL_Studio_Path, Projects_Font_Size
         Settings_Info_Label_Size = 12
 
         if not self.settings_open:
@@ -1357,6 +1360,29 @@ class FLPExporterUI:
                 text="1 Slow\n2 Medium\n3 Fast\n4 Very Fast",
                 font=(Font_Name, 12))
             self.scroll_info_label.pack(anchor="w", padx=20, pady=(0, 10))
+
+            # Font Size Selection
+            font_size_frame = ttk.Frame(self.scrollable_settings_frame, style='Settings.TFrame')
+            font_size_frame.pack(fill=tk.X, pady=5)
+
+            self.font_size_label = ttk.Label(font_size_frame, text="Projects Font Size", font=(Font_Name, 14))
+            self.font_size_label.pack(side=tk.LEFT, padx=(10, 10))
+
+            # Mapping between display names and actual font sizes
+            font_mapping = {'Normal': 9, 'Large': 14}
+            current_font_key = 'Normal' if Projects_Font_Size == 9 else 'Large'
+
+            self.font_size_var = tk.StringVar(value=current_font_key)
+            self.font_combobox = ttk.Combobox(
+                font_size_frame,
+                textvariable=self.font_size_var,
+                values=list(font_mapping.keys()),
+                state='readonly',
+                width=10,
+                font=(Font_Name, 14)
+            )
+            self.font_combobox.pack(side=tk.LEFT)
+            
 
             #
             # ABOUT
@@ -2282,6 +2308,16 @@ class FLPExporterUI:
             selected_key = self.scroll_speed_var.get()
             Mouse_Scroll_Speed = SCROLL_SPEED_MAPPING.get(selected_key, 10)
             Launch_At_Startup = self.startup_var.get()
+
+            # Handle font size
+            font_mapping = {'Normal': 9, 'Large': 14}
+            selected_font = self.font_size_var.get()
+            Projects_Font_Size = font_mapping.get(selected_font, 14)
+
+            # Update UI elements
+            style.configure("Custom.Treeview", font=(Font_Name, Projects_Font_Size))
+            self.cart_listbox.config(font=(Font_Name, Projects_Font_Size))
+
         save_config()
 
     def get_fl_studio_location_from_running_process(self):
