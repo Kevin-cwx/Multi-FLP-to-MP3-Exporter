@@ -279,7 +279,7 @@ def first_run_setup(root):
     setup_root.minsize(800, 550)
     setup_root.grab_set()
     setup_root.transient()
-    setup_completed = False
+    setup_completed = tk.BooleanVar(value=False) 
 
     # Create style for indicators
     style = ttk.Style()
@@ -490,57 +490,33 @@ def first_run_setup(root):
 
             # Use detected path if available, otherwise use user input
             detected_fl_path = fl_studio_path.get()
-            if detected_fl_path:
-                FL_Studio_Path = detected_fl_path
+            if fl_studio_path.get():
+                FL_Studio_Path = fl_studio_path.get()
+                Processor_Type = processor_type.get()
                 print("a")
 
             else:
-                print("b")
-                # Try to auto-detect if user didn't provide path
                 fl_path, processor = get_fl_studio_info()
-                if fl_path:
-                    print("c")
-                    FL_Studio_Path = fl_path
-                    Processor_Type = processor
-
-                else:
-                    print("d")
-                    messagebox.showerror(
-                        "Error", "Could not detect FL Studio path")
-                    return
-
-            Processor_Type = processor_type.get()
+                if not fl_path:
+                        messagebox.showerror("Error", "Could not detect FL Studio path")
+                        return
+                print("b")
+                FL_Studio_Path = fl_path
+                Processor_Type = processor
+                
+            print("c")
+            #Processor_Type = processor_type.get()
             save_config()
-            setup_completed = True
+            setup_completed.set(True)
             setup_root.destroy()
-
-            root.deiconify()
-
-            return True
-        print("not in validate")
-        return False
-    print("w")
+        else:
+            print("Validation failed")
 
     ttk.Button(setup_root, text="OK", command=on_ok).pack(pady=20)
     # update_indicators()
-    # setup_root.mainloop()
     setup_root.mainloop()
-
-    # setup_root.destroy()
-    return bool(Output_Folder_Path and Dir_FLP_Projects and FL_Studio_Path)
-
-    if setup_completed:
-        root = tk.Tk()
-        style = Style("flatly")
-        app = FLPExporterUI(root)
-        root.mainloop()
-
-    return setup_completed
-
-    # Start checking FL Studio status
-    check_fl_studio_status()
-
-    # Initial update of indicators
+    #root.wait_window(setup_root)
+    return setup_completed.get() 
 
 
 def is_fl_studio_running():
@@ -2378,7 +2354,10 @@ if __name__ == "__main__":
     else:
         # Run first-time setup
         if not first_run_setup(root):  # This will show the setup window
-            sys.exit(0)  # Exit if setup wasn't completed
+            print("First run setup was not completed")
+            sys.exit(0)
+        else:
+            print("First run setup completed")
         # Reload config after setup is complete
         load_config()
 
@@ -2388,6 +2367,7 @@ if __name__ == "__main__":
         sys.exit(1)
 
     # Now show the main application window
+    print("Deiconifying root window...")
     root.deiconify()  # Show the hidden root window
 
     # Apply ttkbootstrap style
@@ -2395,6 +2375,10 @@ if __name__ == "__main__":
         style = Style("pulse" if USE_DARK_MODE else "flatly")
     except tk.TclError:
         style = Style()
-
+try:
     app = FLPExporterUI(root)
     root.mainloop()
+except Exception as e:
+    print("Error starting main UI:", e)
+    messagebox.showerror("UI Error", str(e))
+    sys.exit(1)
