@@ -57,6 +57,7 @@ Projects_Font_Size = 14
 Application_Name = "Multi FLP to MP3 Exporter"
 Launch_At_Startup = False
 Font_Name = "Meiryo"
+Status_Indicator_Size = 30
 
 CHECK_ICON = "🗹"
 EMPTY_ICON = "□"
@@ -299,23 +300,23 @@ def first_run_setup():
 
     # FL Studio status label
     fl_status_label = ttk.Label(
-        setup_root, text="QAQ", font=(Font_Name, 10))
-    fl_status_label.pack(pady=(10, 0))
+        setup_root, text="QAQ", font=(Font_Name, 1))
+    fl_status_label.pack(pady=(0, 0))
 
     # FL Studio path info label
     fl_path_label = ttk.Label(setup_root, text="", font=(Font_Name, 10))
     fl_path_label.pack(pady=(0, 10))
 
+    
+
     def update_indicators():
-        """Update all field indicators based on current values"""
-        fields = [
-            (output_folder, output_folder_indicator),
-            (flp_folder, flp_folder_indicator),
-            (fl_studio_path, fl_studio_indicator),
-            (processor_type, processor_indicator)
-        ]
-        for field, indicator in fields:
-            indicator.set(CHECK_ICON if field.get() else EMPTY_ICON)
+        #Update all field indicators based on current values
+         for field_var, indicator_var, label_widget in indicator_fields:
+            has_value = bool(field_var.get())
+            # Update the indicator text
+            indicator_var.set(CHECK_ICON if has_value else EMPTY_ICON)
+            # Update the label's style
+            label_widget.configure(style="Green.TLabel" if has_value else "Gray.TLabel")
 
     def check_fl_studio_status():
         """Check FL Studio status and update UI"""
@@ -356,7 +357,7 @@ def first_run_setup():
 
     # Create widgets
     ttk.Label(setup_root, text="First Run Configuration",
-              font=(Font_Name, 16, "bold")).pack(pady=10)
+              font=(Font_Name, 16, "bold")).pack(pady=5)
 
     # Output Folder
     output_frame = ttk.Frame(setup_root)
@@ -364,10 +365,10 @@ def first_run_setup():
 
     # Add indicator label
     output_indicator = ttk.Label(output_frame, textvariable=output_folder_indicator,
-                                 font=(Font_Name, 14), style="Gray.TLabel")
+                                 font=(Font_Name, Status_Indicator_Size), style="Gray.TLabel")
     output_indicator.pack(side=tk.LEFT, padx=(0, 5))
 
-    ttk.Label(output_frame, text="Output Folder for MP3 files:").pack(
+    ttk.Label(output_frame, text="Output Folder for MP3 files:",font=(Font_Name, 14)).pack(
         side=tk.LEFT)
     ttk.Entry(output_frame, textvariable=output_folder).pack(
         side=tk.LEFT, fill=tk.X, expand=True, padx=(5, 5))
@@ -386,10 +387,10 @@ def first_run_setup():
     flp_frame.pack(fill="x", padx=20, pady=(10, 0))
 
     flp_indicator = ttk.Label(flp_frame, textvariable=flp_folder_indicator,
-                              font=(Font_Name, 14), style="Gray.TLabel")
+                              font=(Font_Name, Status_Indicator_Size), style="Gray.TLabel")
     flp_indicator.pack(side=tk.LEFT, padx=(0, 5))
 
-    ttk.Label(flp_frame, text="FLP Projects Folder:").pack(side=tk.LEFT)
+    ttk.Label(flp_frame, text="FLP Projects Folder:",font=(Font_Name, 14)).pack(side=tk.LEFT)
     ttk.Entry(flp_frame, textvariable=flp_folder).pack(
         side=tk.LEFT, fill=tk.X, expand=True, padx=(5, 5))
     ttk.Button(flp_frame, text="Browse", command=lambda: [
@@ -407,10 +408,10 @@ def first_run_setup():
 
     # Add indicator label
     fl_studio_indicator_label = ttk.Label(fl_path_frame, textvariable=fl_studio_indicator,
-                                          font=(Font_Name, 14), style="Gray.TLabel")
+                                          font=(Font_Name, Status_Indicator_Size), style="Gray.TLabel")
     fl_studio_indicator_label.pack(side=tk.LEFT, padx=(0, 5))
 
-    ttk.Label(fl_path_frame, text="FL Studio Installation Path:").pack(
+    ttk.Label(fl_path_frame, text="FL Studio Installation Path:",font=(Font_Name, 14)).pack(
         side=tk.LEFT)
     ttk.Entry(fl_path_frame, textvariable=fl_studio_path).pack(
         side=tk.LEFT, fill=tk.X, expand=True, padx=(5, 5))
@@ -429,10 +430,10 @@ def first_run_setup():
 
     # Add indicator label
     processor_indicator_label = ttk.Label(processor_frame, textvariable=processor_indicator,
-                                          font=(Font_Name, 14), style="Gray.TLabel")
+                                          font=(Font_Name, Status_Indicator_Size), style="Gray.TLabel")
     processor_indicator_label.pack(side=tk.LEFT, padx=(0, 5))
 
-    ttk.Label(processor_frame, text="FL Studio Processor Type:").pack(
+    ttk.Label(processor_frame, text="FL Studio Processor Type:",font=(Font_Name, 14)).pack(
         side=tk.LEFT)
     ttk.Combobox(processor_frame, textvariable=processor_type, values=[
                  "FL64.exe", "FL.exe"], state="readonly").pack(side=tk.LEFT)
@@ -443,11 +444,18 @@ def first_run_setup():
 
     # Add legend for the indicators
     ttk.Label(status_frame, text="Status:", font=(
-        Font_Name, 12)).pack(side=tk.LEFT)
+        Font_Name, 14)).pack(side=tk.LEFT)
     ttk.Label(status_frame, text=f"{CHECK_ICON} = Completed",
-              font=(Font_Name, 12), style="Green.TLabel").pack(side=tk.LEFT, padx=(10, 20))
+              font=(Font_Name, 14), style="Green.TLabel").pack(side=tk.LEFT, padx=(10, 20))
     ttk.Label(status_frame, text=f"{EMPTY_ICON} = Needs input",
-              font=(Font_Name, 12), style="Gray.TLabel").pack(side=tk.LEFT)
+              font=(Font_Name, 14), style="Gray.TLabel").pack(side=tk.LEFT)
+
+    indicator_fields = [
+        (output_folder, output_folder_indicator, output_indicator),
+        (flp_folder, flp_folder_indicator, flp_indicator),
+        (fl_studio_path, fl_studio_indicator, fl_studio_indicator_label),
+        (processor_type, processor_indicator, processor_indicator_label)
+    ]
 
     # Validation function
     def validate():
