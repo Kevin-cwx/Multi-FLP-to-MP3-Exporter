@@ -2365,7 +2365,7 @@ if __name__ == "__main__":
         sys.exit(1)
 
     # Now show the main application window
-    root.deiconify()  # Show the hidden root window
+    root.deiconify()  
 
     # Apply ttkbootstrap style
     try:

@@ -56,7 +56,7 @@
 ## **Bugs**
 - Figure out how to prevent FLP from exporting pattern instead of full song
     - If FLP is added to pattern it exports as pattern, if project is closed on song mode then it exports as song.
-
+- Settings, output folder, when a new folder is added - it does not show the new folder in the input frame
 
 
 ---
