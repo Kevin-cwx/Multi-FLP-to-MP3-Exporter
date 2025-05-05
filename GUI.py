@@ -271,7 +271,7 @@ def get_fl_studio_info():
     return fl_path, processor
 
 
-def first_run_setup():
+def first_run_setup(root):
     """Show first-run configuration dialog"""
     setup_root = tk.Toplevel()
     setup_root.title("First Run Setup")
@@ -440,7 +440,7 @@ def first_run_setup():
 
     # Add a frame for the status indicators at the bottom
     status_frame = ttk.Frame(setup_root)
-    status_frame.pack(fill="x", padx=20, pady=(20, 10))
+    status_frame.pack(fill="x", padx=20, pady=(5, 10))
 
     # Add legend for the indicators
     ttk.Label(status_frame, text="Status:", font=(
@@ -513,6 +513,9 @@ def first_run_setup():
             save_config()
             setup_completed = True
             setup_root.destroy()
+
+            root.deiconify()
+
             return True
         print("not in validate")
         return False
@@ -2374,7 +2377,7 @@ if __name__ == "__main__":
         load_config()
     else:
         # Run first-time setup
-        if not first_run_setup():  # This will show the setup window
+        if not first_run_setup(root):  # This will show the setup window
             sys.exit(0)  # Exit if setup wasn't completed
         # Reload config after setup is complete
         load_config()
