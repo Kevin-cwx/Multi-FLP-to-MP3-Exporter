@@ -1,3 +1,5 @@
+From setup, ok, works but settings does not show all items
+
 import os
 import re
 import subprocess
@@ -280,6 +282,7 @@ def first_run_setup(root):
     setup_root.grab_set()
     setup_root.transient()
     root.withdraw()
+
     setup_completed = tk.BooleanVar(value=False) 
 
     # Create style for indicators
@@ -2350,37 +2353,61 @@ if __name__ == "__main__":
     root = tk.Tk()
     root.withdraw()
 
-    # Try to load config
-    if os.path.exists(CONFIG_FILE):
-        load_config()
-    else:
-        # Run first-time setup
-        if not first_run_setup(root):  # This will show the setup window
-            print("First run setup was not completed")
+    # Check if first run
+    if check_first_run():
+        if not first_run_setup(root):
+            root.destroy()
             sys.exit(0)
-        else:
-            print("First run setup completed")
-        # Reload config after setup is complete
-        load_config()
 
-    # Verify required paths are set
-    if not Output_Folder_Path or not Dir_FLP_Projects or not FL_Studio_Path:
-        messagebox.showerror("Error", "Required paths not configured")
+    # Validate config file structure
+    def validate_config():
+        """Check if config file has required entries"""
+        config = configparser.ConfigParser()
+        try:
+            if not config.read(CONFIG_FILE):
+                return False, "Config file missing or unreadable"
+            
+            if not config.has_section('PATHS'):
+                return False, "Missing [PATHS] section in config"
+            
+            required = ['Output_Folder_Path', 'Dir_FLP_Projects', 'FL_Studio_Path']
+            for key in required:
+                if not config.has_option('PATHS', key):
+                    return False, f"Missing required key: {key}"
+                
+                value = config.get('PATHS', key)
+                if not value.strip():
+                    return False, f"Empty value for {key}"
+                
+                # Special check for Dir_FLP_Projects
+                if key == 'Dir_FLP_Projects' and not any(value.split(';')):
+                    return False, "No FLP project directories specified"
+
+            return True, "Config valid"
+        
+        except Exception as e:
+            return False, f"Config validation error: {str(e)}"
+
+    # Check config validity
+    config_valid, message = validate_config()
+    if not config_valid:
+        messagebox.showerror("Config Error", f"Invalid configuration:\n{message}")
+        root.destroy()
         sys.exit(1)
 
-    # Now show the main application window
-    print("Deiconifying root window...")
-    root.deiconify()  # Show the hidden root window
+    # Load config into global variables
+    if not load_config():
+        messagebox.showerror("Error", "Failed to load configuration")
+        root.destroy()
+        sys.exit(1)
 
-    # Apply ttkbootstrap style
+    # Create and show main application
     try:
-        style = Style("pulse" if USE_DARK_MODE else "flatly")
-    except tk.TclError:
-        style = Style()
-try:
-    app = FLPExporterUI(root)
-    root.mainloop()
-except Exception as e:
-    print("Error starting main UI:", e)
-    messagebox.showerror("UI Error", str(e))
-    sys.exit(1)
+        app = FLPExporterUI(root)
+        root.deiconify()
+        root.mainloop()
+    except Exception as e:
+        messagebox.showerror("Startup Error", f"Failed to start application: {str(e)}")
+        sys.exit(1)
+
+    
