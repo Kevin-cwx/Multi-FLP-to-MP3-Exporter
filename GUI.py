@@ -58,7 +58,7 @@ Launch_At_Startup = False
 Font_Name = "Meiryo"
 
 CHECK_ICON = "🗹"
-EMPTY_ICON = "▢"
+EMPTY_ICON = "□"
 GREEN = "#2ecc71"
 GRAY = "black"
 
@@ -272,6 +272,7 @@ def first_run_setup():
     setup_root = tk.Toplevel()
     setup_root.title("First Run Setup")
     setup_root.geometry("600x500")
+    setup_root.minsize(800, 550)
     setup_root.grab_set()
     setup_root.transient()
     setup_completed = False
