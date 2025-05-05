@@ -494,18 +494,14 @@ def first_run_setup(root):
             if fl_studio_path.get():
                 FL_Studio_Path = fl_studio_path.get()
                 Processor_Type = processor_type.get()
-                print("a")
-
             else:
                 fl_path, processor = get_fl_studio_info()
                 if not fl_path:
                         messagebox.showerror("Error", "Could not detect FL Studio path")
                         return
-                print("b")
                 FL_Studio_Path = fl_path
                 Processor_Type = processor
                 
-            print("c")
             #Processor_Type = processor_type.get()
             save_config()
             setup_completed.set(True)
@@ -1401,7 +1397,7 @@ class FLPExporterUI:
                 self.scrollable_settings_frame,
                 text="Note: FL Studio must be closed before exporting song.\nMake sure to save your project.\nClicking export will automatically close FL Studio.\n\nIf your project has a popup, (unlicensed vst, audio missing) we recommend buying the vst as FL intends, or replacing the missing audio.\n"
                 "The project will continue to export once you click ok, or remove the popup."
-                "\n\nBackup projects are not shown, in order to reduce duplicates.",
+                "\n\nBackup projects with same name are not shown, in order to reduce duplicates.",
                 font=(Font_Name, 15, ),
                 foreground="black",
                 wraplength=1100,
@@ -2369,7 +2365,6 @@ if __name__ == "__main__":
         sys.exit(1)
 
     # Now show the main application window
-    print("Deiconifying root window...")
     root.deiconify()  # Show the hidden root window
 
     # Apply ttkbootstrap style
