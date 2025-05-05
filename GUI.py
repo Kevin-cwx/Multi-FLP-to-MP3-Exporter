@@ -332,16 +332,16 @@ def first_run_setup():
                     fl_path_label.config(
                         text=f"Detected path: {fl_path}\nProcessor: {process.info['name']}")
                     # Update indicators
-                    fl_studio_indicator.set(CHECK_ICON)
-                    processor_indicator.set(CHECK_ICON)
+                    #fl_studio_indicator.set(CHECK_ICON)
+                    #processor_indicator.set(CHECK_ICON)
                     break
         else:
             fl_status_label.config(
                 text="Manually open FL Studio", foreground="red", font=(Font_Name, 20))
             fl_path_label.config(text="")
             # Reset indicators if FL Studio is closed
-            fl_studio_indicator.set(EMPTY_ICON)
-            processor_indicator.set(EMPTY_ICON)
+            #fl_studio_indicator.set(EMPTY_ICON)
+            #processor_indicator.set(EMPTY_ICON)
 
         # Check again after 1 second
         setup_root.after(500, check_fl_studio_status)
@@ -422,7 +422,7 @@ def first_run_setup():
 
     ttk.Label(setup_root,
               text=r"Example - C:\Program Files\Image-Line\FL Studio 21",
-              font=(Font_Name, 10)).pack(anchor="w", padx=40, pady=(0, 5))
+              font=(Font_Name, 12)).pack(anchor="w", padx=40, pady=(0, 5))
 
     # Processor Type
     processor_frame = ttk.Frame(setup_root)
@@ -460,20 +460,20 @@ def first_run_setup():
     # Validation function
     def validate():
         if not all([output_folder.get(), flp_folder.get()]):
-            messagebox.showerror("Error", "All fields are required!")
+            messagebox.showerror("Error", "All fields are required")
             return False
 
         if not os.path.isdir(output_folder.get()):
-            messagebox.showerror("Error", "Output folder does not exist!")
+            messagebox.showerror("Error", "Output folder does not exist")
             return False
 
         if not os.path.isdir(flp_folder.get()):
-            messagebox.showerror("Error", "FLP folder does not exist!")
+            messagebox.showerror("Error", "FLP folder does not exist")
             return False
 
         # FL Studio path is optional since we try to detect it automatically
         if fl_studio_path.get() and not os.path.isdir(fl_studio_path.get()):
-            messagebox.showerror("Error", "FL Studio path does not exist!")
+            messagebox.showerror("Error", "FL Studio path does not exist")
             return False
 
         return True
