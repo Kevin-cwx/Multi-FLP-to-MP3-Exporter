@@ -48,7 +48,7 @@ open(os.path.join(os.path.expanduser('~'),
 Search_Placeholder_Text = "Search Projects"
 Project_Order_By = "name"  # date, name
 global Enable_Output_Sub_Folder
-Enable_Output_Sub_Folder = False
+Enable_Output_Sub_Folder = True
 Output_Sub_Folder_Name = ""
 Output_Sub_Folder_Name = ""
 Output_Audio_Format = "Emp3"
@@ -1257,7 +1257,7 @@ class FLPExporterUI:
             subfolder_frame = ttk.Frame(self.scrollable_settings_frame)
             subfolder_frame.pack(fill=tk.X, pady=5)
             style.configure('Large.TCheckbutton',
-                            font=('Segoe UI', 14))  # <<< NEW
+                            font=('Segoe UI', 14)) 
 
             # Launch at Startup Toggle
             startup_frame = ttk.Frame(self.scrollable_settings_frame,
