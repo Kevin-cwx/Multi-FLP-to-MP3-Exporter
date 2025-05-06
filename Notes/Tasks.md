@@ -20,7 +20,7 @@
 ## **Settings**
 #### General 
 #### Items to have
-- Set output folder 
+- ✅ - Set output folder 
 - Set input folder (Multiple, if not in same location)
 - Launch at system startup
 - Project_Order_By, toggle name or date

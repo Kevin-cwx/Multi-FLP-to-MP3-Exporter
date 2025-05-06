@@ -1108,8 +1108,8 @@ class FLPExporterUI:
                                        expand=True,
                                        padx=(0, 5))
             # Display existing folders separated by semicolons if they exist
-            if hasattr(self, 'Dir_FLP_Projects'):
-                self.flp_folder_entry.insert(0, "; ".join(Dir_FLP_Projects))
+            #if hasattr(self, 'Dir_FLP_Projects'):
+            self.flp_folder_entry.insert(0, "; ".join(Dir_FLP_Projects))
 
             self.browse_flp_button = ttk.Button(
                 flp_folder_frame,
@@ -1123,6 +1123,7 @@ class FLPExporterUI:
                 self.scrollable_settings_frame,
                 text=("This is where your FLP projects are. Add the top folder.\n"
                       "Click Browse to add multiple folders.\n"
+                      "To remove a path, simply delete it from the input field. Paths are separated by a semicolon ;\n"
                       "Example - C:\\Users\\Kfoen\\Documents\\Image-Line\\FL Studio\\Projects\\FL 25 - projects"
                       ),
                 font=(Font_Name, Settings_Info_Label_Size),
@@ -1135,7 +1136,7 @@ class FLPExporterUI:
             order_frame.pack(fill=tk.X, pady=0)
 
             self.order_label = ttk.Label(order_frame,
-                                         text="Project Order",
+                                         text="Order Projects By ",
                                          font=(Font_Name, 14),
                                          background=Background_Color)
             self.order_label.pack(side=tk.LEFT, padx=(10, 5))
@@ -1201,8 +1202,8 @@ class FLPExporterUI:
                                            expand=True,
                                            padx=(0, 5))
             # Set current path if it exists
-            if hasattr(self, 'FL_Studio_Path') and self.FL_Studio_Path:
-                self.fl_studio_path_entry.insert(0, self.FL_Studio_Path)
+            #if hasattr(self, 'FL_Studio_Path') and self.FL_Studio_Path:
+            self.fl_studio_path_entry.insert(0, FL_Studio_Path)
 
             self.browse_fl_studio_button = ttk.Button(
                 fl_studio_frame,
@@ -1467,6 +1468,7 @@ class FLPExporterUI:
 
             self.settings_canvas.unbind_all("<MouseWheel>")
             self.restore_header_and_ui()
+            self.sync_projects()
 
     def browse_flp_folders(self):
         """Open a dialog to select multiple FLP project folders"""
@@ -2046,6 +2048,7 @@ class FLPExporterUI:
             self.text_widget.configure(yscrollincrement=Mouse_Scroll_Speed)
         # Add other widgets that need scroll speed adjustment
 
+    # Not used as users can right click and open folder
     def open_first_flp_folder(self):
         """Open the first FLP folder in File Explorer"""
         if Dir_FLP_Projects and len(Dir_FLP_Projects) > 0:
@@ -2303,7 +2306,7 @@ class FLPExporterUI:
             # Update UI elements
             style.configure("Custom.Treeview", font=(Font_Name, Projects_Font_Size))
             self.cart_listbox.config(font=(Font_Name, Projects_Font_Size))
-
+            
         save_config()
 
     def get_fl_studio_location_from_running_process(self):
@@ -2362,7 +2365,6 @@ if __name__ == "__main__":
 
     # Verify required paths are set
     if not Output_Folder_Path or not Dir_FLP_Projects or not FL_Studio_Path:
-        load_config()
         messagebox.showerror("Error", "Required paths not configured")
         sys.exit(1)
 
