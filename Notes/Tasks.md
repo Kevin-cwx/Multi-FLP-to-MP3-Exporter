@@ -13,6 +13,7 @@
 - Add themes functionality
 - Add settings functionality, save and get values from ini file
 
+- Figure out how to be able to save a output folder with name "♬", need to escape characters in save_config
 
 
 

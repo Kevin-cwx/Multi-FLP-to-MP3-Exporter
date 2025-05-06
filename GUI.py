@@ -47,8 +47,8 @@ open(os.path.join(os.path.expanduser('~'),
 
 Search_Placeholder_Text = "Search Projects"
 Project_Order_By = "name"  # date, name
-global Set_Output_Sub_Folder
-Set_Output_Sub_Folder = False
+global Enable_Output_Sub_Folder
+Enable_Output_Sub_Folder = False
 Output_Sub_Folder_Name = ""
 Output_Sub_Folder_Name = ""
 Output_Audio_Format = "Emp3"
@@ -58,6 +58,13 @@ Application_Name = "Multi FLP to MP3 Exporter"
 Launch_At_Startup = False
 Font_Name = "Meiryo"
 Status_Indicator_Size = 30
+
+SCROLL_SPEED_MAPPING = {
+                1: 7,   # Slow
+                2: 10,  # Medium (default)
+                3: 15,  # Fast
+                4: 19   # Very fast
+            }
 
 CHECK_ICON = "🗹"
 EMPTY_ICON = "□"
@@ -145,7 +152,7 @@ def export_flp_to_mp3(file_path):
     global Output_Folder_Path
     close_fl_studio()
     # Get subfolder name if enabled
-    if Set_Output_Sub_Folder:
+    if Enable_Output_Sub_Folder:
         subfolder = app.subfolder_entry.get().strip()
         if subfolder:
             # Create full output path with subfolder
@@ -171,7 +178,7 @@ def export_flp_to_mp3(file_path):
 def save_config():
     """Save current settings to config file"""
     config = configparser.ConfigParser()
-
+    
     config['PATHS'] = {
         'Output_Folder_Path': Output_Folder_Path,
         # Store multiple paths separated by ;
@@ -182,7 +189,7 @@ def save_config():
     config['SETTINGS'] = {
         'Processor_Type': Processor_Type,
         'Project_Order_By': Project_Order_By,
-        'Set_Output_Sub_Folder': str(Set_Output_Sub_Folder),
+        'Enable_Output_Sub_Folder': str(Enable_Output_Sub_Folder),
         'Output_Sub_Folder_Name': Output_Sub_Folder_Name,
         'Output_Audio_Format': Output_Audio_Format,
         'Mouse_Scroll_Speed': str(Mouse_Scroll_Speed),
@@ -201,7 +208,7 @@ def save_config():
 def load_config():
     """Load settings from config file"""
     global Output_Folder_Path, Dir_FLP_Projects, FL_Studio_Path, Processor_Type
-    global Project_Order_By, Set_Output_Sub_Folder, Output_Sub_Folder_Name
+    global Project_Order_By, Enable_Output_Sub_Folder, Output_Sub_Folder_Name
     global Output_Audio_Format, Mouse_Scroll_Speed, Application_Name,Projects_Font_Size  
     global Launch_At_Startup, Font_Name, USE_DARK_MODE
 
@@ -221,8 +228,8 @@ def load_config():
         # Load settings
         Processor_Type = config['SETTINGS']['Processor_Type']
         Project_Order_By = config['SETTINGS']['Project_Order_By']
-        Set_Output_Sub_Folder = config['SETTINGS'].getboolean(
-            'Set_Output_Sub_Folder')
+        Enable_Output_Sub_Folder = config['SETTINGS'].getboolean(
+            'Enable_Output_Sub_Folder')
         Output_Sub_Folder_Name = config['SETTINGS']['Output_Sub_Folder_Name']
         Output_Audio_Format = config['SETTINGS']['Output_Audio_Format']
         Mouse_Scroll_Speed = int(config['SETTINGS']['Mouse_Scroll_Speed'])
@@ -480,10 +487,8 @@ def first_run_setup(root):
         return True
 
     def on_ok():
-        print("in on ok")
         nonlocal setup_completed
         if validate():
-            print("in validatee")
             # Set the global variables
             global Output_Folder_Path, Dir_FLP_Projects, FL_Studio_Path, Processor_Type
             Output_Folder_Path = output_folder.get()
@@ -601,7 +606,7 @@ class FLPExporterUI:
                                expand=True,
                                padx=(0, 0))
 
-        if Set_Output_Sub_Folder:
+        if Enable_Output_Sub_Folder:
             # Create a new frame below the search frame
             self.subfolder_frame = ttk.Frame(self.left_frame)
             self.subfolder_frame.pack(fill=tk.X, padx=5, pady=(5, 0))
@@ -978,7 +983,7 @@ class FLPExporterUI:
             self.collapse_all_nodes(item)
 
     def open_settings(self):
-        global Output_Folder_Path, Project_Order_By, Dir_FLP_Projects, Set_Output_Sub_Folder
+        global Output_Folder_Path, Project_Order_By, Dir_FLP_Projects, Enable_Output_Sub_Folder
         global Output_Sub_Folder_Name, Mouse_Scroll_Speed, FL_Studio_Path, Projects_Font_Size
         Settings_Info_Label_Size = 12
 
@@ -1076,8 +1081,7 @@ class FLPExporterUI:
                                             command=self.browse_output_folder,
                                             bootstyle="info")
             self.browse_button.pack(side=tk.LEFT)
-            self.output_folder_entry = ttk.Entry(output_folder_frame,
-                                                 style='Settings.TEntry')
+            
 
             self.output_folder_info_label = ttk.Label(
                 self.scrollable_settings_frame,
@@ -1136,10 +1140,10 @@ class FLPExporterUI:
                                          background=Background_Color)
             self.order_label.pack(side=tk.LEFT, padx=(10, 5))
 
-            self.order_var = tk.StringVar(value=Project_Order_By)
+            self.Project_Order_By_Var = tk.StringVar(value=Project_Order_By)
             self.order_combobox = ttk.Combobox(
                 order_frame,
-                textvariable=self.order_var,
+                textvariable=self.Project_Order_By_Var,
                 values=["date", "name"],
                 state="readonly",
                 width=10,
@@ -1287,7 +1291,7 @@ class FLPExporterUI:
             self.enable_subfolder_label.pack(side=tk.LEFT, padx=(10, 20))
 
             self.subfolder_toggle_var = tk.BooleanVar(
-                value=Set_Output_Sub_Folder)
+                value=Enable_Output_Sub_Folder)
             self.subfolder_toggle = ttk.Checkbutton(
                 subfolder_toggle_frame,
                 variable=self.subfolder_toggle_var,
@@ -1315,12 +1319,6 @@ class FLPExporterUI:
                 font=(Font_Name, 14))
             self.scroll_speed_label.pack(side=tk.LEFT, padx=(10, 10))
 
-            SCROLL_SPEED_MAPPING = {
-                1: 7,   # Slow
-                2: 10,  # Medium (default)
-                3: 15,  # Fast
-                4: 19   # Very fast
-            }
 
             # Find which key has our current value (reverse lookup)
             current_key = next(
@@ -1431,7 +1429,7 @@ class FLPExporterUI:
                         )
                         return
 
-            Project_Order_By = self.order_var.get()
+            Project_Order_By = self.Project_Order_By_Var.get()
 
             # Handle startup setting
             if self.startup_var.get():
@@ -1440,8 +1438,8 @@ class FLPExporterUI:
                 self.remove_from_startup()
 
             # Save subfolder settings
-            Set_Output_Sub_Folder = self.subfolder_toggle_var.get()
-            if Set_Output_Sub_Folder:
+            Enable_Output_Sub_Folder = self.subfolder_toggle_var.get()
+            if Enable_Output_Sub_Folder:
                 subfolder_name = self.subfolder_entry.get().strip()
                 if not subfolder_name:
                     # Keep code, as if removd, it disbales writing in output sub folder
@@ -2273,7 +2271,7 @@ class FLPExporterUI:
     def save_settings(self):
         """Save current settings to config file"""
         global Output_Folder_Path, Dir_FLP_Projects, FL_Studio_Path, Processor_Type
-        global Project_Order_By, Set_Output_Sub_Folder, Output_Sub_Folder_Name
+        global Project_Order_By, Enable_Output_Sub_Folder, Output_Sub_Folder_Name
         global Output_Audio_Format, Mouse_Scroll_Speed, Application_Name
         global Launch_At_Startup, Font_Name, USE_DARK_MODE
 
@@ -2282,11 +2280,14 @@ class FLPExporterUI:
             Output_Folder_Path = self.output_folder_entry.get().strip()
             Dir_FLP_Projects = [
                 f.strip() for f in self.flp_folder_entry.get().strip().split(";") if f.strip()]
-            Project_Order_By = self.order_var.get()
+            Project_Order_By = self.Project_Order_By_Var.get()
             FL_Studio_Path = self.fl_studio_path_entry.get().strip()
             Processor_Type = self.processor_type.get()
-            Set_Output_Sub_Folder = self.subfolder_toggle_var.get()
-            Output_Sub_Folder_Name = self.subfolder_entry.get().strip()
+            Enable_Output_Sub_Folder = self.subfolder_toggle_var.get()
+            if Enable_Output_Sub_Folder:
+                Output_Sub_Folder_Name = self.subfolder_entry.get().strip()
+            else:
+                Output_Sub_Folder_Name = ""
 
             # Mouse scroll speed
             SCROLL_SPEED_MAPPING = {1: 7, 2: 10, 3: 15, 4: 19}
@@ -2361,6 +2362,7 @@ if __name__ == "__main__":
 
     # Verify required paths are set
     if not Output_Folder_Path or not Dir_FLP_Projects or not FL_Studio_Path:
+        load_config()
         messagebox.showerror("Error", "Required paths not configured")
         sys.exit(1)
 
