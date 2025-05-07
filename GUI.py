@@ -1102,14 +1102,20 @@ class FLPExporterUI:
                                               font=(Font_Name, 14))
             self.flp_folder_label.pack(side=tk.LEFT, padx=(10, 0), pady=5)
 
-            self.flp_folder_entry = ttk.Entry(flp_folder_frame)
-            self.flp_folder_entry.pack(side=tk.LEFT,
-                                       fill=tk.X,
-                                       expand=True,
-                                       padx=(0, 5))
-            # Display existing folders separated by semicolons if they exist
-            #if hasattr(self, 'Dir_FLP_Projects'):
-            self.flp_folder_entry.insert(0, "; ".join(Dir_FLP_Projects))
+
+            # ⬇️ Use a Text widget instead of Entry for multi-line folder display
+            self.flp_folder_entry = tk.Text(flp_folder_frame,
+                                            height=3,  # Adjust height as needed
+                                            wrap="none",
+                                            font=(Font_Name, 10))
+            self.flp_folder_entry.pack(fill=tk.BOTH,
+                                        expand=True,
+                                        padx=(10, 5),
+                                        pady=(0, 5))
+
+            # ⬇️ Insert directories, one per line
+            self.flp_folder_entry.insert(tk.END, "\n".join(Dir_FLP_Projects))
+            self.flp_folder_entry.bind("<Double-Button-1>", self.remove_selected_flp_folder)
 
             self.browse_flp_button = ttk.Button(
                 flp_folder_frame,
@@ -1122,8 +1128,8 @@ class FLPExporterUI:
             self.flp_folder_info_label = ttk.Label(
                 self.scrollable_settings_frame,
                 text=("This is where your FLP projects are. Add the top folder.\n"
-                      "Click Browse to add multiple folders.\n"
-                      "To remove a path, simply delete it from the input field. Paths are separated by a semicolon ;\n"
+                      "Click Browse to add multiple folders.\n\n"
+                      "To remove a path, simply delete it from the input field, or double click it.\n"
                       "Example - C:\\Users\\Kfoen\\Documents\\Image-Line\\FL Studio\\Projects\\FL 25 - projects"
                       ),
                 font=(Font_Name, Settings_Info_Label_Size),
@@ -1213,14 +1219,44 @@ class FLPExporterUI:
             self.browse_fl_studio_button.pack(side=tk.LEFT)
 
             # Info label
-            self.fl_studio_path_info_label = ttk.Label(
-                self.scrollable_settings_frame,
-                text=("Path to your FL Studio installation folder.\nEnsure this is the correct path as you will not be able to export if the path is incorrect.\nExample - C:\\Program Files\\Image-Line\\FL Studio 21"
-                      ),
-                font=(Font_Name, Settings_Info_Label_Size))
-            self.fl_studio_path_info_label.pack(anchor="w",
-                                                padx=20,
-                                                pady=(0, 10))
+            fl_studio_path_info_frame = ttk.Frame(self.scrollable_settings_frame)
+            fl_studio_path_info_frame.pack(anchor="w", fill="x", padx=20, pady=(0, 10))
+
+            # Line 1
+            entry_line1 = ttk.Entry(
+                fl_studio_path_info_frame,
+                font=(Font_Name, Settings_Info_Label_Size),
+                state="readonly",
+                style="TLabel",
+            )
+            entry_line1.pack(fill="x")
+            entry_line1["state"] = "normal"
+            entry_line1.insert(0, "Path to your FL Studio installation folder.")
+            entry_line1["state"] = "readonly"
+
+            # Line 2
+            entry_line2 = ttk.Entry(
+                fl_studio_path_info_frame,
+                font=(Font_Name, Settings_Info_Label_Size),
+                state="readonly",
+                style="TLabel",
+            )
+            entry_line2.pack(fill="x")
+            entry_line2["state"] = "normal"
+            entry_line2.insert(0, "Ensure this is the correct path as you will not be able to export if the path is incorrect.")
+            entry_line2["state"] = "readonly"
+
+            # Line 3
+            entry_line3 = ttk.Entry(
+                fl_studio_path_info_frame,
+                font=(Font_Name, Settings_Info_Label_Size),
+                state="readonly",
+                style="TLabel",
+            )
+            entry_line3.pack(fill="x")
+            entry_line3["state"] = "normal"
+            entry_line3.insert(0, "Example - C:\\Program Files\\Image-Line\\FL Studio 21")
+            entry_line3["state"] = "readonly"
 
             # Processor Type Dropdown
             processor_frame = ttk.Frame(self.scrollable_settings_frame,
@@ -1471,19 +1507,18 @@ class FLPExporterUI:
             self.sync_projects()
 
     def browse_flp_folders(self):
-        """Open a dialog to select multiple FLP project folders"""
-        folders = filedialog.askdirectory(mustexist=True,
-                                          title="Select FLP Project Folders")
-        if folders:
-            # Get current folders from the entry
-            current_folders = self.flp_folder_entry.get()
-            if current_folders:
-                # Append new folder to existing ones, separated by semicolon
-                updated_folders = f"{current_folders}; {folders}"
-            else:
-                updated_folders = folders
-            self.flp_folder_entry.delete(0, tk.END)
-            self.flp_folder_entry.insert(0, updated_folders)
+        """Open a dialog to select a new FLP folder and append if not present"""
+        folder = filedialog.askdirectory(mustexist=True, title="Select FLP Project Folder")
+        if folder:
+            current_text = self.flp_folder_entry.get("1.0", "end-1c").strip()
+            current_folders = current_text.split("\n") if current_text else []
+
+            if folder not in current_folders:
+                current_folders.append(folder)
+
+                # Refresh list
+                self.flp_folder_entry.delete("1.0", tk.END)
+                self.flp_folder_entry.insert(tk.END, "\n".join(current_folders))
 
     def browse_output_folder(self):
         global Output_Folder_Path
@@ -2336,7 +2371,15 @@ class FLPExporterUI:
             text="FL Studio process not found", bootstyle="danger")
         return None, None
 
-    
+    def remove_selected_flp_folder(self, event):
+        """Remove the line (folder) under double-click."""
+        # Get index of clicked line
+        clicked_index = self.flp_folder_entry.index(f"@{event.x},{event.y}")
+        line_number = clicked_index.split(".")[0]
+
+        # Delete the entire line
+        self.flp_folder_entry.delete(
+            f"{line_number}.0", f"{line_number}.0 lineend+1c")
 
 # === START APP ===
 if __name__ == "__main__":

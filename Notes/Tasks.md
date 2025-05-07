@@ -15,6 +15,10 @@
 
 - Figure out how to be able to save a output folder with name "♬", need to escape characters in save_config
 
+- First run window, make FL installation path text selectable, also in settings
+- Let FLP projects folder be shown underneath each other
+- Enable check, on save settings, mandatory fields must be filled in, Output folder, FLP projects folder, FL studio path. Check before saving current to ini file, that way you still auto set paths for user
+
 
 
 ## **Settings**
@@ -59,6 +63,7 @@
     - If FLP is added to pattern it exports as pattern, if project is closed on song mode then it exports as song.
 - Settings, output folder, when a new folder is added - it does not show the new folder in the input frame
 - Font size should be calculated as on home laptop size of font gets clipped while not the case on work pc
+- After clicking "save settings" it does not go back
 
 
 ---
