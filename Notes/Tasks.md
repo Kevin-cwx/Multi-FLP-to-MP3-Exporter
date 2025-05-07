@@ -18,7 +18,7 @@
 - First run window, make FL installation path text selectable, also in settings
 - Let FLP projects folder be shown underneath each other
 - Enable check, on save settings, mandatory fields must be filled in, Output folder, FLP projects folder, FL studio path. Check before saving current to ini file, that way you still auto set paths for user
-
+- Need to clear search entry after projects are synced
 
 
 ## **Settings**

@@ -428,9 +428,20 @@ def first_run_setup(root):
         update_indicators()
     ]).pack(side=tk.LEFT)
 
-    ttk.Label(setup_root,
-              text=r"Example - C:\Program Files\Image-Line\FL Studio 21",
-              font=(Font_Name, 12)).pack(anchor="w", padx=40, pady=(0, 5))
+    # ttk.Label(setup_root,
+    #           text=r"Example - C:\Program Files\Image-Line\FL Studio 21",
+    #           font=(Font_Name, 12)).pack(anchor="w", padx=40, pady=(0, 5))
+
+    Setup_Selectable_FL_Installation_Path = ttk.Entry(
+    setup_root,
+    font=(Font_Name, 10),
+    state="readonly",
+    style="TLabel",
+    )
+    Setup_Selectable_FL_Installation_Path.pack(fill="x", padx=20)
+    Setup_Selectable_FL_Installation_Path["state"] = "normal"
+    Setup_Selectable_FL_Installation_Path.insert(0, r"Example - C:\Program Files\Image-Line\FL Studio 21")
+    Setup_Selectable_FL_Installation_Path["state"] = "readonly"
 
     # Processor Type
     processor_frame = ttk.Frame(setup_root)
