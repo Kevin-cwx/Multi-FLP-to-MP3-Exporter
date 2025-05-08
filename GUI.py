@@ -539,6 +539,29 @@ def is_fl_studio_running():
     return False
 
 
+def handle_mouse_scroll_speed(selected_key=None):
+        """
+        Handle mouse scroll speed settings and return the appropriate speed value.
+        If selected_key is provided, returns the corresponding speed value.
+        If not provided, returns the current Mouse_Scroll_Speed.
+        """
+        global Mouse_Scroll_Speed
+
+        SCROLL_SPEED_MAPPING = {
+            1: 1,   # Slow
+            2: 10,  # Medium (default)
+            3: 15,  # Fast
+            4: 50   # Very fast
+            }
+
+        if selected_key is not None:
+                # Update the scroll speed based on the selected key
+                Mouse_Scroll_Speed = SCROLL_SPEED_MAPPING.get(selected_key, 10)
+                return Mouse_Scroll_Speed
+        else:
+                # Return the current scroll speed
+                return Mouse_Scroll_Speed
+
 class CustomCombobox(ttk.Combobox):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
@@ -1365,6 +1388,7 @@ class FLPExporterUI:
             # Mouse Scroll Speed Dropdown
             scroll_frame = ttk.Frame(self.scrollable_settings_frame,
                                      style='Settings.TFrame')
+
             scroll_frame.pack(fill=tk.X, pady=5)
 
             self.scroll_speed_label = ttk.Label(
@@ -1373,13 +1397,10 @@ class FLPExporterUI:
                 font=(Font_Name, 14))
             self.scroll_speed_label.pack(side=tk.LEFT, padx=(10, 10))
 
-
-            # Find which key has our current value (reverse lookup)
+            # Get current scroll speed setting
+            current_speed = handle_mouse_scroll_speed()
             current_key = next(
-                (k for k, v in SCROLL_SPEED_MAPPING.items()
-                 if v == Mouse_Scroll_Speed),
-                1  # Default to medium if not found
-            )
+                (k for k, v in SCROLL_SPEED_MAPPING.items() if v == current_speed), 2)
 
             self.scroll_speed_var = tk.IntVar(value=current_key)
             self.scroll_combobox = CustomCombobox(
@@ -1851,7 +1872,8 @@ class FLPExporterUI:
 
     def on_mousewheel(self, event):
         delta = -1 if event.delta > 0 else 1
-        self.tree.yview_scroll(Mouse_Scroll_Speed * delta, "units")
+        scroll_speed = handle_mouse_scroll_speed()
+        self.tree.yview_scroll(scroll_speed * delta, "units")
 
     # Right click opens the file
     def on_right_click(self, event):
@@ -2369,10 +2391,8 @@ class FLPExporterUI:
 
 
             # Mouse scroll speed
-            #SCROLL_SPEED_MAPPING = {1: 7, 2: 10, 3: 15, 4: 19}
             selected_key = self.scroll_speed_var.get()
-            Mouse_Scroll_Speed = SCROLL_SPEED_MAPPING.get(selected_key, 10)
-            Launch_At_Startup = self.startup_var.get()
+            handle_mouse_scroll_speed(selected_key)
 
             # Handle font size
             font_mapping = {'Normal': 9, 'Large': 14}
@@ -2475,6 +2495,8 @@ class FLPExporterUI:
             self.subfolder_frame.pack(fill=tk.X, padx=5, pady=(0, 5),
                                     after=widgets[search_frame_index])
 
+    
+    
 # === START APP ===
 if __name__ == "__main__":
     # Initialize default values
