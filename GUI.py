@@ -1290,7 +1290,7 @@ class FLPExporterUI:
             subfolder_frame = ttk.Frame(self.scrollable_settings_frame)
             subfolder_frame.pack(fill=tk.X, pady=5)
             style.configure('Large.TCheckbutton',
-                            font=('Segoe UI', 14)) 
+                            font=(Font_Name, 14)) 
 
             # Launch at Startup Toggle
             startup_frame = ttk.Frame(self.scrollable_settings_frame,
@@ -2384,32 +2384,54 @@ class FLPExporterUI:
 
     def setup_subfolder_ui(self):
         """Setup the subfolder UI elements based on current settings"""
+        # First, remove the frame if it exists (we'll recreate it in the right position)
+        if hasattr(self, 'subfolder_frame'):
+            self.subfolder_frame.pack_forget()
+            self.subfolder_frame.destroy()
+            del self.subfolder_frame
+
         if Enable_Output_Sub_Folder:
-            # Create frame if it doesn't exist
-            if not hasattr(self, 'subfolder_frame'):
-                self.subfolder_frame = ttk.Frame(self.left_frame)
-                
-            # Create label if it doesn't exist
-            if not hasattr(self, 'subfolder_label'):
-                self.subfolder_label = ttk.Label(
-                    self.subfolder_frame,
-                    text="Output Subfolder:",
-                    background="white"
-                )
-                self.subfolder_label.pack(side=tk.LEFT, padx=(0, 5))
-                
-            # Create entry if it doesn't exist
-            if not hasattr(self, 'subfolder_entry'):
-                self.subfolder_entry = ttk.Entry(self.subfolder_frame)
-                self.subfolder_entry.pack(side=tk.LEFT, fill=tk.X, expand=True)
-                self.subfolder_entry.insert(0, Output_Sub_Folder_Name)
-                
-            # Pack the frame
-            self.subfolder_frame.pack(fill=tk.X, padx=5, pady=(5, 0))
-        else:
-            # Remove the UI elements if they exist
-            if hasattr(self, 'subfolder_frame'):
-                self.subfolder_frame.pack_forget()
+            # Create the frame with consistent background
+            self.subfolder_frame = ttk.Frame(
+                self.left_frame,
+                style='Default_Theme.TFrame'  # Use the same style as other frames
+            )
+
+            # Create label with consistent background
+            self.subfolder_label = ttk.Label(
+                self.subfolder_frame,
+                text="Output Subfolder",
+                style='TLabel'  # Use the default label style
+            )
+            self.subfolder_label.pack(side=tk.LEFT, padx=(0, 5))
+
+            # Create entry with consistent styling
+            self.subfolder_entry = ttk.Entry(
+                self.subfolder_frame,
+                style='TEntry'  # Use the default entry style
+            )
+            self.subfolder_entry.pack(side=tk.LEFT, fill=tk.X, expand=True)
+            self.subfolder_entry.insert(0, Output_Sub_Folder_Name)
+
+            # Configure the entry's background to match
+            style = ttk.Style()
+            style.configure('TEntry', fieldbackground=Background_Color)
+            style.configure('TLabel', background=Background_Color)
+
+            # Pack the frame in the correct position
+            # Get all widgets in left_frame
+            widgets = self.left_frame.pack_slaves()
+
+            # Find the search_frame (it should be the first one)
+            search_frame_index = 0
+            for i, widget in enumerate(widgets):
+                if widget == self.search_entry.master:  # search_frame is parent of search_entry
+                    search_frame_index = i
+                    break
+
+            # Pack subfolder_frame right after search_frame
+            self.subfolder_frame.pack(fill=tk.X, padx=5, pady=(0, 5),
+                                    after=widgets[search_frame_index])
 
 # === START APP ===
 if __name__ == "__main__":
