@@ -539,8 +539,26 @@ def is_fl_studio_running():
     return False
 
 
-class FLPExporterUI:
+class CustomCombobox(ttk.Combobox):
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
+        self.bind("<MouseWheel>", self.on_mousewheel, add="+")
+        self.bind("<Button-4>", self.on_mousewheel, add="+")
+        self.bind("<Button-5>", self.on_mousewheel, add="+")
 
+    def on_mousewheel(self, event):
+        if self.state() == ("readonly", "active"):
+            # Disable scrolling when the dropdown is open
+            return "break"
+        else:
+            # Allow regular scrolling when the dropdown is closed
+            if event.delta > 0:
+                self.master.event_generate("<MouseWheel>", delta=-120)
+            else:
+                self.master.event_generate("<MouseWheel>", delta=120)
+            return "break"
+
+class FLPExporterUI:
     def __init__(self, root):
         self.root = root
         self.root.title(Application_Name)
@@ -1145,7 +1163,7 @@ class FLPExporterUI:
             self.order_label.pack(side=tk.LEFT, padx=(10, 5))
 
             self.Project_Order_By_Var = tk.StringVar(value=Project_Order_By)
-            self.order_combobox = ttk.Combobox(
+            self.order_combobox = CustomCombobox(
                 order_frame,
                 textvariable=self.Project_Order_By_Var,
                 values=["Date", "Name"],
@@ -1166,7 +1184,7 @@ class FLPExporterUI:
             self.theme_label.pack(side=tk.LEFT, padx=(10, 10))
 
             self.theme_var = tk.StringVar(value="Default")  # Default selection
-            self.theme_combobox = ttk.Combobox(theme_frame,
+            self.theme_combobox = CustomCombobox(theme_frame,
                                                textvariable=self.theme_var,
                                                values=THEME_NAMES,
                                                state="readonly",
@@ -1270,7 +1288,7 @@ class FLPExporterUI:
                 value="FL64.exe")  # Default value
 
             # Create the Combobox dropdown
-            self.processor_dropdown = ttk.Combobox(
+            self.processor_dropdown = CustomCombobox(
                 processor_frame,
                 textvariable=self.processor_type,
                 values=["FL64.exe", "FL.exe"],
