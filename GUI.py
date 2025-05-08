@@ -48,8 +48,7 @@ open(os.path.join(os.path.expanduser('~'),
 Search_Placeholder_Text = "Search Projects"
 Project_Order_By = "name"  # date, name
 global Enable_Output_Sub_Folder
-Enable_Output_Sub_Folder = True
-Output_Sub_Folder_Name = ""
+Enable_Output_Sub_Folder = False
 Output_Sub_Folder_Name = ""
 Output_Audio_Format = "Emp3"
 Mouse_Scroll_Speed = 7
@@ -617,20 +616,6 @@ class FLPExporterUI:
                                expand=True,
                                padx=(0, 0))
 
-        if Enable_Output_Sub_Folder:
-            # Create a new frame below the search frame
-            self.subfolder_frame = ttk.Frame(self.left_frame)
-            self.subfolder_frame.pack(fill=tk.X, padx=5, pady=(5, 0))
-
-            self.subfolder_label = ttk.Label(self.subfolder_frame,
-                                             text="Output Subfolder:",
-                                             background="white")
-            self.subfolder_label.pack(side=tk.LEFT, padx=(0, 5))
-
-            self.subfolder_entry = ttk.Entry(self.subfolder_frame)
-            self.subfolder_entry.pack(side=tk.LEFT, fill=tk.X, expand=True)
-            self.subfolder_entry.insert(0, Output_Sub_Folder_Name)
-
         # Add placeholder text and configure events
         self.search_entry.insert(0, Search_Placeholder_Text)
         self.search_entry.config(foreground=Search_Placeholder_Text_Color)
@@ -806,6 +791,7 @@ class FLPExporterUI:
                                       bootstyle="success",
                                       background=Background_Color)
         self.status_label.pack(pady=(0, 10))
+        self.setup_subfolder_ui()
 
         self.populate_tree(Dir_FLP_Projects)
         self.root.bind("<Return>", self.on_enter_key)
@@ -1338,16 +1324,18 @@ class FLPExporterUI:
                 style='Settings.TLabel')
             self.enable_subfolder_label.pack(side=tk.LEFT, padx=(10, 20))
 
-            self.subfolder_toggle_var = tk.BooleanVar(
-                value=Enable_Output_Sub_Folder)
+            self.subfolder_toggle_var = tk.BooleanVar(value=Enable_Output_Sub_Folder)
             self.subfolder_toggle = ttk.Checkbutton(
                 subfolder_toggle_frame,
                 variable=self.subfolder_toggle_var,
                 bootstyle="round-toggle",
-                command=self.toggle_subfolder_entry,
+                command=self.Toggle_Enable_output_subfolder,
                 style='Settings.TCheckbutton')
             self.subfolder_toggle.pack(side=tk.LEFT)
             self.subfolder_toggle.pack(side=tk.LEFT, padx=(0, 10))
+
+            
+
             # Info label
             self.subfolder_info_label = ttk.Label(
                 self.scrollable_settings_frame,
@@ -1452,7 +1440,8 @@ class FLPExporterUI:
                                  pady=(0, 60), fill='x')
             self.settings_canvas.configure(
                 scrollregion=self.settings_canvas.bbox("all"))
-
+        
+        # open_settings_Else
         else:
             # Save output path
             new_path = self.output_folder_entry.get().strip()
@@ -1461,12 +1450,13 @@ class FLPExporterUI:
                     "Error", "The specified directory does not exist.")
                 return
             Output_Folder_Path = new_path
-
+           
             # Save FLP projects folders
-            flp_folders = self.flp_folder_entry.get().strip()
+            flp_folders = self.flp_folder_entry.get("1.0", tk.END).strip()  # Get all text from line 1 character 0 to end
             if flp_folders:
+                # Split by newlines since we're using a Text widget with one path per line
                 Dir_FLP_Projects = [
-                    f.strip() for f in flp_folders.split(";") if f.strip()
+                    f.strip() for f in flp_folders.split("\n") if f.strip()
                 ]
                 # Validate each folder
                 for folder in Dir_FLP_Projects:
@@ -1476,7 +1466,7 @@ class FLPExporterUI:
                             f"The specified FLP directory does not exist: {folder}"
                         )
                         return
-
+         
             Project_Order_By = self.Project_Order_By_Var.get()
 
             # Handle startup setting
@@ -1484,8 +1474,8 @@ class FLPExporterUI:
                 self.add_to_startup()
             else:
                 self.remove_from_startup()
-
-            # Save subfolder settings
+           
+            #Save subfolder settings
             Enable_Output_Sub_Folder = self.subfolder_toggle_var.get()
             if Enable_Output_Sub_Folder:
                 subfolder_name = self.subfolder_entry.get().strip()
@@ -1493,7 +1483,8 @@ class FLPExporterUI:
                     # Keep code, as if removd, it disbales writing in output sub folder
                     return
                 Output_Sub_Folder_Name = subfolder_name
-
+            #did not print here 
+        
             # Save mouse scroll speed
             selected_key = self.scroll_speed_var.get()
             Mouse_Scroll_Speed = SCROLL_SPEED_MAPPING.get(
@@ -2022,6 +2013,7 @@ class FLPExporterUI:
         self.left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         self.right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=False)
 
+    # 
     def toggle_startup(self):
         """Handle the startup toggle button"""
         if self.startup_var.get():
@@ -2079,12 +2071,12 @@ class FLPExporterUI:
             self.fl_studio_path_entry.delete(0, tk.END)
             self.fl_studio_path_entry.insert(0, path)
 
-    def toggle_subfolder_entry(self):
+    def Toggle_Enable_output_subfolder(self):
         """Enable/disable the subfolder entry based on toggle state"""
-        if self.subfolder_toggle_var.get():
-            self.subfolder_entry.config(state=tk.NORMAL)
-        else:
-            self.subfolder_entry.config(state=tk.DISABLED)
+        global Enable_Output_Sub_Folder
+        Enable_Output_Sub_Folder = self.subfolder_toggle_var.get()
+        self.setup_subfolder_ui()
+        self.save_settings()
 
     def apply_scroll_speed(self):
         """Apply the selected scroll speed to the application"""
@@ -2327,16 +2319,17 @@ class FLPExporterUI:
         # Update globals from UI if in settings mode
         if hasattr(self, 'settings_open') and self.settings_open:
             Output_Folder_Path = self.output_folder_entry.get().strip()
+            flp_folders = self.flp_folder_entry.get("1.0", tk.END).strip()
             Dir_FLP_Projects = [
-                f.strip() for f in self.flp_folder_entry.get().strip().split(";") if f.strip()]
+            f.strip() for f in flp_folders.split("\n") if f.strip()
+            ]
             Project_Order_By = self.Project_Order_By_Var.get()
             FL_Studio_Path = self.fl_studio_path_entry.get().strip()
             Processor_Type = self.processor_type.get()
             Enable_Output_Sub_Folder = self.subfolder_toggle_var.get()
-            if Enable_Output_Sub_Folder:
-                Output_Sub_Folder_Name = self.subfolder_entry.get().strip()
-            else:
-                Output_Sub_Folder_Name = ""
+            Output_Sub_Folder_Name = ""
+            # rework to get last saved value in config
+            # Output_Sub_Folder_Name = config['SETTINGS']['Output_Sub_Folder_Name']
 
             # Mouse scroll speed
             SCROLL_SPEED_MAPPING = {1: 7, 2: 10, 3: 15, 4: 19}
@@ -2391,6 +2384,35 @@ class FLPExporterUI:
         # Delete the entire line
         self.flp_folder_entry.delete(
             f"{line_number}.0", f"{line_number}.0 lineend+1c")
+
+    def setup_subfolder_ui(self):
+        """Setup the subfolder UI elements based on current settings"""
+        if Enable_Output_Sub_Folder:
+            # Create frame if it doesn't exist
+            if not hasattr(self, 'subfolder_frame'):
+                self.subfolder_frame = ttk.Frame(self.left_frame)
+                
+            # Create label if it doesn't exist
+            if not hasattr(self, 'subfolder_label'):
+                self.subfolder_label = ttk.Label(
+                    self.subfolder_frame,
+                    text="Output Subfolder:",
+                    background="white"
+                )
+                self.subfolder_label.pack(side=tk.LEFT, padx=(0, 5))
+                
+            # Create entry if it doesn't exist
+            if not hasattr(self, 'subfolder_entry'):
+                self.subfolder_entry = ttk.Entry(self.subfolder_frame)
+                self.subfolder_entry.pack(side=tk.LEFT, fill=tk.X, expand=True)
+                self.subfolder_entry.insert(0, Output_Sub_Folder_Name)
+                
+            # Pack the frame
+            self.subfolder_frame.pack(fill=tk.X, padx=5, pady=(5, 0))
+        else:
+            # Remove the UI elements if they exist
+            if hasattr(self, 'subfolder_frame'):
+                self.subfolder_frame.pack_forget()
 
 # === START APP ===
 if __name__ == "__main__":

@@ -1,5 +1,7 @@
-## **Future Feature**
-- 
+## **Current Task**
+- Logic for enable output subfolder in settings
+    - First time user - Set to false
+    - this is preventing "save settings" 
 
 
 ## **Other**
@@ -15,8 +17,8 @@
 
 - Figure out how to be able to save a output folder with name "♬", need to escape characters in save_config
 
-- First run window, make FL installation path text selectable, also in settings
-- Let FLP projects folder be shown underneath each other
+- ✅ - First run window, make FL installation path text selectable, also in settings
+- ✅ - Let FLP projects folder be shown underneath each other
 - Enable check, on save settings, mandatory fields must be filled in, Output folder, FLP projects folder, FL studio path. Check before saving current to ini file, that way you still auto set paths for user
 - Need to clear search entry after projects are synced
 
@@ -41,6 +43,8 @@
 - Make advanced closable (default)
 - Add change font size for projects and selected projects (padding must also be changed in background)
 
+## **Future Feature**
+- 
 
 
 
