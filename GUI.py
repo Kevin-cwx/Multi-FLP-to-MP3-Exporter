@@ -2004,6 +2004,9 @@ class FLPExporterUI:
             # Visual refresh - flash the frames
             self.flash_refresh()
 
+            """
+            # This section will clear the previosly selected items in projects 
+            # and clear the search entry, once save settings is clicked
             # Clear and repopulate the tree
             self.tree.delete(*self.tree.get_children())
             self.path_map.clear()
@@ -2011,6 +2014,13 @@ class FLPExporterUI:
             self.selected_files.clear()
             self.cart_listbox.delete(0, tk.END)
             self.populate_tree(Dir_FLP_Projects)
+            
+            # Clear the search entry
+            self.search_entry.delete(0, tk.END)
+            self.search_entry.insert(0, Search_Placeholder_Text)
+            self.search_entry.config(foreground=Search_Placeholder_Text_Color)
+            self.placeholder_active = True
+            """
 
             # Force expand all folders using existing toggle mechanism
             if not self.folders_expanded:
