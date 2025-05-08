@@ -623,6 +623,7 @@ class FLPExporterUI:
         self.search_entry.bind("<FocusIn>", self.on_search_focus_in)
         self.search_entry.bind("<FocusOut>", self.on_search_focus_out)
         self.search_entry.bind("<KeyRelease>", self.filter_tree)
+        self.search_entry.config(font=(Font_Name, 12))
 
         self.close_button = ttk.Button(
             self.top_bar,
@@ -2421,6 +2422,8 @@ class FLPExporterUI:
             # Pack the frame in the correct position
             # Get all widgets in left_frame
             widgets = self.left_frame.pack_slaves()
+            self.subfolder_entry.config(font=(Font_Name, 12))
+            self.subfolder_label.config(font=(Font_Name, 12))
 
             # Find the search_frame (it should be the first one)
             search_frame_index = 0
