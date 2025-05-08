@@ -57,13 +57,6 @@ Launch_At_Startup = False
 Font_Name = "Meiryo"
 Status_Indicator_Size = 30
 
-SCROLL_SPEED_MAPPING = {
-                1: 1,   # Slow
-                2: 10,  # Medium (default)
-                3: 15,  # Fast
-                4: 50   # Very fast
-            }
-
 CHECK_ICON = "🗹"
 EMPTY_ICON = "□"
 GREEN = "#2ecc71"
@@ -176,7 +169,7 @@ def export_flp_to_mp3(file_path):
 def save_config():
     """Save current settings to config file"""
     config = configparser.ConfigParser()
-    
+
     config['PATHS'] = {
         'Output_Folder_Path': Output_Folder_Path,
         # Store multiple paths separated by ;
@@ -207,7 +200,7 @@ def load_config():
     """Load settings from config file"""
     global Output_Folder_Path, Dir_FLP_Projects, FL_Studio_Path, Processor_Type
     global Project_Order_By, Enable_Output_Sub_Folder, Output_Sub_Folder_Name
-    global Output_Audio_Format, Mouse_Scroll_Speed, Application_Name,Projects_Font_Size  
+    global Output_Audio_Format, Mouse_Scroll_Speed, Application_Name,Projects_Font_Size
     global Launch_At_Startup, Font_Name, USE_DARK_MODE
 
     if not os.path.exists(CONFIG_FILE):
@@ -285,7 +278,7 @@ def first_run_setup(root):
     setup_root.grab_set()
     setup_root.transient()
     root.withdraw()
-    setup_completed = tk.BooleanVar(value=False) 
+    setup_completed = tk.BooleanVar(value=False)
 
     # Create style for indicators
     style = ttk.Style()
@@ -313,11 +306,11 @@ def first_run_setup(root):
     fl_path_label = ttk.Label(setup_root, text="", font=(Font_Name, 10))
     fl_path_label.pack(pady=(0, 10))
 
-    
+
 
     def update_indicators():
         #Update all field indicators based on current values
-         for field_var, indicator_var, label_widget in indicator_fields:
+        for field_var, indicator_var, label_widget in indicator_fields:
             has_value = bool(field_var.get())
             # Update the indicator text
             indicator_var.set(CHECK_ICON if has_value else EMPTY_ICON)
@@ -511,11 +504,11 @@ def first_run_setup(root):
             else:
                 fl_path, processor = get_fl_studio_info()
                 if not fl_path:
-                        messagebox.showerror("Error", "Could not detect FL Studio path")
-                        return
+                    messagebox.showerror("Error", "Could not detect FL Studio path")
+                    return
                 FL_Studio_Path = fl_path
                 Processor_Type = processor
-                
+
             #Processor_Type = processor_type.get()
             save_config()
             setup_completed.set(True)
@@ -528,7 +521,7 @@ def first_run_setup(root):
     # update_indicators()
     #setup_root.mainloop()
     root.wait_window(setup_root)
-    return setup_completed.get() 
+    return setup_completed.get()
 
 
 def is_fl_studio_running():
@@ -540,27 +533,27 @@ def is_fl_studio_running():
 
 
 def handle_mouse_scroll_speed(selected_key=None):
-        """
+    """
         Handle mouse scroll speed settings and return the appropriate speed value.
         If selected_key is provided, returns the corresponding speed value.
         If not provided, returns the current Mouse_Scroll_Speed.
         """
-        global Mouse_Scroll_Speed
+    global Mouse_Scroll_Speed
+    global SCROLL_SPEED_MAPPING
+    SCROLL_SPEED_MAPPING = {
+        1: 1,   # Slow
+        2: 10,  # Medium (default)
+        3: 15,  # Fast
+        4: 50   # Very fast
+        }
 
-        SCROLL_SPEED_MAPPING = {
-            1: 1,   # Slow
-            2: 10,  # Medium (default)
-            3: 15,  # Fast
-            4: 50   # Very fast
-            }
-
-        if selected_key is not None:
-                # Update the scroll speed based on the selected key
-                Mouse_Scroll_Speed = SCROLL_SPEED_MAPPING.get(selected_key, 10)
-                return Mouse_Scroll_Speed
-        else:
-                # Return the current scroll speed
-                return Mouse_Scroll_Speed
+    if selected_key is not None:
+        # Update the scroll speed based on the selected key
+        Mouse_Scroll_Speed = SCROLL_SPEED_MAPPING.get(selected_key, 10)
+        return Mouse_Scroll_Speed
+    else:
+        # Return the current scroll speed
+        return Mouse_Scroll_Speed
 
 class CustomCombobox(ttk.Combobox):
     def __init__(self, master, **kwargs):
@@ -748,8 +741,8 @@ class FLPExporterUI:
         # Force listbox color
         self.cart_listbox.configure(
             bg=Selected_Project_Window_Background_Color, fg=Project_Tree_Text_Color, highlightthickness=2,                # Border thickness
-    highlightbackground="black",         # Border color when not focused
-    highlightcolor="black"    )
+        highlightbackground="black",         # Border color when not focused
+        highlightcolor="black"    )
 
         self.export_button = ttk.Button(self.right_frame,
                                         text="Export",
@@ -863,7 +856,7 @@ class FLPExporterUI:
         except Exception as e:
             print(f"Error opening folder: {str(e)}")
 
-    def filter_tree(self, event):
+    def filter_tree(self, event=None):
         search_term = self.search_entry.get().lower()
 
         # Check if placeholder is active
@@ -1119,7 +1112,7 @@ class FLPExporterUI:
                                             command=self.browse_output_folder,
                                             bootstyle="info")
             self.browse_button.pack(side=tk.LEFT)
-            
+
 
             self.output_folder_info_label = ttk.Label(
                 self.scrollable_settings_frame,
@@ -1331,7 +1324,7 @@ class FLPExporterUI:
             subfolder_frame = ttk.Frame(self.scrollable_settings_frame)
             subfolder_frame.pack(fill=tk.X, pady=5)
             style.configure('Large.TCheckbutton',
-                            font=(Font_Name, 14)) 
+                            font=(Font_Name, 14))
 
             # Launch at Startup Toggle
             startup_frame = ttk.Frame(self.scrollable_settings_frame,
@@ -1375,7 +1368,7 @@ class FLPExporterUI:
             self.subfolder_toggle.pack(side=tk.LEFT)
             self.subfolder_toggle.pack(side=tk.LEFT, padx=(0, 10))
 
-            
+
 
             # Info label
             self.subfolder_info_label = ttk.Label(
@@ -1440,7 +1433,7 @@ class FLPExporterUI:
                 font=(Font_Name, 14)
             )
             self.font_combobox.pack(side=tk.LEFT)
-            
+
 
             #
             # ABOUT
@@ -1479,7 +1472,7 @@ class FLPExporterUI:
                                  pady=(0, 60), fill='x')
             self.settings_canvas.configure(
                 scrollregion=self.settings_canvas.bbox("all"))
-        
+
         # open_settings_Else
         else:
             # Save output path
@@ -1489,7 +1482,7 @@ class FLPExporterUI:
                     "Error", "The specified directory does not exist.")
                 return
             Output_Folder_Path = new_path
-           
+
             # Save FLP projects folders
             flp_folders = self.flp_folder_entry.get("1.0", tk.END).strip()  # Get all text from line 1 character 0 to end
             if flp_folders:
@@ -1505,7 +1498,7 @@ class FLPExporterUI:
                             f"The specified FLP directory does not exist: {folder}"
                         )
                         return
-         
+
             Project_Order_By = self.Project_Order_By_Var.get()
 
             # Handle startup setting
@@ -1513,13 +1506,13 @@ class FLPExporterUI:
                 self.add_to_startup()
             else:
                 self.remove_from_startup()
-           
+
             #Save subfolder settings
             Enable_Output_Sub_Folder = self.subfolder_toggle_var.get()
             if Enable_Output_Sub_Folder:
                 subfolder_name = self.subfolder_entry.get().strip()
                 Output_Sub_Folder_Name = subfolder_name
-        
+
             # Save mouse scroll speed
             selected_key = self.scroll_speed_var.get()
             Mouse_Scroll_Speed = SCROLL_SPEED_MAPPING.get(
@@ -2004,8 +1997,8 @@ class FLPExporterUI:
             # Visual refresh - flash the frames
             self.flash_refresh()
 
-            """
-            # This section will clear the previosly selected items in projects 
+
+            # This section will clear the previosly selected items in projects
             # and clear the search entry, once save settings is clicked
             # Clear and repopulate the tree
             self.tree.delete(*self.tree.get_children())
@@ -2014,7 +2007,8 @@ class FLPExporterUI:
             self.selected_files.clear()
             self.cart_listbox.delete(0, tk.END)
             self.populate_tree(Dir_FLP_Projects)
-            
+
+            """
             # Clear the search entry
             self.search_entry.delete(0, tk.END)
             self.search_entry.insert(0, Search_Placeholder_Text)
@@ -2039,11 +2033,14 @@ class FLPExporterUI:
 
             self.refresh_cart()
             self.status_label.config(text="Project tree synced",
-                                     bootstyle="primary")
+                                 bootstyle="primary")
+
+            # Reapply the current search filter after syncing
+            self.filter_tree()  # This line is added
 
         except Exception as e:
             self.status_label.config(text=f"Sync failed: {str(e)}",
-                                     bootstyle="danger")
+                                        bootstyle="danger")
 
     def flash_refresh(self):
         """Visual effect to show refresh is happening"""
@@ -2060,7 +2057,7 @@ class FLPExporterUI:
         self.left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         self.right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=False)
 
-    # 
+    #
     def toggle_startup(self):
         """Handle the startup toggle button"""
         if self.startup_var.get():
@@ -2378,7 +2375,7 @@ class FLPExporterUI:
             # rework to get last saved value in config
             # Output_Sub_Folder_Name = config['SETTINGS']['Output_Sub_Folder_Name']
 
-             # Load config
+            # Load config
             config = configparser.ConfigParser()
             config.read(CONFIG_FILE)
 
@@ -2412,7 +2409,7 @@ class FLPExporterUI:
             # Update UI elements
             style.configure("Custom.Treeview", font=(Font_Name, Projects_Font_Size))
             self.cart_listbox.config(font=(Font_Name, Projects_Font_Size))
-            
+
         #save_config()
 
     def get_fl_studio_location_from_running_process(self):
@@ -2505,8 +2502,8 @@ class FLPExporterUI:
             self.subfolder_frame.pack(fill=tk.X, padx=5, pady=(0, 5),
                                     after=widgets[search_frame_index])
 
-    
-    
+
+
 # === START APP ===
 if __name__ == "__main__":
     # Initialize default values
@@ -2539,7 +2536,7 @@ if __name__ == "__main__":
         #sys.exit(1)
 
     # Now show the main application window
-    root.deiconify()  
+    root.deiconify()
 
     # Apply ttkbootstrap style
     try:

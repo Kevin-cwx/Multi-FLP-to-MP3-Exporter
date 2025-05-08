@@ -1,6 +1,7 @@
 ## **Current Task**
 - Implement - if FL64.exe fails, then try FL.exe, and vice versa
 - organize code, multiple, SCROLL_SPEED_MAPPING
+- 
 
 
 ## **Other**
@@ -89,6 +90,7 @@
 - ✅ - Logic for enable output subfolder in settings
     - First time user - Set to false
     - this is preventing "save settings"
+- ✅ - Fix after i search for a project and i go in settings, and then click save settings. Once i return to the main window, i want to be able to see my last search results, thus search entry needs to be populated correctly, and the correct items i search need to be shown in project tree
 
 ## **Search**
 - ✅ - Search input field, text should only show project in left side, and should open the folder if in sub folder
