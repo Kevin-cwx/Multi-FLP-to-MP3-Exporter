@@ -236,8 +236,8 @@ def load_config():
         Launch_At_Startup = config['SETTINGS'].getboolean('Launch_At_Startup')
         Font_Name = config['SETTINGS']['Font_Name']
         USE_DARK_MODE = config['SETTINGS'].getboolean('USE_DARK_MODE')
-        Projects_Font_Size = int(config['SETTINGS'].get(
-            'Projects_Font_Size', 14))
+        #Projects_Font_Size = int(config['SETTINGS'].get(
+        #    'Projects_Font_Size', 14))
 
         return True
     except (KeyError, ValueError) as e:
@@ -2574,6 +2574,13 @@ if __name__ == "__main__":
     # Create the root window early but keep it withdrawn
     root = tk.Tk()
     root.withdraw()
+
+    # Calculate dynamic font size based on DPI scaling
+    dpi = root.winfo_fpixels('1i')  # Get DPI
+    scaling_factor = dpi / 96.0  # 96 is default DPI for 100% scaling
+    base_font_size = 14  # Base size at 100% scaling
+    Projects_Font_Size = int(base_font_size / scaling_factor)
+    Projects_Font_Size = max(Projects_Font_Size, 8)  # Ensure minimum font size
 
     # Try to load config
     if os.path.exists(CONFIG_FILE):
