@@ -2,6 +2,7 @@
 - Implement - if FL64.exe fails, then try FL.exe, and vice versa
 - Dynamic font
     - implemented, test at home and other machines
+- Cather for when FLP Folder needs to search through a lot of files, which would cause the app to freeze.
 
 
 ## **Other**
