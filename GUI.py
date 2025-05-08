@@ -46,7 +46,7 @@ open(os.path.join(os.path.expanduser('~'),
 
 
 Search_Placeholder_Text = "Search Projects"
-Project_Order_By = "name"  # date, name
+Project_Order_By = "Name"  # date, name
 global Enable_Output_Sub_Folder
 Enable_Output_Sub_Folder = False
 Output_Sub_Folder_Name = ""
@@ -1140,7 +1140,7 @@ class FLPExporterUI:
             order_frame.pack(fill=tk.X, pady=0)
 
             self.order_label = ttk.Label(order_frame,
-                                         text="Order Projects By ",
+                                         text="Order Projects By             ",
                                          font=(Font_Name, 14),
                                          background=Background_Color)
             self.order_label.pack(side=tk.LEFT, padx=(10, 5))
@@ -1149,7 +1149,7 @@ class FLPExporterUI:
             self.order_combobox = ttk.Combobox(
                 order_frame,
                 textvariable=self.Project_Order_By_Var,
-                values=["date", "name"],
+                values=["Date", "Name"],
                 state="readonly",
                 width=10,
                 style="CustomCombobox.TCombobox")
@@ -1642,7 +1642,7 @@ class FLPExporterUI:
         if not items:  # Return empty list if no items
             return []
 
-        if Project_Order_By == "date":
+        if Project_Order_By == "Date":
             # Sort by modification date (newest first)
             def get_mtime(item):
                 if len(item) >= 2:  # Ensure we have at least 2 elements

@@ -1,7 +1,4 @@
 ## **Current Task**
-- Logic for enable output subfolder in settings
-    - First time user - Set to false
-    - this is preventing "save settings"
 - Implement - if FL64.exe fails, then try FL.exe, and vice versa
 - Disable scroll for all dropdowns
     -   As it causes accidental value changes, only allow explicit opening ofdropdown and value selection
@@ -30,16 +27,16 @@
 #### General 
 #### Items to have
 - ✅ - Set output folder 
-- Set input folder (Multiple, if not in same location)
+- ✅ - Set input folder (Multiple, if not in same location)
 - Launch at system startup
-- Project_Order_By, toggle name or date
+- ✅ -  Project_Order_By, toggle name or date
 
 #### Advanced
-- Set FL_Studio_Path ( Write function to find on own, but make editable)
+- ✅ -  Set FL_Studio_Path ( Write function to find on own, but make editable)
 - Set Processor_Type
 - ❌ - Toggle, enable auto export all projects you worked on today
     - No need to build this. Users can just click recent projects
-- Enable Set output folder sub folder, User can name the sub folder within subfolder where they want to export songs
+- ✅ - Enable Set output folder sub folder, User can name the sub folder within subfolder where they want to export songs
 - User can set mouse scroll speed 4 speeds. Normal, 2X, 3X, 5X
 
 
@@ -64,6 +61,9 @@
     - Default
 - Change default to have a dark grey color
 
+- Input fields should be white, in settings and also on mainwindow
+    - or only in settings, and on main window make border bold as indicator
+
 
 ## **Bugs**
 - Figure out how to prevent FLP from exporting pattern instead of full song
@@ -86,7 +86,9 @@
     - Ctrl + Down Key
     - No unselect
 - ✅ - Change background color of selected project section
-
+- ✅ - Logic for enable output subfolder in settings
+    - First time user - Set to false
+    - this is preventing "save settings"
 
 ## **Search**
 - ✅ - Search input field, text should only show project in left side, and should open the folder if in sub folder
@@ -137,3 +139,6 @@ Run in GUI.py dir
 watchmedo auto-restart --patterns="*.py" --recursive -- python GUI.py
 
 If it fails, move file back to Good/A dir
+
+**First Time User**
+C:\Users\Kfoen
