@@ -51,17 +51,17 @@ Enable_Output_Sub_Folder = False
 Output_Sub_Folder_Name = ""
 Output_Audio_Format = "Emp3"
 Mouse_Scroll_Speed = 7
-Projects_Font_Size = 14
+Projects_Font_Size = 9
 Application_Name = "Multi FLP to MP3 Exporter"
 Launch_At_Startup = False
 Font_Name = "Meiryo"
 Status_Indicator_Size = 30
 
 SCROLL_SPEED_MAPPING = {
-                1: 7,   # Slow
+                1: 1,   # Slow
                 2: 10,  # Medium (default)
                 3: 15,  # Fast
-                4: 19   # Very fast
+                4: 50   # Very fast
             }
 
 CHECK_ICON = "🗹"
@@ -1378,7 +1378,7 @@ class FLPExporterUI:
             current_key = next(
                 (k for k, v in SCROLL_SPEED_MAPPING.items()
                  if v == Mouse_Scroll_Speed),
-                2  # Default to medium if not found
+                1  # Default to medium if not found
             )
 
             self.scroll_speed_var = tk.IntVar(value=current_key)
@@ -1502,7 +1502,7 @@ class FLPExporterUI:
             # Save mouse scroll speed
             selected_key = self.scroll_speed_var.get()
             Mouse_Scroll_Speed = SCROLL_SPEED_MAPPING.get(
-                selected_key, 10)  # Default to medium if invalid
+                selected_key, 1)  # Default to medium if invalid
 
             # Save FL Studio path
             fl_studio_path = self.fl_studio_path_entry.get().strip()
@@ -2369,7 +2369,7 @@ class FLPExporterUI:
 
 
             # Mouse scroll speed
-            SCROLL_SPEED_MAPPING = {1: 7, 2: 10, 3: 15, 4: 19}
+            #SCROLL_SPEED_MAPPING = {1: 7, 2: 10, 3: 15, 4: 19}
             selected_key = self.scroll_speed_var.get()
             Mouse_Scroll_Speed = SCROLL_SPEED_MAPPING.get(selected_key, 10)
             Launch_At_Startup = self.startup_var.get()
