@@ -1,7 +1,7 @@
 ## **Current Task**
 - Implement - if FL64.exe fails, then try FL.exe, and vice versa
 - organize code, multiple, SCROLL_SPEED_MAPPING
-- 
+- Dynamic font
 
 
 ## **Other**

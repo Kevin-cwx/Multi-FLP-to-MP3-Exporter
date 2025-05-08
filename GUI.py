@@ -61,6 +61,13 @@ EMPTY_ICON = "□"
 GREEN = "#2ecc71"
 GRAY = "black"
 
+SCROLL_SPEED_MAPPING = {
+    1: 1,  # Slow
+    2: 10,  # Medium (default)
+    3: 15,  # Fast
+    4: 50  # Very fast
+}
+
 # Emp3,ogg,wav
 # ogg does not work in powershell, FL might have disabled
 
@@ -577,14 +584,6 @@ def handle_mouse_scroll_speed(selected_key=None):
         If not provided, returns the current Mouse_Scroll_Speed.
         """
     global Mouse_Scroll_Speed
-    global SCROLL_SPEED_MAPPING
-    SCROLL_SPEED_MAPPING = {
-        1: 1,  # Slow
-        2: 10,  # Medium (default)
-        3: 15,  # Fast
-        4: 50  # Very fast
-    }
-
     if selected_key is not None:
         # Update the scroll speed based on the selected key
         Mouse_Scroll_Speed = SCROLL_SPEED_MAPPING.get(selected_key, 10)
@@ -720,11 +719,11 @@ class FLPExporterUI:
             font=(Font_Name, 14),
             background=Background_Color)
         self.instruction_label.pack(pady=(1, 1), anchor='w', fill='x')
-        
+
         # Projects Left Side
         tree_frame = ttk.Frame(self.left_frame)
         tree_frame.pack(fill=tk.BOTH, expand=True, padx=5, pady=(0, 10))
-        
+
         style.configure("Custom.Treeview",
                         background=Project_Tree_Background_Color,
                         fieldbackground="#f0f0f0",
