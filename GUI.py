@@ -24,7 +24,6 @@ from pathlib import Path
 
 global Output_Folder_Path
 global Project_Order_By
-# === CONFIG ===
 USE_DARK_MODE = False
 # Dir_FLP_Projects = r"C:\Users\foendoe.kevin\Documents\findusic - FLP Input"
 
@@ -1767,7 +1766,7 @@ class FLPExporterUI:
             Exported_project_label = "project" if total == 1 else "projects"
             self.status_label.config(
                 text=f"{total} {Exported_project_label} exported.",
-                bootstyle="success")
+                bootstyle="dark")
             self.status_label.update()
 
         except Exception as e:
@@ -2329,6 +2328,28 @@ class FLPExporterUI:
             # rework to get last saved value in config
             # Output_Sub_Folder_Name = config['SETTINGS']['Output_Sub_Folder_Name']
 
+             # Load config
+            config = configparser.ConfigParser()
+            config.read(CONFIG_FILE)
+
+            # Validate directories
+        if not os.path.isdir(Output_Folder_Path):
+            messagebox.showerror(
+                "Error", "The specified Output Folder does not exist. Using previously saved value.")
+            Output_Folder_Path = config['PATHS']['Output_Folder_Path']
+
+        if not all(os.path.isdir(path) for path in Dir_FLP_Projects):
+            messagebox.showerror(
+                "Error", "One or more FLP Projects Folders do not exist. Using previously saved values.")
+            Dir_FLP_Projects = [path.strip(
+            ) for path in config['PATHS']['Dir_FLP_Projects'].split(';') if path.strip()]
+
+        if FL_Studio_Path and not os.path.isdir(FL_Studio_Path):
+            messagebox.showerror(
+                "Error", "The specified FL Studio Path does not exist. Using previously saved value.")
+            FL_Studio_Path = config['PATHS']['FL_Studio_Path']
+
+
             # Mouse scroll speed
             SCROLL_SPEED_MAPPING = {1: 7, 2: 10, 3: 15, 4: 19}
             selected_key = self.scroll_speed_var.get()
@@ -2464,7 +2485,8 @@ if __name__ == "__main__":
     # Verify required paths are set
     if not Output_Folder_Path or not Dir_FLP_Projects or not FL_Studio_Path:
         messagebox.showerror("Error", "Required paths not configured")
-        sys.exit(1)
+        first_run_setup(root)
+        #sys.exit(1)
 
     # Now show the main application window
     root.deiconify()  
