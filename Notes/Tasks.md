@@ -1,7 +1,10 @@
 ## **Current Task**
 - Logic for enable output subfolder in settings
     - First time user - Set to false
-    - this is preventing "save settings" 
+    - this is preventing "save settings"
+- Implement - if FL64.exe fails, then try FL.exe, and vice versa
+- Disable scroll for all dropdowns
+    -   As it causes accidental value changes, only allow explicit opening ofdropdown and value selection
 
 
 ## **Other**

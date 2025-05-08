@@ -1479,11 +1479,7 @@ class FLPExporterUI:
             Enable_Output_Sub_Folder = self.subfolder_toggle_var.get()
             if Enable_Output_Sub_Folder:
                 subfolder_name = self.subfolder_entry.get().strip()
-                if not subfolder_name:
-                    # Keep code, as if removd, it disbales writing in output sub folder
-                    return
                 Output_Sub_Folder_Name = subfolder_name
-            #did not print here 
         
             # Save mouse scroll speed
             selected_key = self.scroll_speed_var.get()
@@ -1501,6 +1497,7 @@ class FLPExporterUI:
                 FL_Studio_Path = fl_studio_path
 
             self.save_settings()
+            save_config()
             self.settings_frame.destroy()
             self.settings_open = False
 
@@ -2346,7 +2343,7 @@ class FLPExporterUI:
             style.configure("Custom.Treeview", font=(Font_Name, Projects_Font_Size))
             self.cart_listbox.config(font=(Font_Name, Projects_Font_Size))
             
-        save_config()
+        #save_config()
 
     def get_fl_studio_location_from_running_process(self):
         """Get FL Studio location from running process and update UI status"""
