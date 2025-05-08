@@ -1,7 +1,6 @@
 ## **Current Task**
 - Implement - if FL64.exe fails, then try FL.exe, and vice versa
-- Disable scroll for all dropdowns
-    -   As it causes accidental value changes, only allow explicit opening ofdropdown and value selection
+
 
 
 ## **Other**
@@ -63,6 +62,7 @@
 
 - Input fields should be white, in settings and also on mainwindow
     - or only in settings, and on main window make border bold as indicator
+    - currently, ony when output subfolder is created, does it change for all other inputs
 
 
 ## **Bugs**
@@ -119,6 +119,9 @@
 - ✅ - Add right click on folder also, to open folder location
 ✅ - First time user - Setup works, values are saved in ini file
     - However once ok is clicked, program does not open main window
+- ✅ - Disable scroll for all dropdowns
+    -   As it causes accidental value changes, only allow explicit opening ofdropdown and value selection
+
 
 #### About
 - ✅ - Add about section, with version name

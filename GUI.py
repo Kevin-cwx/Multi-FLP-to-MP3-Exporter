@@ -1382,7 +1382,7 @@ class FLPExporterUI:
             )
 
             self.scroll_speed_var = tk.IntVar(value=current_key)
-            self.scroll_combobox = ttk.Combobox(
+            self.scroll_combobox = CustomCombobox(
                 scroll_frame,
                 textvariable=self.scroll_speed_var,
                 values=list(SCROLL_SPEED_MAPPING.keys()),
@@ -1410,7 +1410,7 @@ class FLPExporterUI:
             current_font_key = 'Normal' if Projects_Font_Size == 9 else 'Large'
 
             self.font_size_var = tk.StringVar(value=current_font_key)
-            self.font_combobox = ttk.Combobox(
+            self.font_combobox = CustomCombobox(
                 font_size_frame,
                 textvariable=self.font_size_var,
                 values=list(font_mapping.keys()),
@@ -2047,7 +2047,7 @@ class FLPExporterUI:
         key = winreg.OpenKey(winreg.HKEY_CURRENT_USER,
                              r'Software\Microsoft\Windows\CurrentVersion\Run',
                              0, winreg.KEY_SET_VALUE)
-        winreg.SetValueEx(key, "FLPManager", 0, winreg.REG_SZ, app_path)
+        winreg.SetValueEx(key, "Multi_FLP_To_MP3", 0, winreg.REG_SZ, app_path)
         winreg.CloseKey(key)
 
     def remove_from_startup(self):
