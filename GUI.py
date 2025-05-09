@@ -21,6 +21,7 @@ import time
 import configparser
 from pathlib import Path
 
+
 global Output_Folder_Path
 global Project_Order_By
 USE_DARK_MODE = False
@@ -548,8 +549,9 @@ def first_run_setup(root):
             else:
                 fl_path, processor = get_fl_studio_info()
                 if not fl_path:
-                    messagebox.showerror("Error",
-                                         "Could not detect FL Studio Installation path")
+                    messagebox.showerror(
+                        "Error",
+                        "Could not detect FL Studio Installation path")
                     return
                 FL_Studio_Path = fl_path
                 Processor_Type = processor
@@ -730,7 +732,6 @@ class FLPExporterUI:
                         foreground=Project_Tree_Text_Color,
                         font=(Font_Name, Projects_Font_Size))
 
-
         self.tree = ttk.Treeview(tree_frame,
                                  selectmode="extended",
                                  style="Custom.Treeview")
@@ -871,7 +872,6 @@ class FLPExporterUI:
         self.populate_tree(Dir_FLP_Projects)
         self.root.bind("<Return>", self.on_enter_key)
 
-
     def toggle_advanced(self, event):
         """Toggle visibility of advanced settings"""
         if self.advanced_container.winfo_ismapped():
@@ -879,9 +879,9 @@ class FLPExporterUI:
             self.advanced_header.configure(text="+ Advanced")
         else:
             self.advanced_container.pack(after=self.advanced_header,
-                                    anchor="w",
-                                    fill=tk.X,
-                                    pady=(0, 20))
+                                         anchor="w",
+                                         fill=tk.X,
+                                         pady=(0, 20))
             self.advanced_header.configure(text="- Advanced")
 
     def toggle_about(self, event):
@@ -1288,13 +1288,11 @@ class FLPExporterUI:
             #
 
             # Create Advanced header
-            self.advanced_header = ttk.Label(
-                self.scrollable_settings_frame,
-                text="+ Advanced",
-                font=(Font_Name, 18, "bold"),
-                cursor="hand2",
-                style='Settings.TLabel'
-            )
+            self.advanced_header = ttk.Label(self.scrollable_settings_frame,
+                                             text="+ Advanced",
+                                             font=(Font_Name, 18, "bold"),
+                                             cursor="hand2",
+                                             style='Settings.TLabel')
             self.advanced_header.pack(anchor="w", padx=0, pady=(60, 5))
             self.advanced_header.bind("<Button-1>", self.toggle_advanced)
 
@@ -1529,19 +1527,17 @@ class FLPExporterUI:
             #
             # ABOUT
             #
-
             self.about_header = ttk.Label(self.scrollable_settings_frame,
-                                             text="+ About",
-                                             font=(Font_Name, 18, "bold"),
-                                             cursor="hand2",
-                                             style='Settings.TLabel')
+                                          text="+ About",
+                                          font=(Font_Name, 18, "bold"),
+                                          cursor="hand2",
+                                          style='Settings.TLabel')
             self.about_header.pack(anchor="w", padx=0, pady=(60, 5))
             self.about_header.bind("<Button-1>", self.toggle_about)
 
             # Create container for advanced settings (initially hidden)
             self.about_container = ttk.Frame(self.scrollable_settings_frame,
-                                          style='Settings.TFrame')
-
+                                             style='Settings.TFrame')
 
             # About Section
             # self.about_header = ttk.Label(self.scrollable_settings_frame,
@@ -1582,7 +1578,7 @@ class FLPExporterUI:
             self.about_info.pack(anchor="w", padx=20, pady=(0, 60), fill='x')
             self.settings_canvas.configure(
                 scrollregion=self.settings_canvas.bbox("all"))
-            
+
         # open_settings_Else
         else:
             # Save output path
@@ -1598,21 +1594,27 @@ class FLPExporterUI:
 
             # Check if field is empty
             if not flp_folders:
-                messagebox.showerror("Missing Field", "FLP folders field cannot be empty.")
+                messagebox.showerror("Missing Field",
+                                     "FLP folders field cannot be empty.")
                 return
 
             # Process each non-empty line
-            Dir_FLP_Projects = [f.strip() for f in flp_folders.split("\n") if f.strip()]
+            Dir_FLP_Projects = [
+                f.strip() for f in flp_folders.split("\n") if f.strip()
+            ]
 
             # Check if any valid paths remain
             if not Dir_FLP_Projects:
-                messagebox.showerror("Missing Field", "No valid FLP folder paths specified.")
+                messagebox.showerror("Missing Field",
+                                     "No valid FLP folder paths specified.")
                 return
 
             # Validate that all provided paths are actual directories
             for folder in Dir_FLP_Projects:
                 if not os.path.isdir(folder):
-                    messagebox.showerror("Invalid Folder", f"'{folder}' is not a valid directory.")
+                    messagebox.showerror(
+                        "Invalid Folder",
+                        f"'{folder}' is not a valid directory.")
                     return
 
             Project_Order_By = self.Project_Order_By_Var.get()
@@ -1637,10 +1639,12 @@ class FLPExporterUI:
             # Save FL Studio path
             fl_studio_path = self.fl_studio_path_entry.get().strip()
             if not fl_studio_path:
-                messagebox.showerror("Missing Field", "FL Studio path cannot be empty.")
+                messagebox.showerror("Missing Field",
+                                     "FL Studio path cannot be empty.")
                 return
             if not os.path.isdir(fl_studio_path):
-                messagebox.showerror("Invalid Path", "FL Studio path is not a valid directory.")
+                messagebox.showerror(
+                    "Invalid Path", "FL Studio path is not a valid directory.")
                 return
             FL_Studio_Path = fl_studio_path
 
@@ -1830,20 +1834,20 @@ class FLPExporterUI:
         self.anchor_item = item_id
         self.refresh_cart()
 
-    def select_range(self, new_item_id):
-        if self.last_selected_item is None:
-            self.selected_files.add(self.path_map[new_item_id])
-            self.tree.item(new_item_id, tags=("selected", ))
-            self.last_selected_item = new_item_id
-            return
-        start_idx = self.tree.index(self.last_selected_item)
-        end_idx = self.tree.index(new_item_id)
-        for idx in range(min(start_idx, end_idx), max(start_idx, end_idx) + 1):
-            item_id = self.tree.get_children()[idx]
-            if item_id in self.path_map:
-                self.selected_files.add(self.path_map[item_id])
-                self.tree.item(item_id, tags=("selected", ))
-        self.last_selected_item = new_item_id
+    # def select_range(self, new_item_id):
+    #     if self.last_selected_item is None:
+    #         self.selected_files.add(self.path_map[new_item_id])
+    #         self.tree.item(new_item_id, tags=("selected", ))
+    #         self.last_selected_item = new_item_id
+    #         return
+    #     start_idx = self.tree.index(self.last_selected_item)
+    #     end_idx = self.tree.index(new_item_id)
+    #     for idx in range(min(start_idx, end_idx), max(start_idx, end_idx) + 1):
+    #         item_id = self.tree.get_children()[idx]
+    #         if item_id in self.path_map:
+    #             self.selected_files.add(self.path_map[item_id])
+    #             self.tree.item(item_id, tags=("selected", ))
+    #     self.last_selected_item = new_item_id
 
     def toggle_select(self, item_id):
         file_path = self.path_map[item_id]
@@ -2286,27 +2290,27 @@ class FLPExporterUI:
 
         return _get_items()
 
-    def select_range(self, new_item_id):
-        """Selects items between last_selected_item and new_item_id based on visible order."""
-        if self.last_selected_item is None:
-            if new_item_id in self.path_map:
-                self.selected_files.add(self.path_map[new_item_id])
-                self.tree.item(new_item_id, tags=("selected", ))
-                self.last_selected_item = new_item_id
-            return
+    # def select_range(self, new_item_id):
+    #     """Selects items between last_selected_item and new_item_id based on visible order."""
+    #     if self.last_selected_item is None:
+    #         if new_item_id in self.path_map:
+    #             self.selected_files.add(self.path_map[new_item_id])
+    #             self.tree.item(new_item_id, tags=("selected", ))
+    #             self.last_selected_item = new_item_id
+    #         return
 
-        visible_items = self.get_visible_items()
-        try:
-            start_idx = visible_items.index(self.last_selected_item)
-            end_idx = visible_items.index(new_item_id)
-        except ValueError:
-            return  # One of the items is not visible
+    #     visible_items = self.get_visible_items()
+    #     try:
+    #         start_idx = visible_items.index(self.last_selected_item)
+    #         end_idx = visible_items.index(new_item_id)
+    #     except ValueError:
+    #         return  # One of the items is not visible
 
-        for idx in range(min(start_idx, end_idx), max(start_idx, end_idx) + 1):
-            item_id = visible_items[idx]
-            if item_id in self.path_map:
-                self.selected_files.add(self.path_map[item_id])
-                self.tree.item(item_id, tags=("selected", ))
+    #     for idx in range(min(start_idx, end_idx), max(start_idx, end_idx) + 1):
+    #         item_id = visible_items[idx]
+    #         if item_id in self.path_map:
+    #             self.selected_files.add(self.path_map[item_id])
+    #             self.tree.item(item_id, tags=("selected", ))
 
     def on_ctrl_shift_arrow(self, event):
         """Handle extended multi-selection with arrow keys"""
@@ -2490,9 +2494,9 @@ class FLPExporterUI:
             config.read(CONFIG_FILE)
 
             if not Output_Folder_Path:
-                messagebox.showerror("Missing Field", "Output folder must be specified.")
+                messagebox.showerror("Missing Field",
+                                     "Output folder must be specified.")
                 return
-
 
             # Mouse scroll speed
             selected_key = self.scroll_speed_var.get()
