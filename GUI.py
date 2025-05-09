@@ -1207,7 +1207,7 @@ class FLPExporterUI:
                 text="Browse",
                 command=self.browse_flp_folders,
                 bootstyle="info")
-            self.browse_flp_button.pack(side=tk.LEFT)
+            self.browse_flp_button.pack(side=tk.RIGHT)
 
             # Add label underneath
             self.flp_folder_info_label = ttk.Label(
