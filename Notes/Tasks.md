@@ -38,10 +38,10 @@
 - ❌ - Toggle, enable auto export all projects you worked on today
     - No need to build this. Users can just click recent projects
 - ✅ - Enable Set output folder sub folder, User can name the sub folder within subfolder where they want to export songs
-- User can set mouse scroll speed 4 speeds. Normal, 2X, 3X, 5X
+- ✅ - User can set mouse scroll speed 4 speeds. Normal, 2X, 3X, 5X
 
 
-- Make advanced closable (default)
+- ✅ - Make advanced closable (default)
 - Add change font size for projects and selected projects (padding must also be changed in background)
 
 ## **Future Feature**

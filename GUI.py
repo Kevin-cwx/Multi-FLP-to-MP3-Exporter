@@ -871,6 +871,19 @@ class FLPExporterUI:
         self.populate_tree(Dir_FLP_Projects)
         self.root.bind("<Return>", self.on_enter_key)
 
+
+    def toggle_advanced(self, event):
+        """Toggle visibility of advanced settings"""
+        if self.advanced_container.winfo_ismapped():
+            self.advanced_container.pack_forget()
+            self.advanced_header.configure(text="+ Advanced")
+        else:
+            self.advanced_container.pack(after=self.advanced_header,
+                                    anchor="w",
+                                    fill=tk.X,
+                                    pady=(0, 20))
+            self.advanced_header.configure(text="- Advanced")
+
     def on_search_focus_in(self, event):
         """Handle focus in event to remove placeholder text"""
         if self.placeholder_active:
@@ -1230,7 +1243,7 @@ class FLPExporterUI:
                 style="CustomCombobox.TCombobox")
             self.order_combobox.pack(side=tk.LEFT)
             self.order_combobox.configure(font=(Font_Name, 14))
-        
+
             # Theme selection
             """ 
             theme_frame = ttk.Frame(self.scrollable_settings_frame,
@@ -1261,13 +1274,29 @@ class FLPExporterUI:
             #
             # Advanced
             #
-            self.general_header = ttk.Label(self.scrollable_settings_frame,
-                                            text="Advanced",
-                                            font=(Font_Name, 18, "bold"))
-            self.general_header.pack(anchor="w", padx=0, pady=(60, 5))
+
+            # Create Advanced header
+            self.advanced_header = ttk.Label(
+                self.scrollable_settings_frame,
+                text="+ Advanced",
+                font=(Font_Name, 18, "bold"),
+                cursor="hand2",
+                style='Settings.TLabel'
+            )
+            self.advanced_header.pack(anchor="w", padx=0, pady=(60, 5))
+            self.advanced_header.bind("<Button-1>", self.toggle_advanced)
+
+            # Create container for advanced settings (initially hidden)
+            self.advanced_container = ttk.Frame(self.scrollable_settings_frame,
+                                                style='Settings.TFrame')
+
+            # self.general_header = ttk.Label(self.scrollable_settings_frame,
+            #                                 text="Advanced",
+            #                                 font=(Font_Name, 18, "bold"))
+            # self.general_header.pack(anchor="w", padx=0, pady=(60, 5))
 
             # FL Studio Path Picker
-            fl_studio_frame = ttk.Frame(self.scrollable_settings_frame,
+            fl_studio_frame = ttk.Frame(self.advanced_container,
                                         style='Settings.TFrame')
             fl_studio_frame.pack(fill=tk.X, pady=5)
 
@@ -1293,8 +1322,7 @@ class FLPExporterUI:
             self.browse_fl_studio_button.pack(side=tk.LEFT)
 
             # Info label
-            fl_studio_path_info_frame = ttk.Frame(
-                self.scrollable_settings_frame)
+            fl_studio_path_info_frame = ttk.Frame(self.advanced_container)
             fl_studio_path_info_frame.pack(anchor="w",
                                            fill="x",
                                            padx=20,
@@ -1342,7 +1370,7 @@ class FLPExporterUI:
             entry_line3["state"] = "readonly"
 
             # Processor Type Dropdown
-            processor_frame = ttk.Frame(self.scrollable_settings_frame,
+            processor_frame = ttk.Frame(self.advanced_container,
                                         style='Settings.TFrame')
             processor_frame.pack(fill=tk.X, pady=5)
 
@@ -1367,18 +1395,18 @@ class FLPExporterUI:
 
             # Info label
             self.processor_info_label = ttk.Label(
-                self.scrollable_settings_frame,
+                self.advanced_container,
                 text="Select FL64.exe (64-bit) or FL.exe (32-bit)",
                 font=(Font_Name, 12))
             self.processor_info_label.pack(anchor="w", padx=20, pady=(0, 10))
 
             # Output Subfolder Toggle and Entry
-            subfolder_frame = ttk.Frame(self.scrollable_settings_frame)
+            subfolder_frame = ttk.Frame(self.advanced_container)
             subfolder_frame.pack(fill=tk.X, pady=5)
             style.configure('Large.TCheckbutton', font=(Font_Name, 14))
 
             # Launch at Startup Toggle
-            startup_frame = ttk.Frame(self.scrollable_settings_frame,
+            startup_frame = ttk.Frame(self.advanced_container,
                                       style='Settings.TFrame')
             startup_frame.pack(fill=tk.X, pady=10)
 
@@ -1398,7 +1426,7 @@ class FLPExporterUI:
             self.startup_toggle.pack(side=tk.LEFT, padx=(0, 40))
 
             # Enable Output Subfolder Toggle
-            subfolder_toggle_frame = ttk.Frame(self.scrollable_settings_frame,
+            subfolder_toggle_frame = ttk.Frame(self.advanced_container,
                                                style='Settings.TFrame')
             subfolder_toggle_frame.pack(fill=tk.X, pady=10, padx=0)
 
@@ -1422,7 +1450,7 @@ class FLPExporterUI:
 
             # Info label
             self.subfolder_info_label = ttk.Label(
-                self.scrollable_settings_frame,
+                self.advanced_container,
                 text=
                 ("Creates a subfolder in your output directory, to maintain a more organized output directory.\nFor example an album name."
                  ),
@@ -1430,7 +1458,7 @@ class FLPExporterUI:
             self.subfolder_info_label.pack(anchor="w", padx=20, pady=(0, 10))
 
             # Mouse Scroll Speed Dropdown
-            scroll_frame = ttk.Frame(self.scrollable_settings_frame,
+            scroll_frame = ttk.Frame(self.advanced_container,
                                      style='Settings.TFrame')
 
             scroll_frame.pack(fill=tk.X, pady=5)
@@ -1458,13 +1486,13 @@ class FLPExporterUI:
 
             # Info label showing speed descriptions
             self.scroll_info_label = ttk.Label(
-                self.scrollable_settings_frame,
+                self.advanced_container,
                 text="1 Slow\n2 Medium\n3 Fast\n4 Very Fast",
                 font=(Font_Name, 12))
             self.scroll_info_label.pack(anchor="w", padx=20, pady=(0, 10))
 
             # Font Size Selection
-            font_size_frame = ttk.Frame(self.scrollable_settings_frame,
+            font_size_frame = ttk.Frame(self.advanced_container,
                                         style='Settings.TFrame')
             font_size_frame.pack(fill=tk.X, pady=5)
 
