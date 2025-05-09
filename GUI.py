@@ -1110,16 +1110,21 @@ class FLPExporterUI:
 
             # Create a canvas and vertical scrollbar
             self.settings_canvas = tk.Canvas(self.settings_frame,
-                                             highlightthickness=0,
+                                             highlightthickness=40,
                                              bg=Background_Color)
+
+
             self.settings_scrollbar = ttk.Scrollbar(
                 self.settings_frame,
                 orient="vertical",
                 command=self.settings_canvas.yview)
 
+            style.configure('Red.TFrame', background='red')
+
             # Create the scrollable frame that will hold all settings widgets
             self.scrollable_settings_frame = ttk.Frame(self.settings_canvas,
                                                        style='Settings.TFrame')
+
             # Do NOT pack the scrollable frame; it's managed by the canvas
             self.scrollable_settings_frame.bind(
                 "<Configure>", lambda e: self.settings_canvas.configure(
