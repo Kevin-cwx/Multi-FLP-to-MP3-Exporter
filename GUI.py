@@ -1824,8 +1824,10 @@ class FLPExporterUI:
             self.selected_files.remove(file_path)
             self.tree.item(item_id, tags=())
         else:
+            # Shift
             if event.state & 0x0001:
                 self.select_range(item_id)
+            # Ctrl
             elif event.state & 0x0004:
                 self.toggle_select(item_id)
             else:
@@ -1833,21 +1835,6 @@ class FLPExporterUI:
                 self.tree.item(item_id, tags=("selected", ))
         self.anchor_item = item_id
         self.refresh_cart()
-
-    # def select_range(self, new_item_id):
-    #     if self.last_selected_item is None:
-    #         self.selected_files.add(self.path_map[new_item_id])
-    #         self.tree.item(new_item_id, tags=("selected", ))
-    #         self.last_selected_item = new_item_id
-    #         return
-    #     start_idx = self.tree.index(self.last_selected_item)
-    #     end_idx = self.tree.index(new_item_id)
-    #     for idx in range(min(start_idx, end_idx), max(start_idx, end_idx) + 1):
-    #         item_id = self.tree.get_children()[idx]
-    #         if item_id in self.path_map:
-    #             self.selected_files.add(self.path_map[item_id])
-    #             self.tree.item(item_id, tags=("selected", ))
-    #     self.last_selected_item = new_item_id
 
     def toggle_select(self, item_id):
         file_path = self.path_map[item_id]
@@ -2290,27 +2277,27 @@ class FLPExporterUI:
 
         return _get_items()
 
-    # def select_range(self, new_item_id):
-    #     """Selects items between last_selected_item and new_item_id based on visible order."""
-    #     if self.last_selected_item is None:
-    #         if new_item_id in self.path_map:
-    #             self.selected_files.add(self.path_map[new_item_id])
-    #             self.tree.item(new_item_id, tags=("selected", ))
-    #             self.last_selected_item = new_item_id
-    #         return
+    def select_range(self, new_item_id):
+        """Selects items between last_selected_item and new_item_id based on visible order."""
+        if self.last_selected_item is None:
+            if new_item_id in self.path_map:
+                self.selected_files.add(self.path_map[new_item_id])
+                self.tree.item(new_item_id, tags=("selected", ))
+                self.last_selected_item = new_item_id
+            return
 
-    #     visible_items = self.get_visible_items()
-    #     try:
-    #         start_idx = visible_items.index(self.last_selected_item)
-    #         end_idx = visible_items.index(new_item_id)
-    #     except ValueError:
-    #         return  # One of the items is not visible
+        visible_items = self.get_visible_items()
+        try:
+            start_idx = visible_items.index(self.last_selected_item)
+            end_idx = visible_items.index(new_item_id)
+        except ValueError:
+            return  # One of the items is not visible
 
-    #     for idx in range(min(start_idx, end_idx), max(start_idx, end_idx) + 1):
-    #         item_id = visible_items[idx]
-    #         if item_id in self.path_map:
-    #             self.selected_files.add(self.path_map[item_id])
-    #             self.tree.item(item_id, tags=("selected", ))
+        for idx in range(min(start_idx, end_idx), max(start_idx, end_idx) + 1):
+            item_id = visible_items[idx]
+            if item_id in self.path_map:
+                self.selected_files.add(self.path_map[item_id])
+                self.tree.item(item_id, tags=("selected", ))
 
     def on_ctrl_shift_arrow(self, event):
         """Handle extended multi-selection with arrow keys"""
