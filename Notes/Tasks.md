@@ -73,7 +73,8 @@
 - Settings, output folder, when a new folder is added - it does not show the new folder in the input frame
 - Font size should be calculated as on home laptop size of font gets clipped while not the case on work pc
 - After clicking "save settings" it does not go back
-
+- When scrolling if cursor is on dropdown item, (unopened), then page glithces.
+    - Find a better fix than moving away from dropdown
 
 ---
 ## **Done**

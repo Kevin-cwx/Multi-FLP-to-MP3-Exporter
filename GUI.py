@@ -884,6 +884,18 @@ class FLPExporterUI:
                                     pady=(0, 20))
             self.advanced_header.configure(text="- Advanced")
 
+    def toggle_about(self, event):
+        """Toggle visibility of about section in settings"""
+        if self.about_container.winfo_ismapped():
+            self.about_container.pack_forget()
+            self.about_header.configure(text="+ About")
+        else:
+            self.about_container.pack(after=self.about_header,
+                                      anchor="w",
+                                      fill=tk.X,
+                                      pady=(0, 20))
+            self.about_header.configure(text="- About")
+
     def on_search_focus_in(self, event):
         """Handle focus in event to remove placeholder text"""
         if self.placeholder_active:
@@ -1228,7 +1240,7 @@ class FLPExporterUI:
             order_frame.pack(fill=tk.X, pady=0)
 
             self.order_label = ttk.Label(order_frame,
-                                         text="Order Projects By             ",
+                                         text="Order Projects By ",
                                          font=(Font_Name, 14),
                                          background=Background_Color)
             self.order_label.pack(side=tk.LEFT, padx=(10, 5))
@@ -1310,8 +1322,7 @@ class FLPExporterUI:
                                            fill=tk.X,
                                            expand=True,
                                            padx=(0, 5))
-            # Set current path if it exists
-            #if hasattr(self, 'FL_Studio_Path') and self.FL_Studio_Path:
+
             self.fl_studio_path_entry.insert(0, FL_Studio_Path)
 
             self.browse_fl_studio_button = ttk.Button(
@@ -1519,19 +1530,33 @@ class FLPExporterUI:
             # ABOUT
             #
 
-            # About Section
             self.about_header = ttk.Label(self.scrollable_settings_frame,
-                                          text="About",
-                                          font=(Font_Name, 18, "bold"))
+                                             text="+ About",
+                                             font=(Font_Name, 18, "bold"),
+                                             cursor="hand2",
+                                             style='Settings.TLabel')
             self.about_header.pack(anchor="w", padx=0, pady=(60, 5))
+            self.about_header.bind("<Button-1>", self.toggle_about)
+
+            # Create container for advanced settings (initially hidden)
+            self.about_container = ttk.Frame(self.scrollable_settings_frame,
+                                          style='Settings.TFrame')
+
+
+            # About Section
+            # self.about_header = ttk.Label(self.scrollable_settings_frame,
+            #                               text="About",
+            #                               font=(Font_Name, 18, "bold"))
+            # self.about_header.pack(anchor="w", padx=0, pady=(60, 5))
 
             # Version Info
-            version_frame = ttk.Frame(self.scrollable_settings_frame,
+            version_frame = ttk.Frame(self.about_container,
                                       style='Settings.TFrame')
             version_frame.pack(fill=tk.X, pady=(0, 10))
 
             self.version_label = ttk.Label(version_frame,
                                            text="Version 1.1",
+                                           style='Settings.TLabel',
                                            foreground="black",
                                            font=(Font_Name, 14, "italic"))
             self.version_label.pack(
@@ -1540,22 +1565,24 @@ class FLPExporterUI:
             )
 
             self.about_info = ttk.Label(
-                self.scrollable_settings_frame,
+                self.about_container,
                 text=
                 "Note: FL Studio must be closed before exporting song.\nMake sure to save your project.\nClicking export will automatically close FL Studio.\n\nIf your project has a popup, (unlicensed vst, audio missing) we recommend buying the vst as FL intends, or replacing the missing audio.\n"
                 "The project will continue to export once you click ok, or remove the popup."
                 "\n\nBackup projects with identical names are hidden to reduce clutter and avoid showing excessive duplicates.",
+                style=('Settings.TLabel'),
                 font=(
                     Font_Name,
                     15,
                 ),
                 foreground="black",
                 wraplength=1100,
+                #padding=(5, 90),
                 justify=tk.LEFT)
             self.about_info.pack(anchor="w", padx=20, pady=(0, 60), fill='x')
             self.settings_canvas.configure(
                 scrollregion=self.settings_canvas.bbox("all"))
-
+            
         # open_settings_Else
         else:
             # Save output path
@@ -2415,6 +2442,7 @@ class FLPExporterUI:
 
         # Apply colors to main elements
         self.root.config(bg=colors["bg"])
+        self.root.config(bg=Background_Color)
         style.configure('.', background=colors["bg"], foreground=colors["fg"])
         style.configure('TLabel',
                         background=colors["bg"],
