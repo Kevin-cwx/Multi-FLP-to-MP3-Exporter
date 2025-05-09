@@ -150,3 +150,7 @@ If it fails, move file back to Good/A dir
 
 **First Time User**
 C:\Users\Kfoen
+
+
+## **Installation**
+pyinstaller --onefile --noconsole "Multi FLP To MP3 Exporter.py" --add-data "Media/Icons;Media/Icons"
