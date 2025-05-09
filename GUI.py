@@ -143,6 +143,7 @@ def close_fl_studio():
 
         return True
     except Exception as e:
+        print(e)
         return False
 
 
@@ -237,8 +238,8 @@ def load_config():
         Launch_At_Startup = config['SETTINGS'].getboolean('Launch_At_Startup')
         Font_Name = config['SETTINGS']['Font_Name']
         USE_DARK_MODE = config['SETTINGS'].getboolean('USE_DARK_MODE')
-        #Projects_Font_Size = int(config['SETTINGS'].get(
-        #    'Projects_Font_Size', 14))
+        Projects_Font_Size = int(config['SETTINGS'].get(
+           'Projects_Font_Size', 14))
 
         return True
     except (KeyError, ValueError) as e:
@@ -542,7 +543,6 @@ def first_run_setup(root):
             Dir_FLP_Projects = [flp_folder.get()]
 
             # Use detected path if available, otherwise use user input
-            detected_fl_path = fl_studio_path.get()
             if fl_studio_path.get():
                 FL_Studio_Path = fl_studio_path.get()
                 Processor_Type = processor_type.get()
@@ -625,7 +625,6 @@ class FLPExporterUI:
         self.root.minsize(600, 550)
         # self.root.geometry("600x700+30+20")
         self.root.resizable(True, True)
-        transparent_icon = tk.PhotoImage(width=1, height=1)
         self.root.iconbitmap(r"Media/Icons/FL21 - Icon.ico")
         self.root.configure(bg=Background_Color)
         self.folders_expanded = True
@@ -2075,6 +2074,8 @@ class FLPExporterUI:
                 # self.status_label.config(text="File opened successfully", bootstyle="success")
             except Exception as e:
                 # self.status_label.config( text=f"Error opening file: {str(e)}", bootstyle="danger")
+                print("❌ Error opening file")
+                print(e)
                 pass
             finally:
                 self.context_menu.destroy()
@@ -2091,6 +2092,8 @@ class FLPExporterUI:
                 # self.status_label.config( text="Folder opened successfully", bootstyle="success")
             except Exception as e:
                 # self.status_label.config(text=f"Error opening folder: {str(e)}", bootstyle="danger")
+                print("❌ Error opening folder")
+                print(e)
                 pass
             finally:
                 self.context_menu.destroy()
