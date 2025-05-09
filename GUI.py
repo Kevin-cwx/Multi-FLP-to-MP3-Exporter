@@ -512,7 +512,7 @@ def first_run_setup(root):
     ]
 
     # Validation function
-    def validate():
+    def validate_setup():
         if not all([output_folder.get(), flp_folder.get()]):
             messagebox.showerror("Error", "All fields are required")
             return False
@@ -534,7 +534,7 @@ def first_run_setup(root):
 
     def on_ok():
         nonlocal setup_completed
-        if validate():
+        if validate_setup():
             # Set the global variables
             global Output_Folder_Path, Dir_FLP_Projects, FL_Studio_Path, Processor_Type
             Output_Folder_Path = output_folder.get()
@@ -549,7 +549,7 @@ def first_run_setup(root):
                 fl_path, processor = get_fl_studio_info()
                 if not fl_path:
                     messagebox.showerror("Error",
-                                         "Could not detect FL Studio path")
+                                         "Could not detect FL Studio Installation path")
                     return
                 FL_Studio_Path = fl_path
                 Processor_Type = processor
@@ -1561,27 +1561,32 @@ class FLPExporterUI:
             # Save output path
             new_path = self.output_folder_entry.get().strip()
             if not os.path.isdir(new_path):
-                print("Error", "The specified directory does not exist.")
+                messagebox.showerror("Missing Field",
+                                     "Output folder must be specified.")
                 return
             Output_Folder_Path = new_path
 
             # Save FLP projects folders
-            flp_folders = self.flp_folder_entry.get(
-                "1.0",
-                tk.END).strip()  # Get all text from line 1 character 0 to end
-            if flp_folders:
-                # Split by newlines since we're using a Text widget with one path per line
-                Dir_FLP_Projects = [
-                    f.strip() for f in flp_folders.split("\n") if f.strip()
-                ]
-                # Validate each folder
-                for folder in Dir_FLP_Projects:
-                    if not os.path.isdir(folder):
-                        print(
-                            "Error",
-                            f"The specified FLP directory does not exist: {folder}"
-                        )
-                        return
+            flp_folders = self.flp_folder_entry.get("1.0", tk.END).strip()
+
+            # Check if field is empty
+            if not flp_folders:
+                messagebox.showerror("Missing Field", "FLP folders field cannot be empty.")
+                return
+
+            # Process each non-empty line
+            Dir_FLP_Projects = [f.strip() for f in flp_folders.split("\n") if f.strip()]
+
+            # Check if any valid paths remain
+            if not Dir_FLP_Projects:
+                messagebox.showerror("Missing Field", "No valid FLP folder paths specified.")
+                return
+
+            # Validate that all provided paths are actual directories
+            for folder in Dir_FLP_Projects:
+                if not os.path.isdir(folder):
+                    messagebox.showerror("Invalid Folder", f"'{folder}' is not a valid directory.")
+                    return
 
             Project_Order_By = self.Project_Order_By_Var.get()
 
@@ -1604,12 +1609,13 @@ class FLPExporterUI:
 
             # Save FL Studio path
             fl_studio_path = self.fl_studio_path_entry.get().strip()
-            if fl_studio_path:  # Only validate if path is provided
-                if not os.path.isdir(fl_studio_path):
-                    print("Error",
-                          "The specified FL Studio directory does not exist.")
-                    return
-                FL_Studio_Path = fl_studio_path
+            if not fl_studio_path:
+                messagebox.showerror("Missing Field", "FL Studio path cannot be empty.")
+                return
+            if not os.path.isdir(fl_studio_path):
+                messagebox.showerror("Invalid Path", "FL Studio path is not a valid directory.")
+                return
+            FL_Studio_Path = fl_studio_path
 
             self.save_settings()
             save_config()
@@ -2450,38 +2456,15 @@ class FLPExporterUI:
             Processor_Type = self.processor_type.get()
             Enable_Output_Sub_Folder = self.subfolder_toggle_var.get()
             Output_Sub_Folder_Name = ""
-            # rework to get last saved value in config
-            # Output_Sub_Folder_Name = config['SETTINGS']['Output_Sub_Folder_Name']
 
             # Load config
             config = configparser.ConfigParser()
             config.read(CONFIG_FILE)
 
-            # Validate directories
-        if not os.path.isdir(Output_Folder_Path):
-            messagebox.showerror(
-                "Error",
-                "The specified Output Folder does not exist. Using previously saved value."
-            )
-            Output_Folder_Path = config['PATHS']['Output_Folder_Path']
+            if not Output_Folder_Path:
+                messagebox.showerror("Missing Field", "Output folder must be specified.")
+                return
 
-        if not all(os.path.isdir(path) for path in Dir_FLP_Projects):
-            messagebox.showerror(
-                "Error",
-                "One or more FLP Projects Folders do not exist. Using previously saved values."
-            )
-            Dir_FLP_Projects = [
-                path.strip()
-                for path in config['PATHS']['Dir_FLP_Projects'].split(';')
-                if path.strip()
-            ]
-
-        if FL_Studio_Path and not os.path.isdir(FL_Studio_Path):
-            messagebox.showerror(
-                "Error",
-                "The specified FL Studio Path does not exist. Using previously saved value."
-            )
-            FL_Studio_Path = config['PATHS']['FL_Studio_Path']
 
             # Mouse scroll speed
             selected_key = self.scroll_speed_var.get()
