@@ -3,7 +3,8 @@
 - Dynamic font
     - implemented, test at home and other machines
 - Cater for when FLP Folder needs to search through a lot of files, which would cause the app to freeze.
-
+- Add section to contact me for support, in about
+- Add section for ppl to contact me if they want - cracked latest version of FL, show image and features
 
 ## **Other**
 - Remove empty not a button below "Projects"

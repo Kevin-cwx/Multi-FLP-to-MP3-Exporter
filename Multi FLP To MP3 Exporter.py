@@ -2624,13 +2624,6 @@ if __name__ == "__main__":
     root = tk.Tk()
     root.withdraw()
 
-    # Calculate dynamic font size based on DPI scaling
-    dpi = root.winfo_fpixels('1i')  # Get DPI
-    scaling_factor = dpi / 96.0  # 96 is default DPI for 100% scaling
-    base_font_size = 14  # Base size at 100% scaling
-    Projects_Font_Size = int(base_font_size / scaling_factor)
-    Projects_Font_Size = max(Projects_Font_Size, 8)  # Ensure minimum font size
-
     # Try to load config
     if os.path.exists(CONFIG_FILE):
         load_config()
