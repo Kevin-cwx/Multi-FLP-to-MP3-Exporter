@@ -1230,8 +1230,9 @@ class FLPExporterUI:
                 style="CustomCombobox.TCombobox")
             self.order_combobox.pack(side=tk.LEFT)
             self.order_combobox.configure(font=(Font_Name, 14))
-
+        
             # Theme selection
+            """ 
             theme_frame = ttk.Frame(self.scrollable_settings_frame,
                                     style='Settings.TFrame')
             theme_frame.pack(fill=tk.X, pady=10)
@@ -1256,7 +1257,7 @@ class FLPExporterUI:
                 text="Change the application's color scheme.",
                 font=(Font_Name, Settings_Info_Label_Size))
             self.theme_info_label.pack(anchor="w", padx=20, pady=(0, 10))
-
+            """
             #
             # Advanced
             #
