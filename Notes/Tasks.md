@@ -1,9 +1,10 @@
 ## **Current Task**
-- Settle on default theme color
-- Increase font size of buttons (export, recent, clear all)
-    - Make text black
-- Create email
-- Settle on name
+- ✅ - Create email
+    - tiktok
+    - instagram
+    - twitter
+    - ✅ - reddit
+
 
 
 
@@ -88,6 +89,11 @@
 - ✅ - Test on other machine
 - ✅ - Add settings functionality, save and get values from ini file
 - ✅ - Open about section, until able to fix frame being white
+
+- ✅ - Settle on default theme color
+- ✅ - Increase font size of buttons (export, recent, clear all)
+    - Make text black
+- ✅ - Settle on name
 
 
 ## **Settings**
