@@ -51,7 +51,8 @@ Enable_Output_Sub_Folder = False
 Output_Sub_Folder_Name = ""
 Output_Audio_Format = "Emp3"
 Mouse_Scroll_Speed = 7
-Projects_Font_Size = 9
+Projects_Font_Size = 14 
+row_height = Projects_Font_Size + 8 # Ensures letters lik e p and y don't get cut off
 Application_Name = "Multi FLP to MP3 Exporter"
 Launch_At_Startup = False
 Font_Name = "Meiryo"
@@ -91,7 +92,21 @@ def darken_color(hex_color, factor=0.9):
     return "#{:02x}{:02x}{:02x}".format(*darker_rgb)
 
 
-Background_Color = "#cee4ff"
+"""
+FL Colors
+Dark Gray - "#313C45"
+Light Gray - "#5F686D"
+Gray 1- "#495157"
+Orange - "#E86311"
+Light Orange - "#FFC93F"
+
+---
+Previous
+"#cee4ff"
+"#2fbdff"
+"""
+
+Background_Color = "#708299"
 Darker_Background_Color = darken_color(Background_Color, factor=0.98)
 User_Selected_Project_Background_Color = "#2fbdff"
 Selected_Project_Text_Color = "black"
@@ -244,8 +259,8 @@ def load_config():
         Launch_At_Startup = config['SETTINGS'].getboolean('Launch_At_Startup')
         Font_Name = config['SETTINGS']['Font_Name']
         USE_DARK_MODE = config['SETTINGS'].getboolean('USE_DARK_MODE')
-        Projects_Font_Size = int(config['SETTINGS'].get(
-           'Projects_Font_Size', 14))
+        # Projects_Font_Size = int(config['SETTINGS'].get(
+        #   'Projects_Font_Size', 14))
 
         return True
     except (KeyError, ValueError) as e:
@@ -627,8 +642,8 @@ class FLPExporterUI:
     def __init__(self, root):
         self.root = root
         self.root.title(Application_Name)
-        self.root.geometry("600x700+30+20")
-        self.root.minsize(600, 550)
+        self.root.geometry("600x660+30+20")
+        #self.root.minsize(600, 550)
         # self.root.geometry("600x700+30+20")
         self.root.resizable(True, True)
         #self.root.iconbitmap(r"Media/Icons/FL21 - Icon.ico")
@@ -684,9 +699,9 @@ class FLPExporterUI:
         self.left_frame = ttk.Frame(self.content_frame,
                                     style='Default_Theme.TFrame')
         self.left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-
+        
         search_frame = ttk.Frame(self.left_frame,
-                                 borderwidth=2,
+                                 borderwidth=5,
                                  relief='solid')
         search_frame.pack(fill=tk.X, padx=5, pady=(0, 0))
 
@@ -737,7 +752,7 @@ class FLPExporterUI:
                         background=Project_Tree_Background_Color,
                         fieldbackground="#f0f0f0",
                         foreground=Project_Tree_Text_Color,
-                        font=(Font_Name, Projects_Font_Size))
+                        font=(Font_Name, Projects_Font_Size),rowheight=row_height )
 
         self.tree = ttk.Treeview(tree_frame,
                                  selectmode="extended",
@@ -791,7 +806,8 @@ class FLPExporterUI:
             fg=Project_Tree_Text_Color,
             highlightthickness=2,  # Border thickness
             highlightbackground="black",  # Border color when not focused
-            highlightcolor="black")
+            highlightcolor="black",
+            height=10)
 
         self.export_button = ttk.Button(self.right_frame,
                                         text="Export",
@@ -2514,7 +2530,7 @@ class FLPExporterUI:
 
             # Update UI elements
             style.configure("Custom.Treeview",
-                            font=(Font_Name, Projects_Font_Size))
+                            font=(Font_Name, Projects_Font_Size),rowheight=row_height)
             self.cart_listbox.config(font=(Font_Name, Projects_Font_Size))
 
         #save_config()
