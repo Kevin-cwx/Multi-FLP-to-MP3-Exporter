@@ -5,8 +5,9 @@
     - twitter
     - ✅ - reddit
 
-
-
+- font and launch at application start is not being saved once visually, once save settings is clicked, and you go back in
+    - Launch at application startup worked
+    - font did not persist
 
 
 - Dynamic font

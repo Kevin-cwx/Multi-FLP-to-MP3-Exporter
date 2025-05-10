@@ -2,8 +2,8 @@
 
 VSVersionInfo(
   ffi=FixedFileInfo(
-    filevers=(1, 1, 0, 0),
-    prodvers=(1, 1, 0, 0),
+    filevers=(1, 1),
+    prodvers=(1, 1),
     mask=0x3f,
     flags=0x0,
     OS=0x4,
@@ -17,13 +17,13 @@ VSVersionInfo(
         '040904B0',
         [
           StringStruct('CompanyName', 'Your Company Name'),
-          StringStruct('FileDescription', 'This application allows you to export multiple FLP projects to mp3. It provides a list view of all your fl studio projects and allows you to select the ones you want to export. You can also, auto select all projects you worked on today.'),
-          StringStruct('FileVersion', '1.1.0.0'),
+          StringStruct('FileDescription', 'Export multiple fl studio projects (FLP) to mp3. Provides tree view of all projects.'),
+          StringStruct('FileVersion', '1.1'),
           StringStruct('InternalName', 'MultiFLPExporter'),
-          StringStruct('LegalCopyright', 'Copyright © 2025'),
+          StringStruct('LegalCopyright', 'Copyright © 2026'),
           StringStruct('OriginalFilename', 'Multi FLP To MP3 Exporter.exe'),
           StringStruct('ProductName', 'Multi FLP To MP3 Exporter'),
-          StringStruct('ProductVersion', '1.1.0.0')
+          StringStruct('ProductVersion', '1.1')
         ]
       )
     ]),
