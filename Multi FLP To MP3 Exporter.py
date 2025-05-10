@@ -51,7 +51,7 @@ Enable_Output_Sub_Folder = False
 Output_Sub_Folder_Name = ""
 Output_Audio_Format = "Emp3"
 Mouse_Scroll_Speed = 7
-Projects_Font_Size = 14 
+Projects_Font_Size = 14
 row_height = Projects_Font_Size + 8 # Ensures letters lik e p and y don't get cut off
 Application_Name = "Multi FLP to MP3 Exporter"
 Launch_At_Startup = False
@@ -1533,27 +1533,32 @@ class FLPExporterUI:
             # Font Size Selection
             font_size_frame = ttk.Frame(self.advanced_container,
                                         style='Settings.TFrame')
+
             font_size_frame.pack(fill=tk.X, pady=5)
 
             self.font_size_label = ttk.Label(font_size_frame,
-                                             text="Projects Font Size",
-                                             font=(Font_Name, 14))
+                                            text="Projects Font Size",
+                                            font=(Font_Name, 14))
             self.font_size_label.pack(side=tk.LEFT, padx=(10, 10))
 
-            # Mapping between display names and actual font sizes
-            font_mapping = {'Normal': 9, 'Large': 14}
-            current_font_key = 'Normal' if Projects_Font_Size == 9 else 'Large'
+            self.font_size_tip = Hovertip(self.font_size_label,
+                                        'Font size must be between 9 - 25')
 
-            self.font_size_var = tk.StringVar(value=current_font_key)
-            self.font_combobox = CustomCombobox(
+            # Create a Spinbox instead of Entry
+            self.font_size_var = tk.IntVar(value=Projects_Font_Size)
+
+            self.font_spinbox = ttk.Spinbox(
                 font_size_frame,
+                from_=9,
+                to=25,
                 textvariable=self.font_size_var,
-                values=list(font_mapping.keys()),
-                state='readonly',
-                width=10,
-                font=(Font_Name, 14))
-            self.font_combobox.pack(side=tk.LEFT)
+                width=5,
+                font=(Font_Name, 14),
+                wrap=False,
+                state='readonly')  # optional: use 'normal' to allow typing
+            self.font_spinbox.pack(side=tk.LEFT)
 
+        
             #
             # ABOUT
             #
@@ -2189,7 +2194,7 @@ class FLPExporterUI:
         # Update the UI immediately
         self.root.update_idletasks()
         # Brief delay
-        self.root.after(50, self._show_frames_after_flash)
+        self.root.after(200, self._show_frames_after_flash)
 
     def _show_frames_after_flash(self):
         """Shows frames again after flash effect"""
@@ -2524,10 +2529,9 @@ class FLPExporterUI:
             handle_mouse_scroll_speed(selected_key)
 
             # Handle font size
-            font_mapping = {'Normal': 9, 'Large': 14}
-            selected_font = self.font_size_var.get()
-            Projects_Font_Size = font_mapping.get(selected_font, 14)
-
+            Projects_Font_Size = self.font_size_var.get()
+            row_height = Projects_Font_Size + 8
+            
             # Update UI elements
             style.configure("Custom.Treeview",
                             font=(Font_Name, Projects_Font_Size),rowheight=row_height)
