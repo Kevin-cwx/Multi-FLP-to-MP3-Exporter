@@ -14,8 +14,8 @@
 - Predefined group of projects  - that can be added in selected project via one click
 - Increase size of checkbox in settings
 
-- Package app
-- Test on other machine
+- ✅ - Package app
+- ✅ - Test on other machine
 - Add themes functionality
 - ✅ - Add settings functionality, save and get values from ini file
 
@@ -157,3 +157,6 @@ C:\Users\Kfoen
 
 ## **Installation**
 pyinstaller --onefile --noconsole "Multi FLP To MP3 Exporter.py" --add-data "Media/Icons;Media/Icons"
+
+pyinstaller --onefile --noconsole --add-data "Media/Icons;Media/Icons" --icon "C:\Users\Kfoen\Documents\Docs KF\MyPythonProjects\findusic\Media\Icons\FL21 - Icon.ico" --version-file=version.txt "Multi FLP To MP3 Exporter.py"
+
