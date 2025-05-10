@@ -52,7 +52,8 @@ Output_Sub_Folder_Name = ""
 Output_Audio_Format = "Emp3"
 Mouse_Scroll_Speed = 7
 Projects_Font_Size = 14
-row_height = Projects_Font_Size + 8 # Ensures letters lik e p and y don't get cut off
+# Ensures letters lik e p and y don't get cut off
+row_height = Projects_Font_Size + 8
 Application_Name = "Multi FLP to MP3 Exporter"
 Launch_At_Startup = False
 Font_Name = "Meiryo"
@@ -73,6 +74,7 @@ SCROLL_SPEED_MAPPING = {
 # Emp3,ogg,wav
 # ogg does not work in powershell, FL might have disabled
 
+
 def resource_path(relative_path):
     if hasattr(sys, "_MEIPASS"):
         return os.path.join(sys._MEIPASS, relative_path)
@@ -90,6 +92,7 @@ def darken_color(hex_color, factor=0.9):
 # Colors
 #
 
+
 """
 FL Colors
 Dark Gray - "#313C45"
@@ -104,7 +107,7 @@ Previous
 "#2fbdff"
 """
 
-Background_Color = "#708299"
+Background_Color = "#868f96"
 Darker_Background_Color = darken_color(Background_Color, factor=0.98)
 User_Selected_Project_Background_Color = "#FFC93F"
 Selected_Project_Text_Color = "black"
@@ -115,6 +118,7 @@ Search_Placeholder_Text_Color = "black"
 Project_Color_Tree = "red"
 Project_Tree_Background_Color = Background_Color
 Project_Tree_Text_Color = "black"
+
 """
 #34b1eb
 #8a9296
@@ -336,7 +340,7 @@ def first_run_setup(root):
     fl_path_label.pack(pady=(0, 10))
 
     def update_indicators():
-        #Update all field indicators based on current values
+        # Update all field indicators based on current values
         for field_var, indicator_var, label_widget in indicator_fields:
             has_value = bool(field_var.get())
             # Update the indicator text
@@ -357,12 +361,11 @@ def first_run_setup(root):
                     fl_status_label.config(text="FL Studio status: Running",
                                            foreground="green")
                     fl_path_label.config(
-                        text=
-                        f"Detected path: {fl_path}\nProcessor: {process.info['name']}"
+                        text=f"Detected path: {fl_path}\nProcessor: {process.info['name']}"
                     )
                     # Update indicators
-                    #fl_studio_indicator.set(CHECK_ICON)
-                    #processor_indicator.set(CHECK_ICON)
+                    # fl_studio_indicator.set(CHECK_ICON)
+                    # processor_indicator.set(CHECK_ICON)
                     break
         else:
             fl_status_label.config(text="Manually open FL Studio",
@@ -370,8 +373,8 @@ def first_run_setup(root):
                                    font=(Font_Name, 20))
             fl_path_label.config(text="")
             # Reset indicators if FL Studio is closed
-            #fl_studio_indicator.set(EMPTY_ICON)
-            #processor_indicator.set(EMPTY_ICON)
+            # fl_studio_indicator.set(EMPTY_ICON)
+            # processor_indicator.set(EMPTY_ICON)
 
         # Check again after 1 second
         setup_root.after(500, check_fl_studio_status)
@@ -575,7 +578,7 @@ def first_run_setup(root):
                 FL_Studio_Path = fl_path
                 Processor_Type = processor
 
-            #Processor_Type = processor_type.get()
+            # Processor_Type = processor_type.get()
             save_config()
             setup_completed.set(True)
             setup_root.destroy()
@@ -585,7 +588,7 @@ def first_run_setup(root):
 
     ttk.Button(setup_root, text="OK", command=on_ok).pack(pady=20)
     # update_indicators()
-    #setup_root.mainloop()
+    # setup_root.mainloop()
     root.wait_window(setup_root)
     return setup_completed.get()
 
@@ -641,10 +644,10 @@ class FLPExporterUI:
         self.root = root
         self.root.title(Application_Name)
         self.root.geometry("600x660+30+20")
-        #self.root.minsize(600, 550)
+        # self.root.minsize(600, 550)
         # self.root.geometry("600x700+30+20")
         self.root.resizable(True, True)
-        #self.root.iconbitmap(r"Media/Icons/FL21 - Icon.ico")
+        # self.root.iconbitmap(r"Media/Icons/FL21 - Icon.ico")
         icon_path = resource_path("Media/Icons/FL21 - Icon.ico")
         self.root.iconbitmap(icon_path)
         self.root.configure(bg=Background_Color)
@@ -659,6 +662,34 @@ class FLPExporterUI:
         style.configure('Settings.TLabel', background=Background_Color)
         style.configure('Settings.TCheckbutton', background=Background_Color)
         style.configure('Settings.TCombobox', fieldbackground=Background_Color)
+
+        style.configure("PrimaryAction.TButton",
+                        font=(Font_Name, Projects_Font_Size-2),
+                        foreground="black",
+                        background="red",
+                        padding=5,
+                        relief="flat")
+
+        style.map("PrimaryAction.TButton",
+                  background=[("active", User_Selected_Project_Background_Color),
+                              ("!active", "white")],
+                  foreground=[("active", "white")],
+                  relief=[("pressed", "sunken")])
+
+        style.configure("PrimaryActionRed.TButton",
+                        font=(Font_Name, Projects_Font_Size-2),
+                        foreground="#dc3545",
+                        background="white",
+                        bordercolor="#dc3545",
+                        padding=2,
+                        borderwidth=5,
+                        relief="flat")
+        
+        style.map("PrimaryActionRed.TButton",
+                  background=[("active", "#dc3545"),
+                              ("!active", "white")],
+                  foreground=[("active", "white")],
+                  relief=[("pressed", "sunken")])
 
         self.root.config(bg=Background_Color)
         self.root.update_idletasks()
@@ -697,7 +728,7 @@ class FLPExporterUI:
         self.left_frame = ttk.Frame(self.content_frame,
                                     style='Default_Theme.TFrame')
         self.left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-        
+
         search_frame = ttk.Frame(self.left_frame,
                                  borderwidth=5,
                                  relief='solid')
@@ -725,7 +756,9 @@ class FLPExporterUI:
             self.top_bar,
             text="Cancel",
             command=self.close_settings_without_saving,
-            bootstyle="outline-danger")
+            style="PrimaryActionRed.TButton"
+           # bootstyle="outline-danger"
+           )
 
         self.search_entry.bind("<KeyRelease>", self.filter_tree)
 
@@ -750,7 +783,7 @@ class FLPExporterUI:
                         background=Project_Tree_Background_Color,
                         fieldbackground="#f0f0f0",
                         foreground=Project_Tree_Text_Color,
-                        font=(Font_Name, Projects_Font_Size),rowheight=row_height )
+                        font=(Font_Name, Projects_Font_Size), rowheight=row_height)
 
         self.tree = ttk.Treeview(tree_frame,
                                  selectmode="extended",
@@ -812,7 +845,7 @@ class FLPExporterUI:
                                         image=self.download_icon,
                                         compound=tk.LEFT,
                                         command=self.export_selected,
-                                        bootstyle="success")
+                                        style="PrimaryAction.TButton")
         self.export_button.pack(pady=5, padx=20, fill=X)
 
         self.enter_button = ttk.Button(self.right_frame,
@@ -820,7 +853,7 @@ class FLPExporterUI:
                                        image=self.plus_icon,
                                        compound=tk.LEFT,
                                        command=lambda: self.on_enter_key(None),
-                                       bootstyle="outline-info")
+                                       style="PrimaryAction.TButton")
         self.enter_button.pack(pady=5, padx=20, fill=X)
 
         self.clear_button = ttk.Button(self.right_frame,
@@ -828,16 +861,21 @@ class FLPExporterUI:
                                        image=self.clear_icon,
                                        compound=tk.LEFT,
                                        command=self.clear_selection,
-                                       bootstyle="info-outline")
+                                       style="PrimaryActionRed.TButton",
+                                       )
         self.clear_button.pack(pady=(0, 5), padx=20, fill=X)
+        self.clear_button_hover_tip = Hovertip(
+            self.clear_button, 'Clear all projects in selected projects')
 
         self.add_today_button = ttk.Button(self.right_frame,
                                            text="Recent",
                                            image=self.recent_icon,
                                            compound=tk.LEFT,
                                            command=self.add_recent_projects,
-                                           bootstyle="outline-info")
+                                           style="PrimaryAction.TButton")
         self.add_today_button.pack(pady=(5, 5), padx=20, fill=X)
+        self.recent_hover_tip = Hovertip(
+            self.add_today_button, 'Add projects you\'ve worked on today in selected projects')
         # outline-secondary
 
         # Settings button
@@ -845,9 +883,9 @@ class FLPExporterUI:
                                           text="Settings",
                                           image=self.settings_icon,
                                           command=self.open_settings,
-                                          bootstyle="outline-info")
+                                          style="PrimaryAction.TButton")
         self.settings_button.pack(side=tk.RIGHT)
-        self.settings_tip = Hovertip(self.settings_button, 'Settings')
+        self.settings_tip = Hovertip(self.settings_button, 'Open Settings')
 
         self.toggle_icon = self.minus_icon
         self.toggle_button_Close_Folders = ttk.Button(
@@ -855,7 +893,8 @@ class FLPExporterUI:
             image=self.toggle_icon,
             compound=tk.LEFT,
             command=self.toggle_folders,
-            bootstyle="outline-info")
+            style="PrimaryAction.TButton",
+        )
 
         # Create the Music Output Folder button next to toggle button
         self.output_music_folder_button = ttk.Button(
@@ -863,7 +902,7 @@ class FLPExporterUI:
             image=self.music_folder_icon,
             compound=tk.LEFT,
             command=self.open_output_folder,
-            bootstyle="outline-info")
+            style="PrimaryAction.TButton")
         self.output_music_folder_button.pack(side=tk.RIGHT, padx=(0, 10))
         self.music_folder_tip = Hovertip(self.output_music_folder_button,
                                          'Open MP3 Output Folder')
@@ -872,7 +911,8 @@ class FLPExporterUI:
                                       image=self.sync_icon,
                                       compound=tk.LEFT,
                                       command=self.sync_projects,
-                                      bootstyle="outline-info")
+                                      style="PrimaryAction.TButton"
+                                      )
 
         self.sync_button.pack(side=tk.RIGHT, padx=(0, 10))
         self.sync_tip = Hovertip(self.sync_button,
@@ -884,8 +924,8 @@ class FLPExporterUI:
 
         self.status_label = ttk.Label(self.right_frame,
                                       text="",
-                                      font=(Font_Name, 11),
-                                      bootstyle="success",
+                                      font=(Font_Name, Projects_Font_Size),
+                                      bootstyle="",
                                       background=Background_Color)
         self.status_label.pack(pady=(0, 10))
         self.setup_subfolder_ui()
@@ -907,7 +947,7 @@ class FLPExporterUI:
 
     def toggle_about(self, event):
         """Toggle visibility of about section in settings"""
-        if self.about_container.winfo_ismapped():   
+        if self.about_container.winfo_ismapped():
             return
             self.about_container.pack_forget()
             self.about_header.configure(text="+ About")
@@ -1139,7 +1179,6 @@ class FLPExporterUI:
                                              highlightthickness=40,
                                              bg=Background_Color)
 
-
             self.settings_scrollbar = ttk.Scrollbar(
                 self.settings_frame,
                 orient="vertical",
@@ -1254,12 +1293,11 @@ class FLPExporterUI:
             # Add label underneath
             self.flp_folder_info_label = ttk.Label(
                 self.scrollable_settings_frame,
-                text=
-                ("This is where your FLP projects are. Add the top folder.\n"
-                 "Click Browse to add multiple folders.\n\n"
-                 "To remove a path, simply delete it from the input field, or double click it.\n"
-                 "Example - C:\\Users\\Kfoen\\Documents\\Image-Line\\FL Studio\\Projects\\FL 25 - projects"
-                 ),
+                text=("This is where your FLP projects are. Add the top folder.\n"
+                      "Click Browse to add multiple folders.\n\n"
+                      "To remove a path, simply delete it from the input field, or double click it.\n"
+                      "Example - C:\\Users\\Kfoen\\Documents\\Image-Line\\FL Studio\\Projects\\FL 25 - projects"
+                      ),
                 font=(Font_Name, Settings_Info_Label_Size),
                 foreground="black")
             self.flp_folder_info_label.pack(anchor="w", padx=20, pady=(2, 10))
@@ -1490,9 +1528,8 @@ class FLPExporterUI:
             # Info label
             self.subfolder_info_label = ttk.Label(
                 self.advanced_container,
-                text=
-                ("Creates a subfolder in your output directory, to maintain a more organized output directory.\nFor example an album name."
-                 ),
+                text=("Creates a subfolder in your output directory, to maintain a more organized output directory.\nFor example an album name."
+                      ),
                 font=(Font_Name, Settings_Info_Label_Size))
             self.subfolder_info_label.pack(anchor="w", padx=20, pady=(0, 10))
 
@@ -1537,12 +1574,12 @@ class FLPExporterUI:
             font_size_frame.pack(fill=tk.X, pady=5)
 
             self.font_size_label = ttk.Label(font_size_frame,
-                                            text="Projects Font Size",
-                                            font=(Font_Name, 14))
+                                             text="Projects Font Size",
+                                             font=(Font_Name, 14))
             self.font_size_label.pack(side=tk.LEFT, padx=(10, 10))
 
             self.font_size_tip = Hovertip(self.font_size_label,
-                                        'Font size must be between 9 - 25')
+                                          'Font size must be between 9 - 25')
 
             # Create a Spinbox instead of Entry
             self.font_size_var = tk.IntVar(value=Projects_Font_Size)
@@ -1558,7 +1595,6 @@ class FLPExporterUI:
                 state='readonly')  # optional: use 'normal' to allow typing
             self.font_spinbox.pack(side=tk.LEFT)
 
-        
             #
             # ABOUT
             #
@@ -1574,7 +1610,6 @@ class FLPExporterUI:
             self.about_container = ttk.Frame(self.scrollable_settings_frame,
                                              style='Settings.TFrame')
             self.toggle_about(None)
-
 
             # About Section
             # self.about_header = ttk.Label(self.scrollable_settings_frame,
@@ -1599,8 +1634,7 @@ class FLPExporterUI:
 
             self.about_info = ttk.Label(
                 self.about_container,
-                text=
-                "NOTE: FL Studio must be closed before exporting song.\nMake sure to save your project.\nClicking export will automatically close FL Studio.\n\nIf your project has a popup, (unlicensed vst, audio missing) we recommend buying the vst as FL intends, or replacing the missing audio.\n"
+                text="NOTE: FL Studio must be closed before exporting song.\nMake sure to save your project.\nClicking export will automatically close FL Studio.\n\nIf your project has a popup, (unlicensed vst, audio missing) we recommend buying the vst as FL intends, or replacing the missing audio.\n"
                 "The project will continue to export once you click ok, or remove the popup."
                 "\n\nBackup projects with identical names are hidden to reduce clutter and avoid showing excessive duplicates.",
                 style=('Settings.TLabel'),
@@ -1610,7 +1644,7 @@ class FLPExporterUI:
                 ),
                 foreground="black",
                 wraplength=1100,
-                #padding=(5, 90),
+                # padding=(5, 90),
                 justify=tk.LEFT)
             self.about_info.pack(anchor="w", padx=20, pady=(0, 60), fill='x')
             self.settings_canvas.configure(
@@ -1662,7 +1696,7 @@ class FLPExporterUI:
             else:
                 self.remove_from_startup()
 
-            #Save subfolder settings
+            # Save subfolder settings
             Enable_Output_Sub_Folder = self.subfolder_toggle_var.get()
             if Enable_Output_Sub_Folder:
                 subfolder_name = self.subfolder_entry.get().strip()
@@ -1921,8 +1955,8 @@ class FLPExporterUI:
         self.root.update_idletasks()  # Force complete GUI refresh
 
         if not self.selected_files:
-            self.status_label.config(text="No files selected.",
-                                     bootstyle="primary")
+            self.status_label.config(text="No files selected",
+                                     bootstyle="light")
             self.status_label.update()
             return
 
@@ -1960,8 +1994,8 @@ class FLPExporterUI:
             self.tree.item(item_id, open=False, tags=())
         self.selected_files.clear()
         self.cart_listbox.delete(0, tk.END)
-        self.status_label.config(text="Selection cleared.",
-                                 bootstyle="primary")
+        self.status_label.config(text="Selection cleared",
+                                 bootstyle="light")
         self.anchor_item = None
 
     def add_recent_projects(self):
@@ -1999,16 +2033,15 @@ class FLPExporterUI:
                 # Show how many new files were added
                 Recent_Project_Label = "project" if added == 1 else "projects"
                 self.status_label.config(
-                    text=f"{added}\nrecent {Recent_Project_Label} added.",
-                    bootstyle="primary")
+                    text=f"{added}\nrecent {Recent_Project_Label} added",
+                    bootstyle="light")
             else:
                 # Show that all today's files were already selected
                 Recent_Project_Label = "project" if total_today_files == 1 else "projects"
                 # self.status_label.config(text=f"All {total_today_files} recent {Recent_Project_Label} already selected.", bootstyle="info")
                 self.status_label.config(
-                    text=
-                    f"{total_today_files} recent {Recent_Project_Label} added.",
-                    bootstyle="primary")
+                    text=f"{total_today_files} \nrecent {Recent_Project_Label} added",
+                    bootstyle="light")
 
     def on_mousewheel(self, event):
         delta = -1 if event.delta > 0 else 1
@@ -2179,7 +2212,7 @@ class FLPExporterUI:
 
             self.refresh_cart()
             self.status_label.config(text="Project tree synced",
-                                     bootstyle="primary")
+                                     bootstyle="light")
 
             # Reapply the current search filter after syncing
             self.filter_tree()  # This line is added
@@ -2533,13 +2566,13 @@ class FLPExporterUI:
             # Handle font size
             Projects_Font_Size = self.font_size_var.get()
             row_height = Projects_Font_Size + 8
-            
+
             # Update UI elements
             style.configure("Custom.Treeview",
-                            font=(Font_Name, Projects_Font_Size),rowheight=row_height)
+                            font=(Font_Name, Projects_Font_Size), rowheight=row_height)
             self.cart_listbox.config(font=(Font_Name, Projects_Font_Size))
 
-        #save_config()
+        # save_config()
 
     def get_fl_studio_location_from_running_process(self):
         """Get FL Studio location from running process and update UI status"""
@@ -2589,8 +2622,7 @@ class FLPExporterUI:
             # Create the frame with consistent background
             self.subfolder_frame = ttk.Frame(
                 self.left_frame,
-                style=
-                'Default_Theme.TFrame'  # Use the same style as other frames
+                style='Default_Theme.TFrame'  # Use the same style as other frames
             )
 
             # Create label with consistent background
@@ -2633,7 +2665,7 @@ class FLPExporterUI:
                                       pady=(0, 5),
                                       after=widgets[search_frame_index])
 
-    
+
 # === START APP ===
 if __name__ == "__main__":
     # Initialize default values
@@ -2663,7 +2695,7 @@ if __name__ == "__main__":
     if not Output_Folder_Path or not Dir_FLP_Projects or not FL_Studio_Path:
         messagebox.showerror("Error", "Required paths not configured")
         first_run_setup(root)
-        #sys.exit(1)
+        # sys.exit(1)
 
     # Now show the main application window
     root.deiconify()
