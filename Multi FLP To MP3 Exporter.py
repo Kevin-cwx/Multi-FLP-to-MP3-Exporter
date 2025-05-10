@@ -73,11 +73,6 @@ SCROLL_SPEED_MAPPING = {
 # Emp3,ogg,wav
 # ogg does not work in powershell, FL might have disabled
 
-#
-# Colors
-#
-
-
 def resource_path(relative_path):
     if hasattr(sys, "_MEIPASS"):
         return os.path.join(sys._MEIPASS, relative_path)
@@ -91,6 +86,9 @@ def darken_color(hex_color, factor=0.9):
     darker_rgb = [max(0, int(c * factor)) for c in rgb]
     return "#{:02x}{:02x}{:02x}".format(*darker_rgb)
 
+#
+# Colors
+#
 
 """
 FL Colors
@@ -108,7 +106,7 @@ Previous
 
 Background_Color = "#708299"
 Darker_Background_Color = darken_color(Background_Color, factor=0.98)
-User_Selected_Project_Background_Color = "#2fbdff"
+User_Selected_Project_Background_Color = "#FFC93F"
 Selected_Project_Text_Color = "black"
 Selected_Project_Window_Background_Color = Background_Color
 
@@ -909,7 +907,8 @@ class FLPExporterUI:
 
     def toggle_about(self, event):
         """Toggle visibility of about section in settings"""
-        if self.about_container.winfo_ismapped():
+        if self.about_container.winfo_ismapped():   
+            return
             self.about_container.pack_forget()
             self.about_header.configure(text="+ About")
         else:
@@ -917,7 +916,8 @@ class FLPExporterUI:
                                       anchor="w",
                                       fill=tk.X,
                                       pady=(0, 20))
-            self.about_header.configure(text="- About")
+            self.about_header.configure(text="About")
+            # "- About"
 
     def on_search_focus_in(self, event):
         """Handle focus in event to remove placeholder text"""
@@ -1570,9 +1570,11 @@ class FLPExporterUI:
             self.about_header.pack(anchor="w", padx=0, pady=(60, 5))
             self.about_header.bind("<Button-1>", self.toggle_about)
 
-            # Create container for advanced settings (initially hidden)
+            # Create container for about in settings (initially hidden)
             self.about_container = ttk.Frame(self.scrollable_settings_frame,
                                              style='Settings.TFrame')
+            self.toggle_about(None)
+
 
             # About Section
             # self.about_header = ttk.Label(self.scrollable_settings_frame,
@@ -1598,7 +1600,7 @@ class FLPExporterUI:
             self.about_info = ttk.Label(
                 self.about_container,
                 text=
-                "Note: FL Studio must be closed before exporting song.\nMake sure to save your project.\nClicking export will automatically close FL Studio.\n\nIf your project has a popup, (unlicensed vst, audio missing) we recommend buying the vst as FL intends, or replacing the missing audio.\n"
+                "NOTE: FL Studio must be closed before exporting song.\nMake sure to save your project.\nClicking export will automatically close FL Studio.\n\nIf your project has a popup, (unlicensed vst, audio missing) we recommend buying the vst as FL intends, or replacing the missing audio.\n"
                 "The project will continue to export once you click ok, or remove the popup."
                 "\n\nBackup projects with identical names are hidden to reduce clutter and avoid showing excessive duplicates.",
                 style=('Settings.TLabel'),

@@ -1,5 +1,13 @@
 ## **Current Task**
-- Implement - if FL64.exe fails, then try FL.exe, and vice versa
+- Settle on default theme color
+- Increase font size of buttons (export, recent, clear all)
+    - Make text black
+- Create email
+- Settle on name
+
+
+
+
 - Dynamic font
     - implemented, test at home and other machines
     - Fix, cart needs to stay at same height regardless of font size
@@ -14,38 +22,10 @@
 - Predefined group of projects  - that can be added in selected project via one click
 - Increase size of checkbox in settings
 
-- ✅ - Package app
-- ✅ - Test on other machine
-- Add themes functionality
-- ✅ - Add settings functionality, save and get values from ini file
-
 - Figure out how to be able to save a output folder with name "♬", need to escape characters in save_config
-
-- ✅ - First run window, make FL installation path text selectable, also in settings
-- ✅ - Let FLP projects folder be shown underneath each other
-- Enable check, on save settings, mandatory fields must be filled in, Output folder, FLP projects folder, FL studio path. Check before saving current to ini file, that way you still auto set paths for user
-- Need to clear search entry after projects are synced
+- Implement - if FL64.exe fails, then try FL.exe, and vice versa
 
 
-## **Settings**
-#### General 
-#### Items to have
-- ✅ - Set output folder 
-- ✅ - Set input folder (Multiple, if not in same location)
-- Launch at system startup
-- ✅ -  Project_Order_By, toggle name or date
-
-#### Advanced
-- ✅ -  Set FL_Studio_Path ( Write function to find on own, but make editable)
-- Set Processor_Type
-- ❌ - Toggle, enable auto export all projects you worked on today
-    - No need to build this. Users can just click recent projects
-- ✅ - Enable Set output folder sub folder, User can name the sub folder within subfolder where they want to export songs
-- ✅ - User can set mouse scroll speed 4 speeds. Normal, 2X, 3X, 5X
-
-
-- ✅ - Make advanced closable (default)
-- Add change font size for projects and selected projects (padding must also be changed in background)
 
 ## **Future Feature**
 - 
@@ -97,6 +77,40 @@
     - this is preventing "save settings"
 - ✅ - Fix after i search for a project and i go in settings, and then click save settings. Once i return to the main window, i want to be able to see my last search results, thus search entry needs to be populated correctly, and the correct items i search need to be shown in project tree
 - ✅ - organize code, multiple, SCROLL_SPEED_MAPPING
+
+- ✅ - First run window, make FL installation path text selectable, also in settings
+- ✅ - Let FLP projects folder be shown underneath each other
+- ✅ - Enable check, on save settings, mandatory fields must be filled in, Output folder, FLP projects folder, FL studio path. Check before saving current to ini file, that way you still auto set paths for user
+- ✅ - Need to clear search entry after projects are synced
+    - Disbaled, search stays
+
+- ✅ - Package app
+- ✅ - Test on other machine
+- ✅ - Add settings functionality, save and get values from ini file
+- ✅ - Open about section, until able to fix frame being white
+
+
+## **Settings**
+#### General 
+#### Items to have
+- ✅ - Set output folder 
+- ✅ - Set input folder (Multiple, if not in same location)
+- Launch at system startup
+- ✅ -  Project_Order_By, toggle name or date
+
+#### Advanced
+- ✅ -  Set FL_Studio_Path ( Write function to find on own, but make editable)
+- Set Processor_Type
+- ❌ - Toggle, enable auto export all projects you worked on today
+    - No need to build this. Users can just click recent projects
+- ✅ - Enable Set output folder sub folder, User can name the sub folder within subfolder where they want to export songs
+- ✅ - User can set mouse scroll speed 4 speeds. Normal, 2X, 3X, 5X
+
+
+- ✅ - Make advanced closable (default)
+- Add change font size for projects and selected projects (padding must also be changed in background)
+
+
 
 ## **Search**
 - ✅ - Search input field, text should only show project in left side, and should open the folder if in sub folder
@@ -160,3 +174,4 @@ pyinstaller --onefile --noconsole "Multi FLP To MP3 Exporter.py" --add-data "Med
 
 pyinstaller --onefile --noconsole --add-data "Media/Icons;Media/Icons" --icon "C:\Users\Kfoen\Documents\Docs KF\MyPythonProjects\findusic\Media\Icons\FL21 - Icon.ico" --version-file=version.txt "Multi FLP To MP3 Exporter.py"
 
+After completion, copy and paste exe, fixes window icon caching
