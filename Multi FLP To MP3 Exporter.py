@@ -673,9 +673,9 @@ class FLPExporterUI:
         style.map("PrimaryAction.TButton",
                   background=[("active", User_Selected_Project_Background_Color),
                               ("!active", "white")],
-                  foreground=[("active", "white")],
+                  foreground=[("active", "black")],
                   relief=[("pressed", "sunken")])
-
+        # ####################################################################3
         style.configure("PrimaryActionRed.TButton",
                         font=(Font_Name, Projects_Font_Size-2),
                         foreground="#dc3545",
@@ -1666,7 +1666,7 @@ class FLPExporterUI:
             # Check if field is empty
             if not flp_folders:
                 messagebox.showerror("Missing Field",
-                                     "FLP folders field cannot be empty.")
+                                     "FLP projects folder cannot be empty.")
                 return
 
             # Process each non-empty line
@@ -1978,7 +1978,7 @@ class FLPExporterUI:
             Exported_project_label = "project" if total == 1 else "projects"
             self.status_label.config(
                 text=f"{total} {Exported_project_label} exported.",
-                bootstyle="dark")
+                bootstyle="light")
             self.status_label.update()
 
         except Exception as e:
@@ -2027,7 +2027,7 @@ class FLPExporterUI:
 
         if total_today_files == 0:
             self.status_label.config(text="No files modified today.",
-                                     bootstyle="primary")
+                                     bootstyle="light")
         else:
             if added > 0:
                 # Show how many new files were added

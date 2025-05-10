@@ -180,4 +180,10 @@ pyinstaller --onefile --noconsole "Multi FLP To MP3 Exporter.py" --add-data "Med
 
 pyinstaller --onefile --noconsole --add-data "Media/Icons;Media/Icons" --icon "C:\Users\Kfoen\Documents\Docs KF\MyPythonProjects\findusic\Media\Icons\FL21 - Icon.ico" --version-file=version.txt "Multi FLP To MP3 Exporter.py"
 
+
+pyinstaller --onefile --noconsole --name "FLP Exporter" --add-data "Media/Icons;Media/Icons" --icon "C:\Users\Kfoen\Documents\Docs KF\MyPythonProjects\findusic\Media\Icons\FL21 - Icon.ico" --version-file=version.txt "Multi FLP To MP3 Exporter.py"
+
 After completion, copy and paste exe, fixes window icon caching
+
+
+Allow wacapew windows- antivirus pops up
