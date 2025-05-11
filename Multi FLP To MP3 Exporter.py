@@ -1477,6 +1477,21 @@ class FLPExporterUI:
                 font=(Font_Name, 12))
             self.processor_info_label.pack(anchor="w", padx=20, pady=(0, 10))
 
+            style.layout('LargeSquareToggle.TCheckbutton',
+            [('Checkbutton.padding',
+            {'sticky': 'nswe',
+            'children':
+            [('Checkbutton.indicator', {'side': 'left', 'sticky': ''}),
+            ('Checkbutton.label', {'side': 'left', 'sticky': ''})]
+            })])
+
+            # Optional: apply scale to ttkbootstrap theme elements
+            style.configure('LargeSquareToggle.TCheckbutton',
+            indicatorsize=30, 
+                            background=Background_Color,
+            padding=10)
+
+
             # Output Subfolder Toggle and Entry
             subfolder_frame = ttk.Frame(self.advanced_container)
             subfolder_frame.pack(fill=tk.X, pady=5)
@@ -1498,7 +1513,7 @@ class FLPExporterUI:
                 startup_frame,
                 variable=self.startup_var,
                 #   bootstyle="round-toggle",
-                style='Settings.TCheckbutton',
+                style='LargeSquareToggle.TCheckbutton',
                 command=self.toggle_startup)
             self.startup_toggle.pack(side=tk.LEFT, padx=(0, 40))
 
@@ -1520,8 +1535,10 @@ class FLPExporterUI:
                 subfolder_toggle_frame,
                 variable=self.subfolder_toggle_var,
                 bootstyle="round-toggle",
+                style='LargeSquareToggle.TCheckbutton',
                 command=self.Toggle_Enable_output_subfolder,
-                style='Settings.TCheckbutton')
+                #style='Settings.TCheckbutton'
+                )
             self.subfolder_toggle.pack(side=tk.LEFT)
             self.subfolder_toggle.pack(side=tk.LEFT, padx=(0, 10))
 

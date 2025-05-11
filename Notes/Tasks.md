@@ -22,7 +22,7 @@
 - Remove empty not a button below "Projects"
 - Define tab order
 - Predefined group of projects  - that can be added in selected project via one click
-- Increase size of checkbox in settings
+- ✅ - Increase size of checkbox in settings
 
 - Figure out how to be able to save a output folder with name "♬", need to escape characters in save_config
 - Implement - if FL64.exe fails, then try FL.exe, and vice versa
@@ -47,7 +47,7 @@
     - Default
 - Change default to have a dark grey color
 
-- Input fields should be white, in settings and also on mainwindow
+- ✅ - Input fields should be white, in settings and also on mainwindow
     - or only in settings, and on main window make border bold as indicator
     - currently, ony when output subfolder is created, does it change for all other inputs
 
@@ -55,10 +55,11 @@
 ## **Bugs**
 - Figure out how to prevent FLP from exporting pattern instead of full song
     - If FLP is added to pattern it exports as pattern, if project is closed on song mode then it exports as song.
-- Settings, output folder, when a new folder is added - it does not show the new folder in the input frame
-- Font size should be calculated as on home laptop size of font gets clipped while not the case on work pc
-- After clicking "save settings" it does not go back
-- When scrolling if cursor is on dropdown item, (unopened), then page glithces.
+- ✅ - Settings, output folder, when a new folder is added - it does not show the new folder in the input frame
+- ✅ - Font size should be calculated as on home laptop size of font gets clipped while not the case on work pc
+    - Row height is calculated
+- ✅ - After clicking "save settings" it does not go back
+- ✅ - When scrolling if cursor is on dropdown item, (unopened), then page glithces.
     - Find a better fix than moving away from dropdown
 
 ---
