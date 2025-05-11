@@ -2251,7 +2251,6 @@ class FLPExporterUI:
             app_path = sys.executable
         else:
             app_path = os.path.abspath(__file__)
-
         key = winreg.OpenKey(winreg.HKEY_CURRENT_USER,
                              r'Software\Microsoft\Windows\CurrentVersion\Run',
                              0, winreg.KEY_SET_VALUE)
