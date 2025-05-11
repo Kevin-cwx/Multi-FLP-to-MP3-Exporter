@@ -824,12 +824,18 @@ class FLPExporterUI:
                                     background=Background_Color)
         self.cart_label.pack(pady=(0, 0), anchor='w', fill='x', padx=10)
 
-        self.cart_listbox = Listbox(self.right_frame,
+        #Handles right frame, selected prroject from resizing on larger font
+        self.cart_frame = ttk.Frame(
+            self.right_frame, height=300,  style='Default_Theme.TFrame',)
+        self.cart_frame.pack_propagate(False)  # Prevent resizing to fit contents
+        self.cart_frame.pack(fill=tk.X, padx=10, pady=(5, 10)) 
+
+        self.cart_listbox = Listbox(self.cart_frame,
                                     height=13,
                                     width=40,
                                     selectmode=tk.SINGLE,
                                     font=(Font_Name, Projects_Font_Size))
-        self.cart_listbox.pack(fill=tk.X, padx=10, pady=(5, 10))
+        self.cart_listbox.pack(fill=tk.X, padx=0, pady=0)
         self.cart_listbox.bind("<Double-Button-1>", self.on_cart_double_click)
         # Force listbox color
         self.cart_listbox.configure(
