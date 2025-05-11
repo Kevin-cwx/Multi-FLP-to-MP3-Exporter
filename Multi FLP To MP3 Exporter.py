@@ -443,11 +443,15 @@ def first_run_setup(root):
                                                        expand=True,
                                                        padx=(5, 5))
     ttk.Button(
-        flp_frame,
+        output_frame,
         text="Browse",
-        command=lambda:
-        [flp_folder.set(filedialog.askdirectory()),
-         update_indicators()]).pack(side=tk.LEFT)
+        command=lambda: [
+            folder := filedialog.askdirectory(),
+            folder_contains_flp(folder) and output_folder.set(folder) or
+            messagebox.showwarning(
+                "No FLP Files", "Selected folder doesn't contain FLP files"),
+            update_indicators()
+        ]).pack(side=tk.LEFT)
 
     ttk.Label(setup_root,
               text="Indicate where your FLP projects are stored.",
@@ -619,6 +623,29 @@ def handle_mouse_scroll_speed(selected_key=None):
         # Return the current scroll speed
         return Mouse_Scroll_Speed
 
+
+def folder_contains_flp(folder_path, max_checks=100):
+    """Check if a folder contains FLP files without scanning the entire tree"""
+    try:
+        # First check the immediate directory
+        for entry in os.listdir(folder_path):
+            if entry.lower().endswith('.flp'):
+                return True
+            if max_checks <= 0:
+                return False
+            max_checks -= 1
+
+        # Then do a limited recursive check
+        for root, dirs, files in os.walk(folder_path):
+            for file in files:
+                if file.lower().endswith('.flp'):
+                    return True
+                if max_checks <= 0:
+                    return False
+                max_checks -= 1
+    except Exception:
+        return False
+    return False
 
 class CustomCombobox(ttk.Combobox):
 
@@ -1689,6 +1716,26 @@ class FLPExporterUI:
             # Save FLP projects folders
             flp_folders = self.flp_folder_entry.get("1.0", tk.END).strip()
 
+            # Validate folders before saving
+            valid_folders = []
+            for folder in [f.strip() for f in flp_folders.split("\n") if f.strip()]:
+                if len(folder) <= 3:
+                    messagebox.showerror("Invalid Folder",
+                                        f"Cannot use root directory: {folder}")
+                    return
+                if not folder_contains_flp(folder):
+                    if not messagebox.askyesno("Confirm Folder",
+                                            f"Folder doesn't appear to contain FLP files:\n{folder}\n"
+                                            "Add it anyway?"):
+                        return
+                valid_folders.append(folder)
+            
+            if not valid_folders:
+                messagebox.showerror("Error", "No valid FLP folders specified")
+                return
+                
+            Dir_FLP_Projects = valid_folders
+
             # Check if field is empty
             if not flp_folders:
                 messagebox.showerror("Missing Field",
@@ -1757,18 +1804,30 @@ class FLPExporterUI:
     def browse_flp_folders(self):
         """Open a dialog to select a new FLP folder and append if not present"""
         folder = filedialog.askdirectory(mustexist=True,
-                                         title="Select FLP Project Folder")
+                                        title="Select FLP Project Folder")
         if folder:
+            # Check if this is a root directory or too broad
+            if len(folder) <= 3:  # Like "C:\"
+                messagebox.showerror("Invalid Folder",
+                                    "Please select a more specific folder, not a root directory.")
+                return
+
+            # Check if folder contains FLP files
+            if not folder_contains_flp(folder):
+                messagebox.showwarning("No FLP Files Found",
+                                    f"The selected folder doesn't appear to contain any FLP files.\n"
+                                    f"Selected: {folder}\n\n"
+                                    "Please choose a folder containing FL Studio projects.")
+                return
+
             current_text = self.flp_folder_entry.get("1.0", "end-1c").strip()
             current_folders = current_text.split("\n") if current_text else []
 
             if folder not in current_folders:
                 current_folders.append(folder)
-
                 # Refresh list
                 self.flp_folder_entry.delete("1.0", tk.END)
-                self.flp_folder_entry.insert(tk.END,
-                                             "\n".join(current_folders))
+                self.flp_folder_entry.insert(tk.END, "\n".join(current_folders))
 
     def browse_output_folder(self):
         global Output_Folder_Path
@@ -2681,7 +2740,8 @@ class FLPExporterUI:
                                       padx=5,
                                       pady=(0, 5),
                                       after=widgets[search_frame_index])
-
+            
+    
 
 # === START APP ===
 if __name__ == "__main__":
