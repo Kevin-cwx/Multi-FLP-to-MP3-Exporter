@@ -5,14 +5,10 @@
     - twitter
     - ✅ - reddit
 
-- font and launch at application start is not being saved once visually, once save settings is clicked, and you go back in
-    - Launch at application startup worked
-    - font did not persist
 
 
-- ✅ - Dynamic font
-    - implemented, test at home and other machines
-    - Fix, cart needs to stay at same height regardless of font size
+
+
 - Cater for when FLP Folder needs to search through a lot of files, which would cause the app to freeze.
 - Add section to contact me for support, in about
 - Add section for ppl to contact me if they want - cracked latest version of FL, show image and features
@@ -96,6 +92,12 @@
 - ✅ - Increase font size of buttons (export, recent, clear all)
     - Make text black
 - ✅ - Settle on name
+- ✅ -font and launch at application start is not being saved once visually, once save settings is clicked, and you go back in
+    - Launch at application startup worked
+    - font did not persist
+- ✅ - Dynamic font
+    - implemented, test at home and other machines
+    - Fix, cart needs to stay at same height regardless of font size
 
 
 ## **Settings**

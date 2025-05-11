@@ -894,7 +894,7 @@ class FLPExporterUI:
                                           image=self.settings_icon,
                                           command=self.open_settings,
                                           style="PrimaryAction.TButton")
-        self.settings_button.pack(side=tk.RIGHT)
+        self.settings_button.pack(side=tk.RIGHT, padx=(0, 10))
         self.settings_tip = Hovertip(self.settings_button, 'Open Settings')
 
         self.toggle_icon = self.minus_icon
@@ -2052,7 +2052,7 @@ class FLPExporterUI:
         self.refresh_cart()
 
         if total_today_files == 0:
-            self.status_label.config(text="No files modified today.",
+            self.status_label.config(text="No files \nmodified today.",
                                      bootstyle="light")
         else:
             if added > 0:
@@ -2650,11 +2650,10 @@ class FLPExporterUI:
                 style='Default_Theme.TFrame'
             )
 
-            # 👉 Define custom style ONLY for the label
+           
             style = ttk.Style()
             style.configure('Subfolder.TLabel', background=Background_Color)
 
-            # 👉 Label gets custom style with background color
             self.subfolder_label = ttk.Label(
                 self.subfolder_frame,
                 text="Output Subfolder",
@@ -2662,8 +2661,7 @@ class FLPExporterUI:
             )
             self.subfolder_label.pack(side=tk.LEFT, padx=(0, 5))
             self.subfolder_label.config(font=(Font_Name, 12))
-
-            # 👉 Entry uses default style (white background)
+          
             self.subfolder_entry = ttk.Entry(
                 self.subfolder_frame
             )
