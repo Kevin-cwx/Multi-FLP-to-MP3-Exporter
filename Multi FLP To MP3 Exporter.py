@@ -52,6 +52,7 @@ Output_Sub_Folder_Name = ""
 Output_Audio_Format = "Emp3"
 Mouse_Scroll_Speed = 7
 Projects_Font_Size = 14
+Regular_Font_Size = 14
 # Ensures letters lik e p and y don't get cut off
 row_height = Projects_Font_Size + 8
 Application_Name = "Multi FLP to MP3 Exporter"
@@ -219,7 +220,8 @@ def save_config():
         'Launch_At_Startup': str(Launch_At_Startup),
         'Font_Name': Font_Name,
         'USE_DARK_MODE': str(USE_DARK_MODE),
-        'Projects_Font_Size': str(Projects_Font_Size)
+        'Projects_Font_Size': str(Projects_Font_Size),
+        'Row_Height': str(Projects_Font_Size + 8)
     }
 
     os.makedirs(os.path.dirname(CONFIG_FILE), exist_ok=True)
@@ -232,7 +234,7 @@ def load_config():
     global Output_Folder_Path, Dir_FLP_Projects, FL_Studio_Path, Processor_Type
     global Project_Order_By, Enable_Output_Sub_Folder, Output_Sub_Folder_Name
     global Output_Audio_Format, Mouse_Scroll_Speed, Application_Name, Projects_Font_Size
-    global Launch_At_Startup, Font_Name, USE_DARK_MODE
+    global Launch_At_Startup, Font_Name, USE_DARK_MODE,row_height
 
     if not os.path.exists(CONFIG_FILE):
         return False
@@ -261,8 +263,9 @@ def load_config():
         Launch_At_Startup = config['SETTINGS'].getboolean('Launch_At_Startup')
         Font_Name = config['SETTINGS']['Font_Name']
         USE_DARK_MODE = config['SETTINGS'].getboolean('USE_DARK_MODE')
-        # Projects_Font_Size = int(config['SETTINGS'].get(
-        #   'Projects_Font_Size', 14))
+        Projects_Font_Size = int(config['SETTINGS']['Projects_Font_Size'])
+        row_height = int(config['SETTINGS'].get(
+            'Row_Height', Projects_Font_Size + 8))
 
         return True
     except (KeyError, ValueError) as e:
@@ -664,7 +667,7 @@ class FLPExporterUI:
         style.configure('Settings.TCombobox', fieldbackground=Background_Color)
 
         style.configure("PrimaryAction.TButton",
-                        font=(Font_Name, Projects_Font_Size-2),
+                        font=(Font_Name, Regular_Font_Size),
                         foreground="black",
                         background="red",
                         padding=5,
@@ -677,14 +680,14 @@ class FLPExporterUI:
                   relief=[("pressed", "sunken")])
         # ####################################################################3
         style.configure("PrimaryActionRed.TButton",
-                        font=(Font_Name, Projects_Font_Size-2),
+                        font=(Font_Name, Regular_Font_Size),
                         foreground="#dc3545",
                         background="white",
                         bordercolor="#dc3545",
                         padding=2,
                         borderwidth=5,
                         relief="flat")
-        
+
         style.map("PrimaryActionRed.TButton",
                   background=[("active", "#dc3545"),
                               ("!active", "white")],
@@ -757,8 +760,8 @@ class FLPExporterUI:
             text="Cancel",
             command=self.close_settings_without_saving,
             style="PrimaryActionRed.TButton"
-           # bootstyle="outline-danger"
-           )
+            # bootstyle="outline-danger"
+        )
 
         self.search_entry.bind("<KeyRelease>", self.filter_tree)
 
@@ -824,11 +827,12 @@ class FLPExporterUI:
                                     background=Background_Color)
         self.cart_label.pack(pady=(0, 0), anchor='w', fill='x', padx=10)
 
-        #Handles right frame, selected prroject from resizing on larger font
+        # Handles right frame, selected prroject from resizing on larger font
         self.cart_frame = ttk.Frame(
-            self.right_frame, height=300,  style='Default_Theme.TFrame',)
-        self.cart_frame.pack_propagate(False)  # Prevent resizing to fit contents
-        self.cart_frame.pack(fill=tk.X, padx=10, pady=(5, 10)) 
+            self.right_frame, height=200,  style='Default_Theme.TFrame',)
+        # Prevent resizing to fit contents
+        self.cart_frame.pack_propagate(False)
+        self.cart_frame.pack(fill=tk.X, padx=10, pady=(5, 10))
 
         self.cart_listbox = Listbox(self.cart_frame,
                                     height=13,
@@ -930,7 +934,7 @@ class FLPExporterUI:
 
         self.status_label = ttk.Label(self.right_frame,
                                       text="",
-                                      font=(Font_Name, Projects_Font_Size),
+                                      font=(Font_Name, Regular_Font_Size),
                                       bootstyle="",
                                       background=Background_Color)
         self.status_label.pack(pady=(0, 10))
@@ -1484,19 +1488,18 @@ class FLPExporterUI:
             self.processor_info_label.pack(anchor="w", padx=20, pady=(0, 10))
 
             style.layout('LargeSquareToggle.TCheckbutton',
-            [('Checkbutton.padding',
-            {'sticky': 'nswe',
-            'children':
-            [('Checkbutton.indicator', {'side': 'left', 'sticky': ''}),
-            ('Checkbutton.label', {'side': 'left', 'sticky': ''})]
-            })])
+                         [('Checkbutton.padding',
+                           {'sticky': 'nswe',
+                            'children':
+                            [('Checkbutton.indicator', {'side': 'left', 'sticky': ''}),
+                             ('Checkbutton.label', {'side': 'left', 'sticky': ''})]
+                            })])
 
             # Optional: apply scale to ttkbootstrap theme elements
             style.configure('LargeSquareToggle.TCheckbutton',
-            indicatorsize=30, 
+                            indicatorsize=30,
                             background=Background_Color,
-            padding=10)
-
+                            padding=10)
 
             # Output Subfolder Toggle and Entry
             subfolder_frame = ttk.Frame(self.advanced_container)
@@ -1543,8 +1546,8 @@ class FLPExporterUI:
                 bootstyle="round-toggle",
                 style='LargeSquareToggle.TCheckbutton',
                 command=self.Toggle_Enable_output_subfolder,
-                #style='Settings.TCheckbutton'
-                )
+                # style='Settings.TCheckbutton'
+            )
             self.subfolder_toggle.pack(side=tk.LEFT)
             self.subfolder_toggle.pack(side=tk.LEFT, padx=(0, 10))
 
@@ -2557,7 +2560,7 @@ class FLPExporterUI:
         global Output_Folder_Path, Dir_FLP_Projects, FL_Studio_Path, Processor_Type
         global Project_Order_By, Enable_Output_Sub_Folder, Output_Sub_Folder_Name
         global Output_Audio_Format, Mouse_Scroll_Speed, Application_Name
-        global Launch_At_Startup, Font_Name, USE_DARK_MODE
+        global Launch_At_Startup, Font_Name, USE_DARK_MODE, Projects_Font_Size, row_height
 
         # Update globals from UI if in settings mode
         if hasattr(self, 'settings_open') and self.settings_open:
@@ -2571,6 +2574,8 @@ class FLPExporterUI:
             Processor_Type = self.processor_type.get()
             Enable_Output_Sub_Folder = self.subfolder_toggle_var.get()
             Output_Sub_Folder_Name = ""
+            Projects_Font_Size = self.font_size_var.get()
+            row_height = Projects_Font_Size + 8
 
             # Load config
             config = configparser.ConfigParser()
@@ -2675,11 +2680,9 @@ class FLPExporterUI:
                     break
 
             self.subfolder_frame.pack(fill=tk.X,
-                                    padx=5,
-                                    pady=(0, 5),
-                                    after=widgets[search_frame_index])
-
-
+                                      padx=5,
+                                      pady=(0, 5),
+                                      after=widgets[search_frame_index])
 
 
 # === START APP ===

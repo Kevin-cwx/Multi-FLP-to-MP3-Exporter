@@ -10,7 +10,7 @@
     - font did not persist
 
 
-- Dynamic font
+- ✅ - Dynamic font
     - implemented, test at home and other machines
     - Fix, cart needs to stay at same height regardless of font size
 - Cater for when FLP Folder needs to search through a lot of files, which would cause the app to freeze.
