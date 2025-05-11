@@ -2611,58 +2611,52 @@ class FLPExporterUI:
 
     def setup_subfolder_ui(self):
         """Setup the subfolder UI elements based on current settings"""
-        # First, remove the frame if it exists (we'll recreate it in the right position)
         if hasattr(self, 'subfolder_frame'):
             self.subfolder_frame.pack_forget()
             self.subfolder_frame.destroy()
             del self.subfolder_frame
 
         if Enable_Output_Sub_Folder:
-            # Create the frame with consistent background
             self.subfolder_frame = ttk.Frame(
                 self.left_frame,
-                style='Default_Theme.TFrame'  # Use the same style as other frames
+                style='Default_Theme.TFrame'
             )
 
-            # Create label with consistent background
+            # 👉 Define custom style ONLY for the label
+            style = ttk.Style()
+            style.configure('Subfolder.TLabel', background=Background_Color)
+
+            # 👉 Label gets custom style with background color
             self.subfolder_label = ttk.Label(
                 self.subfolder_frame,
                 text="Output Subfolder",
-                style='TLabel'  # Use the default label style
+                style='Subfolder.TLabel'
             )
             self.subfolder_label.pack(side=tk.LEFT, padx=(0, 5))
+            self.subfolder_label.config(font=(Font_Name, 12))
 
-            # Create entry with consistent styling
+            # 👉 Entry uses default style (white background)
             self.subfolder_entry = ttk.Entry(
-                self.subfolder_frame,
-                style='TEntry'  # Use the default entry style
+                self.subfolder_frame
             )
             self.subfolder_entry.pack(side=tk.LEFT, fill=tk.X, expand=True)
             self.subfolder_entry.insert(0, Output_Sub_Folder_Name)
-
-            # Configure the entry's background to match
-            style = ttk.Style()
-            style.configure('TEntry', fieldbackground=Background_Color)
-            style.configure('TLabel', background=Background_Color)
-
-            # Pack the frame in the correct position
-            # Get all widgets in left_frame
-            widgets = self.left_frame.pack_slaves()
             self.subfolder_entry.config(font=(Font_Name, 12))
-            self.subfolder_label.config(font=(Font_Name, 12))
 
-            # Find the search_frame (it should be the first one)
+            # Insert subfolder frame after search_frame
+            widgets = self.left_frame.pack_slaves()
             search_frame_index = 0
             for i, widget in enumerate(widgets):
-                if widget == self.search_entry.master:  # search_frame is parent of search_entry
+                if widget == self.search_entry.master:
                     search_frame_index = i
                     break
 
-            # Pack subfolder_frame right after search_frame
             self.subfolder_frame.pack(fill=tk.X,
-                                      padx=5,
-                                      pady=(0, 5),
-                                      after=widgets[search_frame_index])
+                                    padx=5,
+                                    pady=(0, 5),
+                                    after=widgets[search_frame_index])
+
+
 
 
 # === START APP ===
