@@ -2062,7 +2062,7 @@ class FLPExporterUI:
 
             Exported_project_label = "project" if total == 1 else "projects"
             self.status_label.config(
-                text=f"{total} {Exported_project_label} exported.",
+                text=f"{total} {Exported_project_label} exported",
                 bootstyle="light")
             self.status_label.update()
 
@@ -2111,7 +2111,7 @@ class FLPExporterUI:
         self.refresh_cart()
 
         if total_today_files == 0:
-            self.status_label.config(text="No files \nmodified today.",
+            self.status_label.config(text="No files \nmodified today",
                                      bootstyle="light")
         else:
             if added > 0:
