@@ -443,13 +443,13 @@ def first_run_setup(root):
                                                        expand=True,
                                                        padx=(5, 5))
     ttk.Button(
-        output_frame,
+        flp_frame,
         text="Browse",
         command=lambda: [
             folder := filedialog.askdirectory(),
-            folder_contains_flp(folder) and output_folder.set(folder) or
-            messagebox.showwarning(
-                "No FLP Files", "Selected folder doesn't contain FLP files"),
+            (folder_contains_flp(folder) and flp_folder.set(folder)) or
+            (not folder_contains_flp(folder) and messagebox.showwarning(
+                "No FLP Files", "Selected folder doesn't contain FLP files")),
             update_indicators()
         ]).pack(side=tk.LEFT)
 
@@ -482,10 +482,6 @@ def first_run_setup(root):
         command=lambda:
         [fl_studio_path.set(filedialog.askdirectory()),
          update_indicators()]).pack(side=tk.LEFT)
-
-    # ttk.Label(setup_root,
-    #           text=r"Example - C:\Program Files\Image-Line\FL Studio 21",
-    #           font=(Font_Name, 12)).pack(anchor="w", padx=40, pady=(0, 5))
 
     Setup_Selectable_FL_Installation_Path = ttk.Entry(
         setup_root,
@@ -544,7 +540,7 @@ def first_run_setup(root):
 
     # Validation function
     def validate_setup():
-        if not all([output_folder.get(), flp_folder.get()]):
+        if not all([output_folder.get(), flp_folder.get(), fl_studio_path.get()]):
             messagebox.showerror("Error", "All fields are required")
             return False
 
@@ -643,7 +639,10 @@ def folder_contains_flp(folder_path, max_checks=100):
                 if max_checks <= 0:
                     return False
                 max_checks -= 1
-    except Exception:
+            if max_checks <= 0:
+                return False
+    except Exception as e:
+        print(f"Error checking folder: {e}")
         return False
     return False
 
@@ -745,6 +744,7 @@ class FLPExporterUI:
         self.settings_icon = self.load_icon("Media/Icons/settings.png")
         self.music_folder_icon = self.load_icon("Media/Icons/musical-note.png")
         self.sync_icon = self.load_icon("Media/Icons/sync.png")
+        self.help_icon = self.load_icon("Media/Icons/question-mark.png")
 
         self.selected_files = set()
         self.path_map = {}
@@ -954,6 +954,14 @@ class FLPExporterUI:
         self.sync_button.pack(side=tk.RIGHT, padx=(0, 10))
         self.sync_tip = Hovertip(self.sync_button,
                                  'Sync and update project tree')
+
+        self.help_button = ttk.Button(self.top_bar,
+                                      image=self.help_icon,
+                                      compound=tk.LEFT,
+                                      command=self.Customer_Support,
+                                      style="PrimaryAction.TButton")
+
+        self.help_button.pack(side=tk.RIGHT, padx=(0, 10))
 
         self.toggle_button_Close_Folders.pack(side=tk.RIGHT, padx=(0, 10))
         self.toggle_tip = Hovertip(self.toggle_button_Close_Folders,
@@ -1729,11 +1737,11 @@ class FLPExporterUI:
                                             "Add it anyway?"):
                         return
                 valid_folders.append(folder)
-            
+
             if not valid_folders:
                 messagebox.showerror("Error", "No valid FLP folders specified")
                 return
-                
+
             Dir_FLP_Projects = valid_folders
 
             # Check if field is empty
@@ -2322,6 +2330,9 @@ class FLPExporterUI:
         self.right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=False)
 
     #
+    def Customer_Support(self):
+        print("in customer support")
+
     def toggle_startup(self):
         """Handle the startup toggle button"""
         if self.startup_var.get():
@@ -2709,7 +2720,7 @@ class FLPExporterUI:
                 style='Default_Theme.TFrame'
             )
 
-           
+
             style = ttk.Style()
             style.configure('Subfolder.TLabel', background=Background_Color)
 
@@ -2720,7 +2731,7 @@ class FLPExporterUI:
             )
             self.subfolder_label.pack(side=tk.LEFT, padx=(0, 5))
             self.subfolder_label.config(font=(Font_Name, 12))
-          
+
             self.subfolder_entry = ttk.Entry(
                 self.subfolder_frame
             )
@@ -2740,8 +2751,8 @@ class FLPExporterUI:
                                       padx=5,
                                       pady=(0, 5),
                                       after=widgets[search_frame_index])
-            
-    
+
+
 
 # === START APP ===
 if __name__ == "__main__":
