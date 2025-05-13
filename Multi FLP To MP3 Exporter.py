@@ -2333,40 +2333,46 @@ class FLPExporterUI:
     #
     def Customer_Support(self):
         print("in customer support")
+
+        # *** New: Check if support window is already open ***
+        if hasattr(self, 'support_window') and self.support_window.winfo_exists():
+            self.support_window.lift()
+            return
+
         from tkinter import Toplevel, Text, Button, END, font
+
         # Create toplevel window
-        support_window = Toplevel(self.root)
-        support_window.title("Customer Support")
-        support_window.resizable(False, False)
+        # *** New: Store as instance variable ***
+        self.support_window = Toplevel(self.root)
+        self.support_window.title("Customer Support")
+        self.support_window.resizable(False, False)
 
         # Configure font
-        custom_font = font.Font(size=12)  # Increased font size (default is usually 10)
+        # Increased font size (default is usually 10)
+        custom_font = font.Font(size=12)
 
         # Create text widget with contact info
-        contact_text = Text(support_window,
+        contact_text = Text(self.support_window,
                             height=12,
                             width=60,
                             wrap="word",
-                            padx=15,  # Increased padding
+                            padx=15,
                             pady=15,
-                            font=custom_font)  # Apply custom font
+                            font=custom_font)
 
-        # Insert contact information with better formatting
         contact_text.insert(END, "Contact Support\n\n")
         contact_text.insert(
             END, "Email: FLPexporter@gmail.com\nInstagram: @kevin._.cwx\n\n")
         contact_text.insert(
             END, "For:\n• Questions\n• Feature requests\n• Bug reports\n• Beat collaborations\n\n")
 
-        # Make text uneditable but selectable
         contact_text.config(state="disabled")
         contact_text.pack()
 
-        # Style the close button
-        close_btn = Button(support_window,
+        close_btn = Button(self.support_window,
                         text="Close",
                         font=custom_font,
-                        command=support_window.destroy)
+                        command=self.support_window.destroy)
         close_btn.pack(pady=10)
 
         # Select all text by default for easy copying
