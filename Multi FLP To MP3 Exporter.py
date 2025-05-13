@@ -2356,22 +2356,20 @@ class FLPExporterUI:
     def Customer_Support(self):
         print("in customer support")
 
-        # *** New: Check if support window is already open ***
+        # Check if support window is already open
         if hasattr(self, 'support_window') and self.support_window.winfo_exists():
             self.support_window.lift()
             return
 
-        from tkinter import Toplevel, Text, Button, END, font
+        from tkinter import Toplevel, Text, Button, END, font, Menu
 
         # Create toplevel window
-        # *** New: Store as instance variable ***
         self.support_window = Toplevel(self.root)
         self.support_window.title("Customer Support")
         self.support_window.resizable(False, False)
 
         # Configure font
-        # Increased font size (default is usually 10)
-        custom_font = font.Font(size=12)
+        custom_font = font.Font(size=14)
 
         # Create text widget with contact info
         contact_text = Text(self.support_window,
@@ -2384,21 +2382,49 @@ class FLPExporterUI:
 
         contact_text.insert(END, "Contact Support\n\n")
         contact_text.insert(
-            END, "Email: FLPexporter@gmail.com\nInstagram: @kevin._.cwx\n\n")
+            END, "Email:           FLPexporter@gmail.com\nInstagram:   @kevin._.cwx\n\n")
         contact_text.insert(
-            END, "For:\n• Questions\n• Feature requests\n• Bug reports\n• Beat collaborations\n\n")
+            END,
+            "For:\n• Questions\n• Feature requests\n• Bug reports\n• Beat collaborations\n\n"
+        )
 
         contact_text.config(state="disabled")
         contact_text.pack()
+
+        # Create right-click context menu
+        def show_context_menu(event):
+            context_menu = Menu(self.support_window, tearoff=0)
+            context_menu.add_command(label="Copy Email", command=lambda: copy_email_to_clipboard())
+            context_menu.add_command(label="Copy", command=lambda: copy_selection_to_clipboard())
+            context_menu.tk_popup(event.x_root, event.y_root)
+
+        def copy_email_to_clipboard():
+            # Extract just the email address
+            contact_text.config(state="normal")
+            email_line = contact_text.get("3.0", "3.0 lineend")  # Line with the email
+            email = email_line.split(": ")[1]  # Get part after "Email: "
+            self.root.clipboard_clear()
+            self.root.clipboard_append(email.strip())
+            contact_text.config(state="disabled")
+
+        def copy_selection_to_clipboard():
+            try:
+                # Get selected text
+                selected_text = contact_text.selection_get()
+                self.root.clipboard_clear()
+                self.root.clipboard_append(selected_text)
+            except:
+                # If no selection, copy email as fallback
+                copy_email_to_clipboard()
+
+        # Bind right-click to show context menu
+        contact_text.bind("<Button-3>", show_context_menu)
 
         close_btn = Button(self.support_window,
                         text="Close",
                         font=custom_font,
                         command=self.support_window.destroy)
         close_btn.pack(pady=10)
-
-        # Select all text by default for easy copying
-        contact_text.tag_add("sel", "1.0", END)
 
     def toggle_startup(self):
         """Handle the startup toggle button"""
