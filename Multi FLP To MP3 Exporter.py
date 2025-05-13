@@ -644,7 +644,7 @@ def handle_mouse_scroll_speed(selected_key=None):
         return Mouse_Scroll_Speed
 
 
-def folder_contains_flp(folder_path, max_checks=100):
+def folder_contains_flp(folder_path, max_checks=2000):
     """Check if a folder contains FLP files without scanning the entire tree"""
     try:
         # First check the immediate directory
