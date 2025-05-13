@@ -172,30 +172,54 @@ def close_fl_studio():
 
 
 def export_flp_to_mp3(file_path):
-    global Output_Folder_Path
+    global Output_Folder_Path, Processor_Type, FL_Studio_Path
     close_fl_studio()
+
     # Get subfolder name if enabled
     if Enable_Output_Sub_Folder:
         subfolder = app.subfolder_entry.get().strip()
         if subfolder:
-            # Create full output path with subfolder
             full_output_path = os.path.join(Output_Folder_Path, subfolder)
-
-            # Create directory if it doesn't exist
             if not os.path.exists(full_output_path):
                 try:
                     os.makedirs(full_output_path)
                 except OSError as e:
                     print(f"Error creating subfolder: {e}")
-                    full_output_path = Output_Folder_Path  # Fallback to main folder
+                    full_output_path = Output_Folder_Path
         else:
             full_output_path = Output_Folder_Path
     else:
         full_output_path = Output_Folder_Path
 
+    # Get the expected output filename
+    base_name = os.path.splitext(os.path.basename(file_path))[0]
+    expected_output = os.path.join(full_output_path, f"{base_name}.mp3")
+
+    # Try exporting with current processor
     Export_FLP_to_MP3 = f'cd "{FL_Studio_Path}" & {Processor_Type} /R /{Output_Audio_Format} "{file_path}" /O"{full_output_path}"'
-    # print(Export_FLP_to_MP3)
     subprocess.call(Export_FLP_to_MP3, shell=True)
+
+    # Check if export was successful
+    if not os.path.exists(expected_output):
+        print(
+            f"Export failed with {Processor_Type}, trying alternate processor...")
+
+        # Switch processor type
+        new_processor = "FL.exe" if Processor_Type == "FL64.exe" else "FL64.exe"
+
+        # Try again with alternate processor
+        Export_FLP_to_MP3 = f'cd "{FL_Studio_Path}" & {new_processor} /R /{Output_Audio_Format} "{file_path}" /O"{full_output_path}"'
+        subprocess.call(Export_FLP_to_MP3, shell=True)
+
+        # If successful with alternate processor, update config
+        if os.path.exists(expected_output):
+            print(f"Successfully exported with {new_processor}")
+            Processor_Type = new_processor
+            save_config()  # Save the new processor type to config
+        else:
+            print("Export failed with both processors")
+    else:
+        print("Export successful with current processor")
 
 
 def save_config():
