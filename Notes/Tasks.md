@@ -19,7 +19,7 @@
 - ✅ - Increase size of checkbox in settings
 
 - Figure out how to be able to save a output folder with name "♬", need to escape characters in save_config
-- Implement - if FL64.exe fails, then try FL.exe, and vice versa
+- ✅ - Implement - if FL64.exe fails, then try FL.exe, and vice versa
 
 
 
@@ -116,7 +116,7 @@
 
 
 - ✅ - Make advanced closable (default)
-- Add change font size for projects and selected projects (padding must also be changed in background)
+- ✅ - Add change font size for projects and selected projects (padding must also be changed in background)
 
 
 

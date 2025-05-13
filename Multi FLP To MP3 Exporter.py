@@ -108,7 +108,7 @@ Previous
 "#2fbdff"
 """
 
-Background_Color = "#868f96"
+Background_Color = "#9aa3ab"
 Darker_Background_Color = darken_color(Background_Color, factor=0.98)
 User_Selected_Project_Background_Color = "#FFC93F"
 Selected_Project_Text_Color = "black"
@@ -1182,7 +1182,14 @@ class FLPExporterUI:
         if not first_item:
             return
         if self.folders_expanded:
-            self.collapse_all()
+            # Collapse all except top-level folders
+            for top_level_item in self.tree.get_children():
+            # For each top-level item, collapse all its children
+                for child in self.tree.get_children(top_level_item):
+                    self.tree.item(child, open=False)
+                    # Collapse any grandchildren
+                    self.collapse_all_nodes(child)
+                
             self.toggle_icon = self.plus_icon
             self.folders_expanded = False
             self.toggle_tip.text = 'Open folders'
