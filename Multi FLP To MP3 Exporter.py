@@ -1527,9 +1527,7 @@ class FLPExporterUI:
             self.processor_label.pack(side=tk.LEFT, padx=(10, 10))
 
             # Create a StringVar to store the selected value
-            self.processor_type = tk.StringVar(
-                value="FL64.exe")  # Default value
-
+            self.processor_type = tk.StringVar(value=Processor_Type)
             # Create the Combobox dropdown
             self.processor_dropdown = CustomCombobox(
                 processor_frame,
