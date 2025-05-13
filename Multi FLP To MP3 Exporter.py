@@ -955,6 +955,10 @@ class FLPExporterUI:
         self.sync_tip = Hovertip(self.sync_button,
                                  'Sync and update project tree')
 
+        self.toggle_button_Close_Folders.pack(side=tk.RIGHT, padx=(0, 10))
+        self.toggle_tip = Hovertip(self.toggle_button_Close_Folders,
+                                   'Close folders')
+
         self.help_button = ttk.Button(self.top_bar,
                                       image=self.help_icon,
                                       compound=tk.LEFT,
@@ -963,9 +967,6 @@ class FLPExporterUI:
 
         self.help_button.pack(side=tk.RIGHT, padx=(0, 10))
 
-        self.toggle_button_Close_Folders.pack(side=tk.RIGHT, padx=(0, 10))
-        self.toggle_tip = Hovertip(self.toggle_button_Close_Folders,
-                                   'Close folders')
 
         self.status_label = ttk.Label(self.right_frame,
                                       text="",
@@ -2332,6 +2333,44 @@ class FLPExporterUI:
     #
     def Customer_Support(self):
         print("in customer support")
+        from tkinter import Toplevel, Text, Button, END, font
+        # Create toplevel window
+        support_window = Toplevel(self.root)
+        support_window.title("Customer Support")
+        support_window.resizable(False, False)
+
+        # Configure font
+        custom_font = font.Font(size=12)  # Increased font size (default is usually 10)
+
+        # Create text widget with contact info
+        contact_text = Text(support_window,
+                            height=12,
+                            width=60,
+                            wrap="word",
+                            padx=15,  # Increased padding
+                            pady=15,
+                            font=custom_font)  # Apply custom font
+
+        # Insert contact information with better formatting
+        contact_text.insert(END, "Contact Support\n\n")
+        contact_text.insert(
+            END, "Email: FLPexporter@gmail.com\nInstagram: @kevin._.cwx\n\n")
+        contact_text.insert(
+            END, "For:\n• Questions\n• Feature requests\n• Bug reports\n• Beat collaborations\n\n")
+
+        # Make text uneditable but selectable
+        contact_text.config(state="disabled")
+        contact_text.pack()
+
+        # Style the close button
+        close_btn = Button(support_window,
+                        text="Close",
+                        font=custom_font,
+                        command=support_window.destroy)
+        close_btn.pack(pady=10)
+
+        # Select all text by default for easy copying
+        contact_text.tag_add("sel", "1.0", END)
 
     def toggle_startup(self):
         """Handle the startup toggle button"""
