@@ -1364,7 +1364,7 @@ class FLPExporterUI:
             self.flp_folder_info_label = ttk.Label(
                 self.scrollable_settings_frame,
                 text=("This is where your FLP projects are. Add the top folder.\n"
-                      "Click Browse to add multiple folders.\n\n"
+                      "Click Browse again to add multiple folders.\n\n"
                       "To remove a path, simply delete it from the input field, or double click it.\n"
                       "Example - C:\\Users\\Kfoen\\Documents\\Image-Line\\FL Studio\\Projects\\FL 25 - projects"
                       ),
