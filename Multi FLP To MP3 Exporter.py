@@ -2392,7 +2392,7 @@ class FLPExporterUI:
             END, "Email:           FLPexporter@gmail.com\nInstagram:   @kevin._.cwx\n\n")
         contact_text.insert(
             END,
-            "For:\n• Questions\n• Feature requests\n• Bug reports\n• Beat collaborations\n\n"
+            "For:\n• Questions\n• Feature requests\n• Bug report\n• Beat collaborations\n\n"
         )
 
         contact_text.config(state="disabled")
