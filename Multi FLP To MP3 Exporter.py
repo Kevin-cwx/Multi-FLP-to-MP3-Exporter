@@ -1727,7 +1727,8 @@ class FLPExporterUI:
                 self.about_container,
                 text="NOTE: FL Studio must be closed before exporting song.\nMake sure to save your project.\nClicking export will automatically close FL Studio.\n\nIf your project has a popup, (unlicensed vst, audio missing) we recommend buying the vst as FL intends, or replacing the missing audio.\n"
                 "The project will continue to export once you click ok, or remove the popup."
-                "\n\nBackup projects with identical names are hidden to reduce clutter and avoid showing excessive duplicates.",
+                "\n\nBackup projects with identical names are hidden to reduce clutter and avoid showing excessive duplicates." \
+                "If your song exports in pattern mode, open it up, switch to song mode, and export again. The application will export based on what mode you last save your project in.",
                 style=('Settings.TLabel'),
                 font=(
                     Font_Name,
