@@ -290,6 +290,7 @@ def load_config():
         Projects_Font_Size = int(config['SETTINGS']['Projects_Font_Size'])
         row_height = int(config['SETTINGS'].get(
             'Row_Height', Projects_Font_Size + 8))
+        return config  # Return the loaded config object
 
         return True
     except (KeyError, ValueError) as e:
@@ -1877,6 +1878,15 @@ class FLPExporterUI:
             self.output_folder_entry.insert(0, folder_selected)
 
     def close_settings_without_saving(self):
+
+        global Enable_Output_Sub_Folder
+
+    # Restore the original subfolder setting
+        Enable_Output_Sub_Folder = load_config().getboolean(
+        'SETTINGS', 'Enable_Output_Sub_Folder', fallback=False)
+        self.setup_subfolder_ui()
+
+
         self.settings_frame.destroy()
         self.settings_open = False
         self.settings_button.config(text="Settings", image=self.settings_icon)
@@ -2820,7 +2830,6 @@ class FLPExporterUI:
                 self.left_frame,
                 style='Default_Theme.TFrame'
             )
-
 
             style = ttk.Style()
             style.configure('Subfolder.TLabel', background=Background_Color)
