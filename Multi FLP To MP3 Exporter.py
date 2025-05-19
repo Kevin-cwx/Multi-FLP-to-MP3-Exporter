@@ -54,7 +54,11 @@ Mouse_Scroll_Speed = 7
 Projects_Font_Size = 14
 Regular_Font_Size = 14
 # Ensures letters lik e p and y don't get cut off
-row_height = Projects_Font_Size + 8
+def get_row_height():
+    return Projects_Font_Size + 8
+
+
+row_height = get_row_height()
 Application_Name = "Multi FLP to MP3 Exporter"
 Launch_At_Startup = False
 Font_Name = "Meiryo"
@@ -159,7 +163,6 @@ def close_fl_studio():
 
         # Alternative Method 2: Using psutil (more elegant)
         try:
-            import psutil
             for proc in psutil.process_iter():
                 if proc.name().lower() in ['fl64.exe', 'fl.exe']:
                     proc.kill()
@@ -197,7 +200,7 @@ def save_config():
         'Font_Name': Font_Name,
         'USE_DARK_MODE': str(USE_DARK_MODE),
         'Projects_Font_Size': str(Projects_Font_Size),
-        'Row_Height': str(Projects_Font_Size + 8)
+        'Row_Height': get_row_height()
     }
 
     os.makedirs(os.path.dirname(CONFIG_FILE), exist_ok=True)
@@ -240,11 +243,10 @@ def load_config():
         Font_Name = config['SETTINGS']['Font_Name']
         USE_DARK_MODE = config['SETTINGS'].getboolean('USE_DARK_MODE')
         Projects_Font_Size = int(config['SETTINGS']['Projects_Font_Size'])
-        row_height = int(config['SETTINGS'].get(
-            'Row_Height', Projects_Font_Size + 8))
+        row_height = int(config['SETTINGS'].get('Row_Height',
+                                                get_row_height()))
         return config  # Return the loaded config object
 
-        return True
     except (KeyError, ValueError) as e:
         print(f"Error loading config: {e}")
         return False
@@ -1170,7 +1172,11 @@ class FLPExporterUI:
     def load_icon(self, path, size=(16, 16)):
         """Load and resize an icon image, handling both dev and bundled paths."""
         icon_path = resource_path(path)
-        return ImageTk.PhotoImage(Image.open(icon_path).resize(size, Image.LANCZOS))
+        try:
+            return ImageTk.PhotoImage(Image.open(icon_path).resize(size, Image.LANCZOS))
+        except Exception as e:
+            print(f"Error loading icon {path}: {e}")
+            return None
 
     def toggle_folders(self):
         first_item = self.tree.get_children("")
@@ -2868,7 +2874,7 @@ class FLPExporterUI:
             Enable_Output_Sub_Folder = self.subfolder_toggle_var.get()
             Output_Sub_Folder_Name = ""
             Projects_Font_Size = self.font_size_var.get()
-            row_height = Projects_Font_Size + 8
+            row_height = get_row_height()
 
             # Load config
             config = configparser.ConfigParser()
@@ -2885,7 +2891,7 @@ class FLPExporterUI:
 
             # Handle font size
             Projects_Font_Size = self.font_size_var.get()
-            row_height = Projects_Font_Size + 8
+            row_height = get_row_height()
 
             # Update UI elements
             style.configure("Custom.Treeview",
