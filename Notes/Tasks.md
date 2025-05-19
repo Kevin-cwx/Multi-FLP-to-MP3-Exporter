@@ -177,6 +177,8 @@ If it fails, move file back to Good/A dir
 C:\Users\Kfoen
 
 
+https://www.image-line.com/fl-studio-learning/fl-studio-online-manual/html/fformats_save_export.htm
+
 ## **Installation**
 pyinstaller --onefile --noconsole "Multi FLP To MP3 Exporter.py" --add-data "Media/Icons;Media/Icons"
 

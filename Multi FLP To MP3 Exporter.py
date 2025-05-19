@@ -770,6 +770,8 @@ class FLPExporterUI:
         self.music_folder_icon = self.load_icon("Media/Icons/musical-note.png")
         self.sync_icon = self.load_icon("Media/Icons/sync.png")
         self.help_icon = self.load_icon("Media/Icons/question-mark.png")
+        self.zip_icon = self.load_icon("Media/Icons/zip-folder.png")
+
 
         self.selected_files = set()
         self.path_map = {}
@@ -992,6 +994,21 @@ class FLPExporterUI:
 
         self.help_button.pack(side=tk.RIGHT, padx=(0, 10))
 
+        self.zip_button = ttk.Button(self.top_bar,
+                                      #image=self.zip_icon,
+                                      text="zip",
+                                      compound=tk.LEFT,
+                                      command=self.Run_Zip,
+                                      style="PrimaryAction.TButton")
+        self.zip_button.pack(side=tk.RIGHT, padx=(0, 10))
+        self.zip_selected = False
+        style.configure("Selected.TButton",
+                        font=(Font_Name, Regular_Font_Size), 
+                        foreground="black",
+                        background=User_Selected_Project_Background_Color,
+                        padding=5,                            
+                        relief="ridge",
+                        borderwidth=1)
 
         self.status_label = ttk.Label(self.right_frame,
                                       text="",
@@ -2372,8 +2389,6 @@ class FLPExporterUI:
 
     #
     def Customer_Support(self):
-        print("in customer support")
-
         # Check if support window is already open
         if hasattr(self, 'support_window') and self.support_window.winfo_exists():
             self.support_window.lift()
@@ -2443,6 +2458,11 @@ class FLPExporterUI:
                         font=custom_font,
                         command=self.support_window.destroy)
         close_btn.pack(pady=10)
+
+    def Run_Zip(self):
+        self.zip_selected = not self.zip_selected
+        new_style = "Selected.TButton" if self.zip_selected else "PrimaryAction.TButton"
+        self.zip_button.configure(style=new_style)
 
     def toggle_startup(self):
         """Handle the startup toggle button"""
