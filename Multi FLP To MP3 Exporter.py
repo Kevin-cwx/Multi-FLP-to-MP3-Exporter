@@ -977,7 +977,7 @@ class FLPExporterUI:
                         relief="ridge",
                         borderwidth=1)
         self.zip_button_hover_tip = Hovertip(
-            self.zip_button, '✪When selected, you can export as zipped loop package')
+            self.zip_button, 'When selected, you can export as zipped loop package')
 
         self.status_label = ttk.Label(self.right_frame,
                                       text="",
@@ -2260,10 +2260,53 @@ class FLPExporterUI:
                 self.context_menu.add_command(
                     label="Open Folder",
                     command=lambda: self.open_folder(item_id))
+                # Add new "Select All Files in Folder" option
+                self.context_menu.add_command(
+                    label="Select All Files in Folder",
+                    command=lambda: self.select_all_files_in_folder(item_id))
 
             # Show menu at cursor position if we added any items
             if self.context_menu.index(tk.END) is not None:
                 self.context_menu.post(event.x_root, event.y_root)
+
+    def select_all_files_in_folder(self, folder_item_id):
+        """Select all FLP files within the specified folder and its subfolders"""
+        # Get all children of the folder recursively
+        all_children = self.get_all_children(folder_item_id)
+        
+        # Count how many files were selected (newly selected, not previously selected)
+        files_selected = 0
+        
+        for child_id in all_children:
+            if child_id in self.path_map:  # This is a file, not a folder
+                file_path = self.path_map[child_id]
+                if file_path not in self.selected_files:
+                    self.selected_files.add(file_path)
+                    self.tree.item(child_id, tags=("selected",))
+                    files_selected += 1
+        
+        # Update the cart display
+        self.refresh_cart()
+        
+        # Show feedback to user
+        if files_selected > 0:
+            file_label = "file" if files_selected == 1 else "files"
+            self.status_label.config(
+                text=f"Added\n{files_selected} {file_label} from folder",
+                bootstyle="light")
+        else:
+            self.status_label.config(
+                text="No new files found in folder",
+                bootstyle="info")
+
+    def get_all_children(self, parent_item_id):
+        """Recursively get all children of a tree item"""
+        children = []
+        for child_id in self.tree.get_children(parent_item_id):
+            children.append(child_id)
+            # Recursively add children of this child (if it's a folder)
+            children.extend(self.get_all_children(child_id))
+        return children
 
     def open_folder(self, item_id):
         """Open the selected folder in File Explorer"""
