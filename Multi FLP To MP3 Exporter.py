@@ -171,55 +171,6 @@ def close_fl_studio():
         return False
 
 
-def export_flp_to_mp3(file_path):
-    global Output_Folder_Path, Processor_Type, FL_Studio_Path
-    close_fl_studio()
-
-    # Get subfolder name if enabled
-    if Enable_Output_Sub_Folder:
-        subfolder = app.subfolder_entry.get().strip()
-        if subfolder:
-            full_output_path = os.path.join(Output_Folder_Path, subfolder)
-            if not os.path.exists(full_output_path):
-                try:
-                    os.makedirs(full_output_path)
-                except OSError as e:
-                    print(f"Error creating subfolder: {e}")
-                    full_output_path = Output_Folder_Path
-        else:
-            full_output_path = Output_Folder_Path
-    else:
-        full_output_path = Output_Folder_Path
-
-    # Get the expected output filename
-    base_name = os.path.splitext(os.path.basename(file_path))[0]
-    expected_output = os.path.join(full_output_path, f"{base_name}.mp3")
-
-    # Try exporting with current processor
-    Export_FLP_to_MP3 = f'cd "{FL_Studio_Path}" & {Processor_Type} /R /{Output_Audio_Format} "{file_path}" /O"{full_output_path}"'
-    subprocess.call(Export_FLP_to_MP3, shell=True)
-
-    # Check if export was successful
-    if not os.path.exists(expected_output):
-        print(
-            f"Export failed with {Processor_Type}, trying alternate processor...")
-
-        # Switch processor type
-        new_processor = "FL.exe" if Processor_Type == "FL64.exe" else "FL64.exe"
-
-        # Try again with alternate processor
-        Export_FLP_to_MP3 = f'cd "{FL_Studio_Path}" & {new_processor} /R /{Output_Audio_Format} "{file_path}" /O"{full_output_path}"'
-        subprocess.call(Export_FLP_to_MP3, shell=True)
-
-        # If successful with alternate processor, update config
-        if os.path.exists(expected_output):
-            print(f"Successfully exported with {new_processor}")
-            Processor_Type = new_processor
-            save_config()  # Save the new processor type to config
-        else:
-            print("Export failed with both processors")
-    else:
-        print("Export successful with current processor")
 
 
 def save_config():
@@ -2112,15 +2063,35 @@ class FLPExporterUI:
             return
 
         total = len(self.selected_files)
+        success_count = 0
+
         try:
             # Set exporting message and force display
             self.status_label.config(text="Exporting...", bootstyle="warning")
             self.status_label.update()
-            self.root.update_idletasks()  # Force complete GUI refresh
+            self.root.update_idletasks()
 
             for idx, path in enumerate(self.selected_files, 1):
                 print(f"[{idx}/{total}] Exporting {os.path.basename(path)}")
-                export_flp_to_mp3(path)
+                if self.zip_selected:
+                    # ZIP export logic
+                    if self.export_as_zip(path):
+                        success_count += 1
+                else:
+                # MP3 export logic
+                    if self.export_flp_to_mp3(path):
+                        success_count += 1
+
+            # Show results
+            if success_count == total:
+                mode = "ZIP" if self.zip_selected else "MP3"
+                self.status_label.config(
+                    text=f"Successfully exported {success_count} files as {mode}",
+                    bootstyle="success")
+            else:
+                self.status_label.config(
+                    text=f"Exported {success_count} of {total} files",
+                    bootstyle="warning")
 
             # Clear before showing success message
             self.status_label.config(text="")
@@ -2136,9 +2107,44 @@ class FLPExporterUI:
             # Clear completely before error message
             self.status_label.config(text="")
             self.status_label.update()
+            print("22 - ",e)
             self.status_label.config(text=f"Export failed: {str(e)}",
                                      bootstyle="danger")
             self.status_label.update()
+
+    def export_as_zip(self, file_path):
+        """Export FLP as a ZIP file containing all project assets"""
+        try:
+            close_fl_studio()
+
+            # Get output path
+            full_output_path = Output_Folder_Path
+            if Enable_Output_Sub_Folder:
+                subfolder = self.subfolder_entry.get().strip()
+                if subfolder:
+                    full_output_path = os.path.join(Output_Folder_Path, subfolder)
+                    os.makedirs(full_output_path, exist_ok=True)
+
+            # Create temp copy in output directory to ensure correct ZIP output path
+            temp_flp_path = os.path.join(
+                full_output_path, os.path.basename(file_path))
+            if not os.path.exists(temp_flp_path):
+                import shutil
+                shutil.copy(file_path, temp_flp_path)
+
+            # Command to export as ZIP
+            export_command = f'cd "{FL_Studio_Path}" & {Processor_Type} /Z"{temp_flp_path}"'
+            subprocess.call(export_command, shell=True)
+
+            # Clean up temp file
+            if os.path.exists(temp_flp_path):
+                os.remove(temp_flp_path)
+
+            return True
+
+        except Exception as e:
+            print(f"ZIP export failed: {e}")
+            return False
 
     def clear_selection(self):
         for item_id in self.path_map:
@@ -2463,6 +2469,64 @@ class FLPExporterUI:
         self.zip_selected = not self.zip_selected
         new_style = "Selected.TButton" if self.zip_selected else "PrimaryAction.TButton"
         self.zip_button.configure(style=new_style)
+
+        if self.zip_selected:
+            self.status_label.config(text="zip mode activated - selected files will be zipped", 
+                               bootstyle="light")
+        else:
+            self.status_label.config(text="zip mode deactivated - selected files will export as MP3", 
+                               bootstyle="light")
+
+    def export_flp_to_mp3(self, file_path):
+        global Output_Folder_Path, Processor_Type, FL_Studio_Path
+        close_fl_studio()
+
+        # Get subfolder name if enabled
+        if Enable_Output_Sub_Folder:
+            subfolder = app.subfolder_entry.get().strip()
+            if subfolder:
+                full_output_path = os.path.join(Output_Folder_Path, subfolder)
+                if not os.path.exists(full_output_path):
+                    try:
+                        os.makedirs(full_output_path)
+                    except OSError as e:
+                        print(f"Error creating subfolder: {e}")
+                        full_output_path = Output_Folder_Path
+            else:
+                full_output_path = Output_Folder_Path
+        else:
+            full_output_path = Output_Folder_Path
+
+        # Get the expected output filename
+        base_name = os.path.splitext(os.path.basename(file_path))[0]
+        expected_output = os.path.join(full_output_path, f"{base_name}.mp3")
+
+        # Try exporting with current processor
+        Export_FLP_to_MP3 = f'cd "{FL_Studio_Path}" & {Processor_Type} /R /{Output_Audio_Format} "{file_path}" /O"{full_output_path}"'
+        subprocess.call(Export_FLP_to_MP3, shell=True)
+
+        # Check if export was successful
+        if not os.path.exists(expected_output):
+            print(
+                f"Export failed with {Processor_Type}, trying alternate processor...")
+
+            # Switch processor type
+            new_processor = "FL.exe" if Processor_Type == "FL64.exe" else "FL64.exe"
+
+            # Try again with alternate processor
+            Export_FLP_to_MP3 = f'cd "{FL_Studio_Path}" & {new_processor} /R /{Output_Audio_Format} "{file_path}" /O"{full_output_path}"'
+            subprocess.call(Export_FLP_to_MP3, shell=True)
+
+            # If successful with alternate processor, update config
+            if os.path.exists(expected_output):
+                print(f"Successfully exported with {new_processor}")
+                Processor_Type = new_processor
+                save_config()  # Save the new processor type to config
+            else:
+                print("Export failed with both processors")
+        else:
+            print("Export successful with current processor")
+
 
     def toggle_startup(self):
         """Handle the startup toggle button"""
