@@ -674,15 +674,19 @@ class FLPExporterUI:
         style.configure("PrimaryAction.TButton",
                         font=(Font_Name, Regular_Font_Size),
                         foreground="black",
-                        background="red",
+                        background="white",
                         padding=5,
-                        relief="flat")
-
-        style.map("PrimaryAction.TButton",
-                  background=[("active", User_Selected_Project_Background_Color),
-                              ("!active", "white")],
-                  foreground=[("active", "black")],
-                  relief=[("pressed", "sunken")])
+                        relief="flat",
+                        borderwidth=1)
+        # hover
+        style.map(
+            "PrimaryAction.TButton",
+            background=[("active", User_Selected_Project_Background_Color),
+                        ("!active", "white")],
+            foreground=[("active", "black")],
+            relief=[("pressed", "sunken"),
+                    ("active", "ridge")],  # Add ridge relief on hover
+            bordercolor=[("active", "white")])
         # ####################################################################3
         style.configure("PrimaryActionRed.TButton",
                         font=(Font_Name, Regular_Font_Size),
@@ -2273,10 +2277,10 @@ class FLPExporterUI:
         """Select all FLP files within the specified folder and its subfolders"""
         # Get all children of the folder recursively
         all_children = self.get_all_children(folder_item_id)
-        
+
         # Count how many files were selected (newly selected, not previously selected)
         files_selected = 0
-        
+
         for child_id in all_children:
             if child_id in self.path_map:  # This is a file, not a folder
                 file_path = self.path_map[child_id]
@@ -2284,10 +2288,10 @@ class FLPExporterUI:
                     self.selected_files.add(file_path)
                     self.tree.item(child_id, tags=("selected",))
                     files_selected += 1
-        
+
         # Update the cart display
         self.refresh_cart()
-        
+
         # Show feedback to user
         if files_selected > 0:
             file_label = "file" if files_selected == 1 else "files"
