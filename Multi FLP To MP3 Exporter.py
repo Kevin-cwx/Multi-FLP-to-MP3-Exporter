@@ -108,7 +108,7 @@ Previous
 "#2fbdff"
 """
 
-Background_Color = "#9aa3ab"
+Background_Color = "#a8b1b9"
 # Background_Color = "#a39bff"
 Darker_Background_Color = darken_color(Background_Color, factor=0.98)
 User_Selected_Project_Background_Color = "#FFC93F"
@@ -650,7 +650,7 @@ class FLPExporterUI:
         self.root = root
         self.root.title(Application_Name)
         self.root.geometry("600x660+30+20")
-        # self.root.minsize(600, 550)
+        self.root.minsize(600, 550)
         # self.root.geometry("600x700+30+20")
         self.root.resizable(True, True)
         # self.root.iconbitmap(r"Media/Icons/FL21 - Icon.ico")
@@ -808,6 +808,18 @@ class FLPExporterUI:
         self.tree.bind("<Control-Shift-Down>", self.on_ctrl_shift_arrow)
         self.tree.bind("<KeyRelease>", self.reset_anchor)
 
+        style = ttk.Style()
+        style.configure("Vertical.TScrollbar",
+                        gripcount=0,
+                        background=User_Selected_Project_Background_Color,
+                        darkcolor="green",
+                        lightcolor="white",
+                        troughcolor=Background_Color,
+                        bordercolor=User_Selected_Project_Background_Color,
+                        arrowsize=15,
+                        arrowcolor="black",
+                        width=10)
+
         scrollbar = ttk.Scrollbar(tree_frame,
                                   orient="vertical",
                                   command=self.tree.yview)
@@ -956,10 +968,10 @@ class FLPExporterUI:
         self.zip_button.pack(side=tk.RIGHT, padx=(0, 10))
         self.zip_selected = False
         style.configure("Selected.TButton",
-                        font=(Font_Name, Regular_Font_Size), 
+                        font=(Font_Name, Regular_Font_Size),
                         foreground="black",
                         background=User_Selected_Project_Background_Color,
-                        padding=5,                            
+                        padding=5,
                         relief="ridge",
                         borderwidth=1)
         self.zip_button_hover_tip = Hovertip(
@@ -983,8 +995,8 @@ class FLPExporterUI:
     #     current_time = time.time() * 1000
     #     if current_time - self.last_wraplength_update > 100:
     #         self.status_label.configure(wraplength=event.width - 20)
-    #         self.last_wraplength_update = current_time      
-        
+    #         self.last_wraplength_update = current_time
+
 
     def toggle_advanced(self, event):
         """Toggle visibility of advanced settings"""
@@ -1167,12 +1179,12 @@ class FLPExporterUI:
         if self.folders_expanded:
             # Collapse all except top-level folders
             for top_level_item in self.tree.get_children():
-            # For each top-level item, collapse all its children
+                # For each top-level item, collapse all its children
                 for child in self.tree.get_children(top_level_item):
                     self.tree.item(child, open=False)
                     # Collapse any grandchildren
                     self.collapse_all_nodes(child)
-                
+
             self.toggle_icon = self.plus_icon
             self.folders_expanded = False
             self.toggle_tip.text = 'Open folders'
@@ -1233,7 +1245,7 @@ class FLPExporterUI:
             self.settings_frame.pack(fill=tk.BOTH,
                                      expand=True,
                                      padx=20,
-                                     pady=10)
+                                     pady=(5,50))
 
             # Create a canvas and vertical scrollbar
             self.settings_canvas = tk.Canvas(self.settings_frame,
@@ -1712,7 +1724,7 @@ class FLPExporterUI:
                 text="NOTE: FL Studio must be closed before exporting song.\nMake sure to save your project.\nClicking export will automatically close FL Studio.\n\nIf your project has a popup, (unlicensed vst, audio missing) we recommend buying the vst as FL intends, or replacing the missing audio.\n"
                 "The project will continue to export once you click ok, or remove the popup."
                 "\n\nBackup projects with identical names are hidden to reduce clutter and avoid showing excessive duplicates." \
-                "If your song exports in pattern mode, open it up, switch to song mode, and export again. The application will export based on what mode you last save your project in.",
+                "\n\nIf your song exports in pattern mode, open it up, switch to song mode, and export again. The application will export based on what mode you last save your project in.",
                 style=('Settings.TLabel'),
                 font=(
                     Font_Name,
@@ -1864,7 +1876,7 @@ class FLPExporterUI:
 
         global Enable_Output_Sub_Folder
 
-    # Restore the original subfolder setting
+        # Restore the original subfolder setting
         Enable_Output_Sub_Folder = load_config().getboolean(
         'SETTINGS', 'Enable_Output_Sub_Folder', fallback=False)
         self.setup_subfolder_ui()
@@ -2094,7 +2106,7 @@ class FLPExporterUI:
                     if self.export_as_zip(path):
                         success_count += 1
                 else:
-                # MP3 export logic
+                    # MP3 export logic
                     if self.export_flp_to_mp3(path):
                         success_count += 1
 
@@ -2429,7 +2441,7 @@ class FLPExporterUI:
         # Create text widget with contact info
         contact_text = Text(self.support_window,
                             height=12,
-                            width=60,
+                            width=35,
                             wrap="word",
                             padx=15,
                             pady=15,
@@ -2487,10 +2499,10 @@ class FLPExporterUI:
         self.zip_button.configure(style=new_style)
 
         if self.zip_selected:
-            self.status_label.config(text="zip mode activated\nFiles will be zipped", 
+            self.status_label.config(text="zip mode activated\nExport as zip file",
                                bootstyle="light")
         else:
-            self.status_label.config(text="zip mode deactivated\nFiles will export as MP3", 
+            self.status_label.config(text="zip mode deactivated\nExport as MP3",
                                bootstyle="light")
 
     def export_flp_to_mp3(self, file_path):
