@@ -109,6 +109,7 @@ Previous
 """
 
 Background_Color = "#9aa3ab"
+# Background_Color = "#a39bff"
 Darker_Background_Color = darken_color(Background_Color, factor=0.98)
 User_Selected_Project_Background_Color = "#FFC93F"
 Selected_Project_Text_Color = "black"
@@ -898,7 +899,8 @@ class FLPExporterUI:
                                           text="Settings",
                                           image=self.settings_icon,
                                           command=self.open_settings,
-                                          style="PrimaryAction.TButton")
+                                          style="PrimaryAction.TButton",
+                                          padding=8)
         self.settings_button.pack(side=tk.RIGHT, padx=(0, 10))
         self.settings_tip = Hovertip(self.settings_button, 'Open Settings')
 
