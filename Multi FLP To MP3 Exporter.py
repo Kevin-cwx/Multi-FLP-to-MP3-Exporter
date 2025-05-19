@@ -965,12 +965,22 @@ class FLPExporterUI:
                                       text="",
                                       font=(Font_Name, Regular_Font_Size),
                                       bootstyle="",
+                                      wraplength=400,
                                       background=Background_Color)
         self.status_label.pack(pady=(0, 10))
         self.setup_subfolder_ui()
 
+        self.last_wraplength_update = 0
+        #self.root.bind("<Configure>", self.update_wrap_length_status_label)
         self.populate_tree(Dir_FLP_Projects)
         self.root.bind("<Return>", self.on_enter_key)
+
+    # def update_wrap_length_status_label(self, event):
+    #     current_time = time.time() * 1000
+    #     if current_time - self.last_wraplength_update > 100:
+    #         self.status_label.configure(wraplength=event.width - 20)
+    #         self.last_wraplength_update = current_time      
+        
 
     def toggle_advanced(self, event):
         """Toggle visibility of advanced settings"""
@@ -1204,6 +1214,7 @@ class FLPExporterUI:
             self.content_frame.pack_forget()
             self.toggle_button_Close_Folders.pack_forget()
             self.sync_button.pack_forget()
+            self.zip_button.pack_forget()
 
             # Change heading
             self.heading.config(text="Settings")
@@ -1874,6 +1885,7 @@ class FLPExporterUI:
         self.left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         self.right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=False)
         self.toggle_button_Close_Folders.pack(side=tk.RIGHT, padx=(0, 10))
+        self.zip_button.pack(side=tk.RIGHT, padx=(0, 10))
 
     def on_enter_key(self, event):
         selected_items = self.tree.selection()
@@ -2471,10 +2483,10 @@ class FLPExporterUI:
         self.zip_button.configure(style=new_style)
 
         if self.zip_selected:
-            self.status_label.config(text="zip mode activated - selected files will be zipped", 
+            self.status_label.config(text="zip mode activated\nfiles will be zipped", 
                                bootstyle="light")
         else:
-            self.status_label.config(text="zip mode deactivated - selected files will export as MP3", 
+            self.status_label.config(text="zip mode deactivated\nfiles will export as MP3", 
                                bootstyle="light")
 
     def export_flp_to_mp3(self, file_path):
