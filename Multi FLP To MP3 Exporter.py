@@ -960,6 +960,8 @@ class FLPExporterUI:
                         padding=5,                            
                         relief="ridge",
                         borderwidth=1)
+        self.zip_button_hover_tip = Hovertip(
+            self.zip_button, '✪When selected, you can export as zipped loop package')
 
         self.status_label = ttk.Label(self.right_frame,
                                       text="",
@@ -2483,10 +2485,10 @@ class FLPExporterUI:
         self.zip_button.configure(style=new_style)
 
         if self.zip_selected:
-            self.status_label.config(text="zip mode activated\nfiles will be zipped", 
+            self.status_label.config(text="zip mode activated\nFiles will be zipped", 
                                bootstyle="light")
         else:
-            self.status_label.config(text="zip mode deactivated\nfiles will export as MP3", 
+            self.status_label.config(text="zip mode deactivated\nFiles will export as MP3", 
                                bootstyle="light")
 
     def export_flp_to_mp3(self, file_path):
