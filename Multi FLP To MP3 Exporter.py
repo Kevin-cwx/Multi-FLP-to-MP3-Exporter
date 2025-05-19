@@ -533,7 +533,7 @@ def first_run_setup(root):
 
         # FL Studio path is optional since we try to detect it automatically
         if fl_studio_path.get() and not os.path.isdir(fl_studio_path.get()):
-            messagebox.showerror("Error", "FL Studio path does not exist")
+            messagebox.showerror("Error", "FL Studio installation path does not exist")
             return False
 
         return True
