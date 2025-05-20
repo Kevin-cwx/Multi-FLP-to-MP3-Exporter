@@ -125,7 +125,7 @@ Previous
 "#2fbdff"
 """
 
-Background_Color = "#EDE7EB"
+Background_Color = "#7E0A58"
 # Background_Color = "#a39bff"
 Darker_Background_Color = darken_color(Background_Color, factor=0.98)
 User_Selected_Project_Background_Color = "#FFC93F"
@@ -2504,6 +2504,7 @@ class FLPExporterUI:
         self.support_window = Toplevel(self.root)
         self.support_window.title("Customer Support")
         self.support_window.resizable(False, False)
+        self.support_window.configure(bg=Background_Color)
 
         # Configure font
         custom_font = font.Font(size=14)
