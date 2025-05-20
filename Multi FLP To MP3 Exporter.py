@@ -997,6 +997,17 @@ class FLPExporterUI:
                         borderwidth=1)
         self.zip_button_hover_tip = Hovertip(
             self.zip_button, 'When selected, you can export as zipped loop package')
+        
+        # Hover
+        style.map("Selected.TButton",
+          background=[
+              ("active", "#FF7118"),  # Hover color when selected
+              ("!active", User_Selected_Project_Background_Color)
+          ],
+          foreground=[
+              ("active", "black"),
+              ("!active", "black")
+          ])
 
         self.status_label = ttk.Label(self.right_frame,
                                       text="",
