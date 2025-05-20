@@ -597,7 +597,6 @@ def is_fl_studio_running():
             return True
     return False
 
-
 def handle_mouse_scroll_speed(selected_key=None):
     """
         Handle mouse scroll speed settings and return the appropriate speed value.
@@ -612,7 +611,6 @@ def handle_mouse_scroll_speed(selected_key=None):
     else:
         # Return the current scroll speed
         return Mouse_Scroll_Speed
-
 
 def folder_contains_flp(folder_path, max_checks=2000):
     """Check if a folder contains FLP files without scanning the entire tree"""
@@ -640,7 +638,6 @@ def folder_contains_flp(folder_path, max_checks=2000):
         return False
     return False
 
-
 class CustomCombobox(ttk.Combobox):
 
     def __init__(self, master, **kwargs):
@@ -660,7 +657,6 @@ class CustomCombobox(ttk.Combobox):
             else:
                 self.master.event_generate("<MouseWheel>", delta=120)
             return "break"
-
 
 class FLPExporterUI:
 

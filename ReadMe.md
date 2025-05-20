@@ -17,11 +17,11 @@ Link your output folder to a cloud service like Google Drive or OneDrive. You'll
 
 ## 🧩 Features
 
-- 🔍 Search projects across different subfolders
+- ⚡ Batch export to MP3
+- 📦 Export as ZIP (loop packages)
 - 🎛️ GUI with tree view of all FLP projects
 - 📅 Auto selects files you worked on today
-- ⚡ Batch export to MP3, WAV, or OGG
-- 📦 Export as ZIP (loop packages)
+- 🔍 Search projects across different subfolders
 
 ---
 
