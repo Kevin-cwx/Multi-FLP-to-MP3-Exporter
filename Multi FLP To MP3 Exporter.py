@@ -837,7 +837,7 @@ class FLPExporterUI:
                         background=User_Selected_Project_Background_Color,
                         darkcolor="green",
                         lightcolor="white",
-                        troughcolor=Background_Color,
+                        troughcolor="white",
                         bordercolor=User_Selected_Project_Background_Color,
                         arrowsize=15,
                         arrowcolor="black",

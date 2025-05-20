@@ -63,7 +63,7 @@ Link your output folder to a cloud service like Google Drive or OneDrive. You'll
 - Order projects by name or date last modified
 
 ---
-## ⚙️ Pro Tips
+## 🧠 Pro Tips
 
 ### 🖱️ Right-click Context Menu:
 
