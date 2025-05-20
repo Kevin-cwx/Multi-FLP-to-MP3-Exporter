@@ -1,54 +1,76 @@
 # 🎵 Multi FLP to MP3 Exporter
 
-Export multiple FL Studio projects (`.flp` files) to MP3 (or WAV/OGG) with just a few clicks. Designed for producers who want a fast, customizable way to batch render their songs from different FL Studio folders.
+<img src="https://www.image-line.com/static/assets/nav-logo-fruit.41db863.png" alt="flp" width="50"/>
+
+Export multiple FL Studio projects (.flp files) to MP3 with batch rendering. Detects projects across folders, lets you select specific files, and supports zipped loop package export — ideal for organizing, sharing, or publishing tracks efficiently. 
+
+📱 Want your songs exported to your phone?  
+Set your export folder to a cloud service like Google Drive or OneDrive. As long as you're signed in on your phone, your exported tracks will show up after export.
 
 ---
 
 ## 🧩 Features
 
-- 🎛️ Modern GUI built with `ttkbootstrap` and `tkinter`
-- 🎹 Automatically detects `.flp` projects across folders
+- 🎛️ GUI with tree view of all FLP projects
 - ⚡ Batch export to MP3, WAV, or OGG
-- 🗂️ Project tree with search, filters, and folder collapse/expand
 - 📁 Select output folder or create subfolders by album name
 - 🔍 Filter by recently modified projects
-- 🎯 Automatically closes FL Studio before export
-- 🧠 Remembers your settings between sessions
-- 🛠️ First-run setup wizard + settings menu
-- 📦 Optional export as ZIP (loop packages)
+- 📦 Export as ZIP (loop packages)
 
 ---
 
 ## 🚀 Installation
 
 1. **Download** the latest release from [Releases](https://github.com/yourusername/FLPExporter/releases)
-2. **Extract** the `.zip` file
-3. **Double-click** `Multi_FLP_Exporter.exe` to launch
-
-> ⚠️ Make sure FL Studio is closed before exporting, or the app will close it automatically.
+2. DONE
 
 ---
 
-## 🖥️ Requirements
-
-- Windows 10 or later
-- FL Studio installed
-- `.flp` projects saved in folders (not backups)
-- [Python 3.10+](https://www.python.org/) (if using source code)
-
----
-
-## 📚 Usage
+## 📚 Configuration
 
 1. Launch the app
 2. On first run:
-   - Set your **FLP folder**
+   - Set your **FLP folder** 
+        - Where all your FLP files are stored. Add the top folder.
    - Set **output folder**
+        - Where you want your songs to be exported to.
    - Locate **FL Studio installation**
+        Example: "C:\Program Files\Image-Line\FL Studio 21\"
 3. Select projects from the left panel
-4. Click `Export` — your MP3s will be rendered to your output folder!
+4. Click `Export` — your MP3s will be rendered to your output folder
 
 ---
 
-## 📂 Folder Layout Example
+## ⚙️ Settings Highlights
 
+- Configure export format: MP3, WAV, OGG
+- Enable output subfolders for album-style structure
+- Set custom scroll speed, font size, and theme
+- Toggle FL Studio processor (FL.exe or FL64.exe)
+- Enable launch at Windows startup
+- Order projects by name, date last modified
+
+---
+## ⚙️ Advanced Features
+
+### 🖱️ Right-click Context Menu:
+
+- Open FLP files directly  
+- Open containing folders  
+- Select all files in a folder  
+
+### ⌨️ Keyboard Shortcuts:
+
+- **Enter:** Select/unselect highlighted project  
+- **Ctrl+Shift+Arrow Keys:** Multi-select projects  
+
+
+---
+## 📬 Contact
+
+For support, feedback, or feature requests, reach out via:
+
+- **Email:** FLPExporter@gmail.com
+- **Instagram:** [@Kevin._.cwx](https://www.instagram.com/Kevin._.cwx)
+
+---

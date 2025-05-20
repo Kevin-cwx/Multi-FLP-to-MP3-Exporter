@@ -125,7 +125,7 @@ Previous
 "#2fbdff"
 """
 
-Background_Color = "#7E0A58"
+Background_Color = "#84AED1"
 # Background_Color = "#a39bff"
 Darker_Background_Color = darken_color(Background_Color, factor=0.98)
 User_Selected_Project_Background_Color = "#FFC93F"
