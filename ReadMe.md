@@ -2,19 +2,19 @@
 
 <img src="https://www.image-line.com/static/assets/nav-logo-fruit.41db863.png" alt="flp" width="50"/>
 
-Export multiple FL Studio projects (.flp files) to MP3. Detects projects across folders, lets you select specific files, and supports zipped loop package export — ideal for organizing, sharing, or publishing tracks efficiently. 
+Export multiple FL Studio projects (.flp files) to MP3. Also able to export as zip. (ZIP Looped Package)
 
 📱 Want your songs exported to your phone?  
-Set your export folder to a cloud service like Google Drive or OneDrive. As long as you're signed in on your phone, your exported tracks will show up after export.
+Set your output folder to a cloud service like Google Drive or OneDrive. As long as you're signed in on your phone, your exported tracks will show up after export.
 
 ---
 
 ## 🧩 Features
 
+- 🔍 Search projects across different subfolders
 - 🎛️ GUI with tree view of all FLP projects
+- 📅 Auto selects files you worked on today
 - ⚡ Batch export to MP3, WAV, or OGG
-- 📁 Select output folder or create subfolders by album name
-- 🔍 Filter by recently modified projects
 - 📦 Export as ZIP (loop packages)
 
 ---
@@ -49,7 +49,7 @@ Set your export folder to a cloud service like Google Drive or OneDrive. As long
 - Set custom scroll speed, font size, and theme
 - Toggle FL Studio processor (FL.exe or FL64.exe)
 - Enable launch at Windows startup
-- Order projects by name, date last modified
+- Order projects by name or date last modified
 
 ---
 ## ⚙️ Advanced Features
