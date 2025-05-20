@@ -2,7 +2,7 @@
 
 <img src="https://www.image-line.com/static/assets/nav-logo-fruit.41db863.png" alt="flp" width="50"/>
 
-Export multiple FL Studio projects (.flp files) to MP3 with batch rendering. Detects projects across folders, lets you select specific files, and supports zipped loop package export — ideal for organizing, sharing, or publishing tracks efficiently. 
+Export multiple FL Studio projects (.flp files) to MP3. Detects projects across folders, lets you select specific files, and supports zipped loop package export — ideal for organizing, sharing, or publishing tracks efficiently. 
 
 📱 Want your songs exported to your phone?  
 Set your export folder to a cloud service like Google Drive or OneDrive. As long as you're signed in on your phone, your exported tracks will show up after export.
