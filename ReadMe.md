@@ -9,8 +9,10 @@ Link your output folder to a cloud service like Google Drive or OneDrive. You'll
 
 ---
 ## Demo Video
-🎥 Click to watch
-[![FLP Exporter Demo](https://framerusercontent.com/images/KF4TvyZEb4xuaRINBYeLJPppDU.jpg)](https://youtu.be/AM7cTDfg3m0)
+<a href="https://youtu.be/AM7cTDfg3m0" target="_blank">
+  🎥 Click to watch<br>
+  <img src="https://framerusercontent.com/images/KF4TvyZEb4xuaRINBYeLJPppDU.jpg" alt="FLP Exporter Demo" />
+</a>
 
 
 ## 🧩 Features
