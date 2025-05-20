@@ -2532,8 +2532,9 @@ class FLPExporterUI:
         # Create right-click context menu
         def show_context_menu(event):
             context_menu = Menu(self.support_window, tearoff=0)
-            context_menu.add_command(label="Copy Email", command=lambda: copy_email_to_clipboard())
             context_menu.add_command(label="Copy", command=lambda: copy_selection_to_clipboard())
+            context_menu.add_command(label="Copy Email", command=lambda: copy_email_to_clipboard())
+            context_menu.add_command(label="Copy Instagram", command=lambda: copy_instagram_to_clipboard(self))
             context_menu.tk_popup(event.x_root, event.y_root)
 
         def copy_email_to_clipboard():
@@ -2544,6 +2545,13 @@ class FLPExporterUI:
             self.root.clipboard_clear()
             self.root.clipboard_append(email.strip())
             contact_text.config(state="disabled")
+        
+        def copy_instagram_to_clipboard(self):
+            # Copy the static Instagram handle to clipboard
+            instagram_handle = "Kevin._.cwx"
+            self.root.clipboard_clear()
+            self.root.clipboard_append(instagram_handle)
+            self.root.update() 
 
         def copy_selection_to_clipboard():
             try:
