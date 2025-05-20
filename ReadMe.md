@@ -12,7 +12,7 @@ Link your output folder to a cloud service like Google Drive or OneDrive. You'll
 
 <a href="https://youtu.be/AM7cTDfg3m0" target="_blank">
   🎥 Click to watch<br>
-  <img src="![Uploading FLP Exporter Main Window.jpg…]()" alt="FLP Exporter Demo" />
+  <img src="https://github.com/Kevin-cwx/Multi-FLP-to-MP3-Exporter/blob/main/Media/Images/FLP%20Exporter%20Main%20Window.jpg" alt="FLP Exporter Demo" />
 </a>
 
 
