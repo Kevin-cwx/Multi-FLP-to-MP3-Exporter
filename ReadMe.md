@@ -28,18 +28,23 @@ Set your output folder to a cloud service like Google Drive or OneDrive. As long
 ---
 
 ## 📚 Configuration
+<details>
+<summary>Click to expand</summary>
 
-1. Launch the app
-2. On first run:
-   - Set your **FLP folder** 
-        - Where all your FLP files are stored. Add the top folder.
-   - Set **output folder**
-        - Where you want your songs to be exported to.
-   - Locate **FL Studio installation**
-        Example: "C:\Program Files\Image-Line\FL Studio 21\"
-3. Select projects from the left panel
-4. Click `Export` — your MP3s will be rendered to your output folder
+<br>
 
+1. Launch the app  
+2. On first run:  
+   - Set your **FLP folder**  
+     - Where all your FLP files are stored. Add the top folder.  
+   - Set **output folder**  
+     - Where you want your songs to be exported to.  
+   - Locate **FL Studio installation**  
+     Example: `"C:\Program Files\Image-Line\FL Studio 21\"`  
+3. Select projects from the left panel  
+4. Click `Export` — your MP3s will be rendered to your output folder  
+
+</details>
 ---
 
 ## ⚙️ Settings Highlights
