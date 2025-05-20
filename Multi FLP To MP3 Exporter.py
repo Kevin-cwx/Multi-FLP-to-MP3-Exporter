@@ -21,7 +21,6 @@ import time
 import configparser
 from pathlib import Path
 
-
 global Output_Folder_Path
 global Project_Order_By
 USE_DARK_MODE = False
@@ -53,6 +52,8 @@ Output_Audio_Format = "Emp3"
 Mouse_Scroll_Speed = 7
 Projects_Font_Size = 14
 Regular_Font_Size = 14
+
+
 # Ensures letters lik e p and y don't get cut off
 def get_row_height():
     return Projects_Font_Size + 8
@@ -105,12 +106,11 @@ def best_readable_text_color(bg_hex: str) -> str:
     luminance = (0.299 * r + 0.587 * g + 0.114 * b)
 
     return '#000000' if luminance > 186 else '#FFFFFF'
+
+
 #
 # Colors
 #
-
-
-
 """
 FL Colors
 Dark Gray - "#313C45"
@@ -137,7 +137,6 @@ Search_Placeholder_Text_Color = "black"
 Project_Color_Tree = "red"
 Project_Tree_Background_Color = Background_Color
 Project_Tree_Text_Color = "black"
-
 """
 #34b1eb
 #8a9296
@@ -188,8 +187,6 @@ def close_fl_studio():
         return False
 
 
-
-
 def save_config():
     """Save current settings to config file"""
     config = configparser.ConfigParser()
@@ -226,7 +223,7 @@ def load_config():
     global Output_Folder_Path, Dir_FLP_Projects, FL_Studio_Path, Processor_Type
     global Project_Order_By, Enable_Output_Sub_Folder, Output_Sub_Folder_Name
     global Output_Audio_Format, Mouse_Scroll_Speed, Application_Name, Projects_Font_Size
-    global Launch_At_Startup, Font_Name, USE_DARK_MODE,row_height
+    global Launch_At_Startup, Font_Name, USE_DARK_MODE, row_height
 
     if not os.path.exists(CONFIG_FILE):
         return False
@@ -356,7 +353,8 @@ def first_run_setup(root):
                     fl_status_label.config(text="FL Studio status: Running",
                                            foreground="green")
                     fl_path_label.config(
-                        text=f"Detected path: {fl_path}\nProcessor: {process.info['name']}"
+                        text=
+                        f"Detected path: {fl_path}\nProcessor: {process.info['name']}"
                     )
                     # Update indicators
                     # fl_studio_indicator.set(CHECK_ICON)
@@ -532,7 +530,10 @@ def first_run_setup(root):
 
     # Validation function
     def validate_setup():
-        if not all([output_folder.get(), flp_folder.get(), fl_studio_path.get()]):
+        if not all(
+            [output_folder.get(),
+             flp_folder.get(),
+             fl_studio_path.get()]):
             messagebox.showerror("Error", "All fields are required")
             return False
 
@@ -546,7 +547,8 @@ def first_run_setup(root):
 
         # FL Studio path is optional since we try to detect it automatically
         if fl_studio_path.get() and not os.path.isdir(fl_studio_path.get()):
-            messagebox.showerror("Error", "FL Studio installation path does not exist")
+            messagebox.showerror("Error",
+                                 "FL Studio installation path does not exist")
             return False
 
         return True
@@ -638,6 +640,7 @@ def folder_contains_flp(folder_path, max_checks=2000):
         return False
     return False
 
+
 class CustomCombobox(ttk.Combobox):
 
     def __init__(self, master, **kwargs):
@@ -713,8 +716,7 @@ class FLPExporterUI:
                         relief="flat")
 
         style.map("PrimaryActionRed.TButton",
-                  background=[("active", "#dc3545"),
-                              ("!active", "white")],
+                  background=[("active", "#dc3545"), ("!active", "white")],
                   foreground=[("active", "white")],
                   relief=[("pressed", "sunken")])
 
@@ -744,7 +746,6 @@ class FLPExporterUI:
         self.sync_icon = self.load_icon("Media/Icons/sync.png")
         self.help_icon = self.load_icon("Media/Icons/question-mark.png")
         self.zip_icon = self.load_icon("Media/Icons/zip-folder.png")
-
 
         self.selected_files = set()
         self.path_map = {}
@@ -813,7 +814,8 @@ class FLPExporterUI:
                         background=Project_Tree_Background_Color,
                         fieldbackground="#f0f0f0",
                         foreground=Project_Tree_Text_Color,
-                        font=(Font_Name, Projects_Font_Size), rowheight=row_height)
+                        font=(Font_Name, Projects_Font_Size),
+                        rowheight=row_height)
 
         self.tree = ttk.Treeview(tree_frame,
                                  selectmode="extended",
@@ -868,7 +870,10 @@ class FLPExporterUI:
 
         # Handles right frame, selected prroject from resizing on larger font
         self.cart_frame = ttk.Frame(
-            self.right_frame, height=200,  style='Default_Theme.TFrame',)
+            self.right_frame,
+            height=200,
+            style='Default_Theme.TFrame',
+        )
         # Prevent resizing to fit contents
         self.cart_frame.pack_propagate(False)
         self.cart_frame.pack(fill=tk.X, padx=10, pady=(5, 10))
@@ -889,12 +894,35 @@ class FLPExporterUI:
             highlightcolor="black",
             height=10)
 
-        self.export_button = ttk.Button(self.right_frame,
-                                        text="Export",
-                                        image=self.download_icon,
-                                        compound=tk.LEFT,
-                                        command=self.export_selected,
-                                        style="PrimaryAction.TButton")
+        style = ttk.Style()
+        style.configure(
+            "PrimaryAction_ExportButton.TButton",
+            borderwidth=9,  
+            relief="solid",  
+            bordercolor=User_Selected_Project_Background_Color,
+            font=(Font_Name, Regular_Font_Size),
+            foreground="black",
+            background="white",
+            padding=5)
+
+        style.map(
+            "PrimaryAction_ExportButton.TButton",
+            background=[
+                ('active', User_Selected_Project_Background_Color),
+                ('!disabled', 'white')  # Default color when not hovered/active
+            ],
+            bordercolor=[('active', User_Selected_Project_Background_Color),
+                         ('!disabled', User_Selected_Project_Background_Color)
+                         ])
+
+        self.export_button = ttk.Button(
+            self.right_frame,
+            text="Export",
+            image=self.download_icon,
+            compound=tk.LEFT,
+            command=self.export_selected,
+            style="PrimaryAction_ExportButton.TButton",
+        )
         self.export_button.pack(pady=5, padx=20, fill=X)
 
         self.enter_button = ttk.Button(self.right_frame,
@@ -905,13 +933,14 @@ class FLPExporterUI:
                                        style="PrimaryAction.TButton")
         self.enter_button.pack(pady=5, padx=20, fill=X)
 
-        self.clear_button = ttk.Button(self.right_frame,
-                                       text="Clear All",
-                                       image=self.clear_icon,
-                                       compound=tk.LEFT,
-                                       command=self.clear_selection,
-                                       style="PrimaryActionRed.TButton",
-                                       )
+        self.clear_button = ttk.Button(
+            self.right_frame,
+            text="Clear All",
+            image=self.clear_icon,
+            compound=tk.LEFT,
+            command=self.clear_selection,
+            style="PrimaryActionRed.TButton",
+        )
         self.clear_button.pack(pady=(0, 5), padx=20, fill=X)
         self.clear_button_hover_tip = Hovertip(
             self.clear_button, 'Clear all projects in selected projects')
@@ -924,7 +953,8 @@ class FLPExporterUI:
                                            style="PrimaryAction.TButton")
         self.add_today_button.pack(pady=(5, 5), padx=20, fill=X)
         self.recent_hover_tip = Hovertip(
-            self.add_today_button, 'Add projects you\'ve worked on today in selected projects')
+            self.add_today_button,
+            'Add projects you\'ve worked on today in selected projects')
         # outline-secondary
 
         # Settings button
@@ -961,8 +991,7 @@ class FLPExporterUI:
                                       image=self.sync_icon,
                                       compound=tk.LEFT,
                                       command=self.sync_projects,
-                                      style="PrimaryAction.TButton"
-                                      )
+                                      style="PrimaryAction.TButton")
 
         self.sync_button.pack(side=tk.RIGHT, padx=(0, 10))
         self.sync_tip = Hovertip(self.sync_button,
@@ -980,12 +1009,13 @@ class FLPExporterUI:
 
         self.help_button.pack(side=tk.RIGHT, padx=(0, 10))
 
-        self.zip_button = ttk.Button(self.top_bar,
-                                      #image=self.zip_icon,
-                                      text="zip",
-                                      compound=tk.LEFT,
-                                      command=self.Run_Zip,
-                                      style="PrimaryAction.TButton")
+        self.zip_button = ttk.Button(
+            self.top_bar,
+            #image=self.zip_icon,
+            text="zip",
+            compound=tk.LEFT,
+            command=self.Run_Zip,
+            style="PrimaryAction.TButton")
         self.zip_button.pack(side=tk.RIGHT, padx=(0, 10))
         self.zip_selected = False
         style.configure("Selected.TButton",
@@ -996,18 +1026,17 @@ class FLPExporterUI:
                         relief="ridge",
                         borderwidth=1)
         self.zip_button_hover_tip = Hovertip(
-            self.zip_button, 'When selected, you can export as zipped loop package')
-        
+            self.zip_button,
+            'When selected, you can export as zipped loop package')
+
         # Hover
-        style.map("Selected.TButton",
-          background=[
-              ("active", "#FF7118"),  # Hover color when selected
-              ("!active", User_Selected_Project_Background_Color)
-          ],
-          foreground=[
-              ("active", "black"),
-              ("!active", "black")
-          ])
+        style.map(
+            "Selected.TButton",
+            background=[
+                ("active", "#FF7118"),  # Hover color when selected
+                ("!active", User_Selected_Project_Background_Color)
+            ],
+            foreground=[("active", "black"), ("!active", "black")])
 
         self.status_label = ttk.Label(self.right_frame,
                                       text="",
@@ -1028,7 +1057,6 @@ class FLPExporterUI:
     #     if current_time - self.last_wraplength_update > 100:
     #         self.status_label.configure(wraplength=event.width - 20)
     #         self.last_wraplength_update = current_time
-
 
     def toggle_advanced(self, event):
         """Toggle visibility of advanced settings"""
@@ -1203,7 +1231,8 @@ class FLPExporterUI:
         """Load and resize an icon image, handling both dev and bundled paths."""
         icon_path = resource_path(path)
         try:
-            return ImageTk.PhotoImage(Image.open(icon_path).resize(size, Image.LANCZOS))
+            return ImageTk.PhotoImage(
+                Image.open(icon_path).resize(size, Image.LANCZOS))
         except Exception as e:
             print(f"Error loading icon {path}: {e}")
             return None
@@ -1255,7 +1284,8 @@ class FLPExporterUI:
     def open_settings(self):
         global Output_Folder_Path, Project_Order_By, Dir_FLP_Projects, Enable_Output_Sub_Folder
         global Output_Sub_Folder_Name, Mouse_Scroll_Speed, FL_Studio_Path, Projects_Font_Size
-        Settings_Info_Label_Size = 12
+        Settings_Info_Label_Size = 13
+        Settings_Subheader_Font_Size = 16
 
         if not self.settings_open:
             if hasattr(self, 'settings_frame'):
@@ -1281,7 +1311,7 @@ class FLPExporterUI:
             self.settings_frame.pack(fill=tk.BOTH,
                                      expand=True,
                                      padx=20,
-                                     pady=(5,50))
+                                     pady=(5, 50))
 
             # Create a canvas and vertical scrollbar
             self.settings_canvas = tk.Canvas(self.settings_frame,
@@ -1340,7 +1370,7 @@ class FLPExporterUI:
 
             self.output_folder_label = ttk.Label(output_folder_frame,
                                                  text="Output Folder",
-                                                 font=(Font_Name, 14),
+                                                 font=(Font_Name, Settings_Subheader_Font_Size),
                                                  style='Settings.TLabel')
             self.output_folder_label.pack(side=tk.LEFT, padx=(10, 0), pady=5)
 
@@ -1373,7 +1403,7 @@ class FLPExporterUI:
 
             self.flp_folder_label = ttk.Label(flp_folder_frame,
                                               text="FLP Projects Folders",
-                                              font=(Font_Name, 14))
+                                              font=(Font_Name, Settings_Subheader_Font_Size))
             self.flp_folder_label.pack(side=tk.LEFT, padx=(10, 0), pady=5)
 
             # ⬇️ Use a Text widget instead of Entry for multi-line folder display
@@ -1402,11 +1432,12 @@ class FLPExporterUI:
             # Add label underneath
             self.flp_folder_info_label = ttk.Label(
                 self.scrollable_settings_frame,
-                text=("This is where your FLP projects are. Add the top folder.\n"
-                      "Click Browse again to add multiple folders.\n\n"
-                      "To remove a path, simply delete it from the input field, or double click it.\n"
-                      "Example - C:\\Users\\Kfoen\\Documents\\Image-Line\\FL Studio\\Projects\\FL 25 - projects"
-                      ),
+                text=
+                ("This is where your FLP projects are. Add the top folder.\n"
+                 "Click Browse again to add multiple folders.\n\n"
+                 "To remove a path, simply delete it from the input field, or double click it.\n"
+                 "Example - C:\\Users\\Kfoen\\Documents\\Image-Line\\FL Studio\\Projects\\FL 25 - projects"
+                 ),
                 font=(Font_Name, Settings_Info_Label_Size),
                 foreground="black")
             self.flp_folder_info_label.pack(anchor="w", padx=20, pady=(2, 10))
@@ -1418,7 +1449,7 @@ class FLPExporterUI:
 
             self.order_label = ttk.Label(order_frame,
                                          text="Order Projects By ",
-                                         font=(Font_Name, 14),
+                                         font=(Font_Name, Settings_Subheader_Font_Size),
                                          background=Background_Color)
             self.order_label.pack(side=tk.LEFT, padx=(10, 5))
 
@@ -1489,7 +1520,7 @@ class FLPExporterUI:
 
             self.fl_studio_path_label = ttk.Label(fl_studio_frame,
                                                   text="FL Studio Path",
-                                                  font=(Font_Name, 14))
+                                                  font=(Font_Name, Settings_Subheader_Font_Size))
             self.fl_studio_path_label.pack(side=tk.LEFT, padx=(10, 5))
 
             self.fl_studio_path_entry = ttk.Entry(fl_studio_frame)
@@ -1562,7 +1593,7 @@ class FLPExporterUI:
 
             self.processor_label = ttk.Label(processor_frame,
                                              text="Processor Type",
-                                             font=(Font_Name, 14))
+                                             font=(Font_Name, Settings_Subheader_Font_Size))
             self.processor_label.pack(side=tk.LEFT, padx=(10, 10))
 
             # Create a StringVar to store the selected value
@@ -1581,16 +1612,22 @@ class FLPExporterUI:
             self.processor_info_label = ttk.Label(
                 self.advanced_container,
                 text="Select FL64.exe (64-bit) or FL.exe (32-bit)",
-                font=(Font_Name, 12))
+                font=(Font_Name, Settings_Info_Label_Size))
             self.processor_info_label.pack(anchor="w", padx=20, pady=(0, 10))
 
             style.layout('LargeSquareToggle.TCheckbutton',
-                         [('Checkbutton.padding',
-                           {'sticky': 'nswe',
-                            'children':
-                            [('Checkbutton.indicator', {'side': 'left', 'sticky': ''}),
-                             ('Checkbutton.label', {'side': 'left', 'sticky': ''})]
-                            })])
+                         [('Checkbutton.padding', {
+                             'sticky':
+                             'nswe',
+                             'children': [('Checkbutton.indicator', {
+                                 'side': 'left',
+                                 'sticky': ''
+                             }),
+                                          ('Checkbutton.label', {
+                                              'side': 'left',
+                                              'sticky': ''
+                                          })]
+                         })])
 
             # Optional: apply scale to ttkbootstrap theme elements
             style.configure('LargeSquareToggle.TCheckbutton',
@@ -1611,7 +1648,7 @@ class FLPExporterUI:
             self.startup_label = ttk.Label(
                 startup_frame,
                 text="Launch application at system startup",
-                font=(Font_Name, 14))
+                font=(Font_Name, Settings_Subheader_Font_Size))
             self.startup_label.pack(side=tk.LEFT, padx=(10, 10))
 
             self.startup_var = tk.BooleanVar(value=self.check_startup_status())
@@ -1631,7 +1668,7 @@ class FLPExporterUI:
             self.enable_subfolder_label = ttk.Label(
                 subfolder_toggle_frame,
                 text="Enable output subfolder",
-                font=(Font_Name, 14),
+                font=(Font_Name, Settings_Subheader_Font_Size),
                 style='Settings.TLabel')
             self.enable_subfolder_label.pack(side=tk.LEFT, padx=(10, 20))
 
@@ -1651,8 +1688,9 @@ class FLPExporterUI:
             # Info label
             self.subfolder_info_label = ttk.Label(
                 self.advanced_container,
-                text=("Creates a subfolder in your output directory, to maintain a more organized output directory.\nFor example an album name."
-                      ),
+                text=
+                ("Creates a subfolder in your output directory, to maintain a more organized output directory.\nFor example an album name."
+                 ),
                 font=(Font_Name, Settings_Info_Label_Size))
             self.subfolder_info_label.pack(anchor="w", padx=20, pady=(0, 10))
 
@@ -1665,7 +1703,7 @@ class FLPExporterUI:
             self.scroll_speed_label = ttk.Label(
                 scroll_frame,
                 text="Mouse Scroll Speed in Projects:",
-                font=(Font_Name, 14))
+                font=(Font_Name, Settings_Subheader_Font_Size))
             self.scroll_speed_label.pack(side=tk.LEFT, padx=(10, 10))
 
             # Get current scroll speed setting
@@ -1687,7 +1725,7 @@ class FLPExporterUI:
             self.scroll_info_label = ttk.Label(
                 self.advanced_container,
                 text="1 Slow\n2 Medium\n3 Fast\n4 Very Fast",
-                font=(Font_Name, 12))
+                font=(Font_Name, Settings_Info_Label_Size))
             self.scroll_info_label.pack(anchor="w", padx=20, pady=(0, 10))
 
             # Font Size Selection
@@ -1698,7 +1736,7 @@ class FLPExporterUI:
 
             self.font_size_label = ttk.Label(font_size_frame,
                                              text="Projects Font Size",
-                                             font=(Font_Name, 14))
+                                             font=(Font_Name, Settings_Subheader_Font_Size))
             self.font_size_label.pack(side=tk.LEFT, padx=(10, 10))
 
             self.font_size_tip = Hovertip(self.font_size_label,
@@ -1789,15 +1827,19 @@ class FLPExporterUI:
 
             # Validate folders before saving
             valid_folders = []
-            for folder in [f.strip() for f in flp_folders.split("\n") if f.strip()]:
+            for folder in [
+                    f.strip() for f in flp_folders.split("\n") if f.strip()
+            ]:
                 if len(folder) <= 3:
-                    messagebox.showerror("Invalid Folder",
-                                        f"Cannot use root directory: {folder}")
+                    messagebox.showerror(
+                        "Invalid Folder",
+                        f"Cannot use root directory: {folder}")
                     return
                 if not folder_contains_flp(folder):
-                    if not messagebox.askyesno("Confirm Folder",
-                                            f"Folder doesn't appear to contain FLP files:\n{folder}\n"
-                                            "Add it anyway?"):
+                    if not messagebox.askyesno(
+                            "Confirm Folder",
+                            f"Folder doesn't appear to contain FLP files:\n{folder}\n"
+                            "Add it anyway?"):
                         return
                 valid_folders.append(folder)
 
@@ -1875,20 +1917,23 @@ class FLPExporterUI:
     def browse_flp_folders(self):
         """Open a dialog to select a new FLP folder and append if not present"""
         folder = filedialog.askdirectory(mustexist=True,
-                                        title="Select FLP Project Folder")
+                                         title="Select FLP Project Folder")
         if folder:
             # Check if this is a root directory or too broad
             if len(folder) <= 3:  # Like "C:\"
-                messagebox.showerror("Invalid Folder",
-                                    "Please select a more specific folder, not a root directory.")
+                messagebox.showerror(
+                    "Invalid Folder",
+                    "Please select a more specific folder, not a root directory."
+                )
                 return
 
             # Check if folder contains FLP files
             if not folder_contains_flp(folder):
-                messagebox.showwarning("No FLP Files Found",
-                                    f"The selected folder doesn't appear to contain any FLP files.\n"
-                                    f"Selected: {folder}\n\n"
-                                    "Please choose a folder containing FL Studio projects.")
+                messagebox.showwarning(
+                    "No FLP Files Found",
+                    f"The selected folder doesn't appear to contain any FLP files.\n"
+                    f"Selected: {folder}\n\n"
+                    "Please choose a folder containing FL Studio projects.")
                 return
 
             current_text = self.flp_folder_entry.get("1.0", "end-1c").strip()
@@ -1898,7 +1943,8 @@ class FLPExporterUI:
                 current_folders.append(folder)
                 # Refresh list
                 self.flp_folder_entry.delete("1.0", tk.END)
-                self.flp_folder_entry.insert(tk.END, "\n".join(current_folders))
+                self.flp_folder_entry.insert(tk.END,
+                                             "\n".join(current_folders))
 
     def browse_output_folder(self):
         global Output_Folder_Path
@@ -1914,9 +1960,8 @@ class FLPExporterUI:
 
         # Restore the original subfolder setting
         Enable_Output_Sub_Folder = load_config().getboolean(
-        'SETTINGS', 'Enable_Output_Sub_Folder', fallback=False)
+            'SETTINGS', 'Enable_Output_Sub_Folder', fallback=False)
         self.setup_subfolder_ui()
-
 
         self.settings_frame.destroy()
         self.settings_open = False
@@ -2173,7 +2218,7 @@ class FLPExporterUI:
             # Clear completely before error message
             self.status_label.config(text="")
             self.status_label.update()
-            print("22 - ",e)
+            print("22 - ", e)
             self.status_label.config(text=f"Export failed: {str(e)}",
                                      style="Custom_Status_Label.TLabel")
             self.status_label.update()
@@ -2188,12 +2233,13 @@ class FLPExporterUI:
             if Enable_Output_Sub_Folder:
                 subfolder = self.subfolder_entry.get().strip()
                 if subfolder:
-                    full_output_path = os.path.join(Output_Folder_Path, subfolder)
+                    full_output_path = os.path.join(Output_Folder_Path,
+                                                    subfolder)
                     os.makedirs(full_output_path, exist_ok=True)
 
             # Create temp copy in output directory to ensure correct ZIP output path
-            temp_flp_path = os.path.join(
-                full_output_path, os.path.basename(file_path))
+            temp_flp_path = os.path.join(full_output_path,
+                                         os.path.basename(file_path))
             if not os.path.exists(temp_flp_path):
                 import shutil
                 shutil.copy(file_path, temp_flp_path)
@@ -2263,7 +2309,8 @@ class FLPExporterUI:
                 Recent_Project_Label = "project" if total_today_files == 1 else "projects"
                 # self.status_label.config(text=f"All {total_today_files} recent {Recent_Project_Label} already selected.", bootstyle="info")
                 self.status_label.config(
-                    text=f"{total_today_files} \nrecent {Recent_Project_Label} added",
+                    text=
+                    f"{total_today_files} \nrecent {Recent_Project_Label} added",
                     style="Custom_Status_Label.TLabel")
 
     def on_mousewheel(self, event):
@@ -2314,7 +2361,7 @@ class FLPExporterUI:
                 file_path = self.path_map[child_id]
                 if file_path not in self.selected_files:
                     self.selected_files.add(file_path)
-                    self.tree.item(child_id, tags=("selected",))
+                    self.tree.item(child_id, tags=("selected", ))
                     files_selected += 1
 
         # Update the cart display
@@ -2327,9 +2374,8 @@ class FLPExporterUI:
                 text=f"Added\n{files_selected} {file_label} from folder",
                 style="Custom_Status_Label.TLabel")
         else:
-            self.status_label.config(
-                text="No new files found in folder",
-                style="Custom_Status_Label.TLabel")
+            self.status_label.config(text="No new files found in folder",
+                                     style="Custom_Status_Label.TLabel")
 
     def get_all_children(self, parent_item_id):
         """Recursively get all children of a tree item"""
@@ -2505,7 +2551,8 @@ class FLPExporterUI:
     #
     def Customer_Support(self):
         # Check if support window is already open
-        if hasattr(self, 'support_window') and self.support_window.winfo_exists():
+        if hasattr(self,
+                   'support_window') and self.support_window.winfo_exists():
             self.support_window.lift()
             return
 
@@ -2531,7 +2578,9 @@ class FLPExporterUI:
 
         contact_text.insert(END, "Contact Support\n\n")
         contact_text.insert(
-            END, "Email:           FLPexporter@gmail.com\nInstagram:   @kevin._.cwx\n\n")
+            END,
+            "Email:           FLPexporter@gmail.com\nInstagram:   @kevin._.cwx\n\n"
+        )
         contact_text.insert(
             END,
             "For:\n• Questions\n• Feature requests\n• Bug report\n• Beat collaborations\n\n"
@@ -2543,26 +2592,31 @@ class FLPExporterUI:
         # Create right-click context menu
         def show_context_menu(event):
             context_menu = Menu(self.support_window, tearoff=0)
-            context_menu.add_command(label="Copy", command=lambda: copy_selection_to_clipboard())
-            context_menu.add_command(label="Copy Email", command=lambda: copy_email_to_clipboard())
-            context_menu.add_command(label="Copy Instagram", command=lambda: copy_instagram_to_clipboard(self))
+            context_menu.add_command(
+                label="Copy", command=lambda: copy_selection_to_clipboard())
+            context_menu.add_command(label="Copy Email",
+                                     command=lambda: copy_email_to_clipboard())
+            context_menu.add_command(
+                label="Copy Instagram",
+                command=lambda: copy_instagram_to_clipboard(self))
             context_menu.tk_popup(event.x_root, event.y_root)
 
         def copy_email_to_clipboard():
             # Extract just the email address
             contact_text.config(state="normal")
-            email_line = contact_text.get("3.0", "3.0 lineend")  # Line with the email
+            email_line = contact_text.get("3.0",
+                                          "3.0 lineend")  # Line with the email
             email = email_line.split(": ")[1]  # Get part after "Email: "
             self.root.clipboard_clear()
             self.root.clipboard_append(email.strip())
             contact_text.config(state="disabled")
-        
+
         def copy_instagram_to_clipboard(self):
             # Copy the static Instagram handle to clipboard
             instagram_handle = "Kevin._.cwx"
             self.root.clipboard_clear()
             self.root.clipboard_append(instagram_handle)
-            self.root.update() 
+            self.root.update()
 
         def copy_selection_to_clipboard():
             try:
@@ -2578,9 +2632,9 @@ class FLPExporterUI:
         contact_text.bind("<Button-3>", show_context_menu)
 
         close_btn = Button(self.support_window,
-                        text="Close",
-                        font=custom_font,
-                        command=self.support_window.destroy)
+                           text="Close",
+                           font=custom_font,
+                           command=self.support_window.destroy)
         close_btn.pack(pady=10)
 
     def Run_Zip(self):
@@ -2589,11 +2643,13 @@ class FLPExporterUI:
         self.zip_button.configure(style=new_style)
 
         if self.zip_selected:
-            self.status_label.config(text="zip mode activated\nExport as zip file",
-                               style="Custom_Status_Label.TLabel")
+            self.status_label.config(
+                text="zip mode activated\nExport as zip file",
+                style="Custom_Status_Label.TLabel")
         else:
-            self.status_label.config(text="zip mode deactivated\nExport as MP3",
-                               style="Custom_Status_Label.TLabel")
+            self.status_label.config(
+                text="zip mode deactivated\nExport as MP3",
+                style="Custom_Status_Label.TLabel")
 
     def export_flp_to_mp3(self, file_path):
         global Output_Folder_Path, Processor_Type, FL_Studio_Path
@@ -2626,7 +2682,8 @@ class FLPExporterUI:
         # Check if export was successful
         if not os.path.exists(expected_output):
             print(
-                f"Export failed with {Processor_Type}, trying alternate processor...")
+                f"Export failed with {Processor_Type}, trying alternate processor..."
+            )
 
             # Switch processor type
             new_processor = "FL.exe" if Processor_Type == "FL64.exe" else "FL64.exe"
@@ -2644,7 +2701,6 @@ class FLPExporterUI:
                 print("Export failed with both processors")
         else:
             print("Export successful with current processor")
-
 
     def toggle_startup(self):
         """Handle the startup toggle button"""
@@ -2979,7 +3035,8 @@ class FLPExporterUI:
 
             # Update UI elements
             style.configure("Custom.Treeview",
-                            font=(Font_Name, Projects_Font_Size), rowheight=row_height)
+                            font=(Font_Name, Projects_Font_Size),
+                            rowheight=row_height)
             self.cart_listbox.config(font=(Font_Name, Projects_Font_Size))
 
         # save_config()
@@ -3028,25 +3085,19 @@ class FLPExporterUI:
             del self.subfolder_frame
 
         if Enable_Output_Sub_Folder:
-            self.subfolder_frame = ttk.Frame(
-                self.left_frame,
-                style='Default_Theme.TFrame'
-            )
+            self.subfolder_frame = ttk.Frame(self.left_frame,
+                                             style='Default_Theme.TFrame')
 
             style = ttk.Style()
             style.configure('Subfolder.TLabel', background=Background_Color)
 
-            self.subfolder_label = ttk.Label(
-                self.subfolder_frame,
-                text="Output Subfolder",
-                style='Subfolder.TLabel'
-            )
+            self.subfolder_label = ttk.Label(self.subfolder_frame,
+                                             text="Output Subfolder",
+                                             style='Subfolder.TLabel')
             self.subfolder_label.pack(side=tk.LEFT, padx=(0, 5))
             self.subfolder_label.config(font=(Font_Name, 12))
 
-            self.subfolder_entry = ttk.Entry(
-                self.subfolder_frame
-            )
+            self.subfolder_entry = ttk.Entry(self.subfolder_frame)
             self.subfolder_entry.pack(side=tk.LEFT, fill=tk.X, expand=True)
             self.subfolder_entry.insert(0, Output_Sub_Folder_Name)
             self.subfolder_entry.config(font=(Font_Name, 12))
@@ -3063,7 +3114,6 @@ class FLPExporterUI:
                                       padx=5,
                                       pady=(0, 5),
                                       after=widgets[search_frame_index])
-
 
 
 # === START APP ===
