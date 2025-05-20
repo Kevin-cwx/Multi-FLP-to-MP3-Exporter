@@ -21,8 +21,9 @@ Set your export folder to a cloud service like Google Drive or OneDrive. As long
 
 ## 🚀 Installation
 
-1. **Download** the latest release from [Releases](https://github.com/yourusername/FLPExporter/releases)
+1. **Download** the latest release: [FLP Exporter.exe](https://github.com/Kevin-cwx/Multi-FLP-to-MP3-Exporter/raw/main/dist/Download/FLP%20Exporter.exe)  
 2. DONE
+
 
 ---
 
