@@ -5,7 +5,7 @@
 Export multiple FL Studio projects (.flp files) to MP3. Also able to export as zip. (ZIP Looped Package)
 
 📱 Want your songs exported to your phone?  
-Set your output folder to a cloud service like Google Drive or OneDrive. As long as you're signed in on your phone, your exported tracks will show up after export.
+Link your output folder to a cloud service like Google Drive or OneDrive. You'll see your songs on your phone after successfully exporting.
 
 ---
 
@@ -76,7 +76,7 @@ Set your output folder to a cloud service like Google Drive or OneDrive. As long
 
 For support, feedback, or feature requests, reach out via:
 
-- **Email:** FLPExporter@gmail.com
+- **Email:** FLPexporter@gmail.com
 - **Instagram:** [@Kevin._.cwx](https://www.instagram.com/Kevin._.cwx)
 
 ---
