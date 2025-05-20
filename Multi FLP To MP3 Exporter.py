@@ -93,9 +93,22 @@ def darken_color(hex_color, factor=0.9):
     darker_rgb = [max(0, int(c * factor)) for c in rgb]
     return "#{:02x}{:02x}{:02x}".format(*darker_rgb)
 
+
+def best_readable_text_color(bg_hex: str) -> str:
+    """
+    Returns '#000000' (black) or '#FFFFFF' (white) based on the luminance of the background hex color.
+    """
+    bg_hex = bg_hex.lstrip('#')
+    r, g, b = int(bg_hex[0:2], 16), int(bg_hex[2:4], 16), int(bg_hex[4:6], 16)
+
+    # Calculate luminance (per W3C standards)
+    luminance = (0.299 * r + 0.587 * g + 0.114 * b)
+
+    return '#000000' if luminance > 186 else '#FFFFFF'
 #
 # Colors
 #
+
 
 
 """
@@ -112,7 +125,7 @@ Previous
 "#2fbdff"
 """
 
-Background_Color = "#a8b1b9"
+Background_Color = "#EDE7EB"
 # Background_Color = "#a39bff"
 Darker_Background_Color = darken_color(Background_Color, factor=0.98)
 User_Selected_Project_Background_Color = "#FFC93F"
@@ -670,6 +683,8 @@ class FLPExporterUI:
         style.configure('Settings.TLabel', background=Background_Color)
         style.configure('Settings.TCheckbutton', background=Background_Color)
         style.configure('Settings.TCombobox', fieldbackground=Background_Color)
+        style.configure("Custom_Status_Label.TLabel",
+                        foreground=best_readable_text_color(Background_Color))
 
         style.configure("PrimaryAction.TButton",
                         font=(Font_Name, Regular_Font_Size),
@@ -2096,7 +2111,7 @@ class FLPExporterUI:
 
         if not self.selected_files:
             self.status_label.config(text="No files selected",
-                                     bootstyle="light")
+                                     style="Custom_Status_Label.TLabel")
             self.status_label.update()
             return
 
@@ -2105,7 +2120,8 @@ class FLPExporterUI:
 
         try:
             # Set exporting message and force display
-            self.status_label.config(text="Exporting...", bootstyle="warning")
+            self.status_label.config(text="Exporting...",
+                                     style="Custom_Status_Label.TLabel")
             self.status_label.update()
             self.root.update_idletasks()
 
@@ -2124,12 +2140,13 @@ class FLPExporterUI:
             if success_count == total:
                 mode = "ZIP" if self.zip_selected else "MP3"
                 self.status_label.config(
-                    text=f"Successfully exported {success_count} files as {mode}",
-                    bootstyle="success")
+                    text=
+                    f"Successfully exported {success_count} files as {mode}",
+                    style="Custom_Status_Label.TLabel")
             else:
                 self.status_label.config(
                     text=f"Exported {success_count} of {total} files",
-                    bootstyle="warning")
+                    style="Custom_Status_Label.TLabel")
 
             # Clear before showing success message
             self.status_label.config(text="")
@@ -2138,7 +2155,7 @@ class FLPExporterUI:
             Exported_project_label = "project" if total == 1 else "projects"
             self.status_label.config(
                 text=f"{total} {Exported_project_label} exported",
-                bootstyle="light")
+                style="Custom_Status_Label.TLabel")
             self.status_label.update()
 
         except Exception as e:
@@ -2147,7 +2164,7 @@ class FLPExporterUI:
             self.status_label.update()
             print("22 - ",e)
             self.status_label.config(text=f"Export failed: {str(e)}",
-                                     bootstyle="danger")
+                                     style="Custom_Status_Label.TLabel")
             self.status_label.update()
 
     def export_as_zip(self, file_path):
@@ -2190,7 +2207,7 @@ class FLPExporterUI:
         self.selected_files.clear()
         self.cart_listbox.delete(0, tk.END)
         self.status_label.config(text="Selection cleared",
-                                 bootstyle="light")
+                                 style="Custom_Status_Label.TLabel")
         self.anchor_item = None
 
     def add_recent_projects(self):
@@ -2222,21 +2239,21 @@ class FLPExporterUI:
 
         if total_today_files == 0:
             self.status_label.config(text="No files \nmodified today",
-                                     bootstyle="light")
+                                     style="Custom_Status_Label.TLabel")
         else:
             if added > 0:
                 # Show how many new files were added
                 Recent_Project_Label = "project" if added == 1 else "projects"
                 self.status_label.config(
                     text=f"{added}\nrecent {Recent_Project_Label} added",
-                    bootstyle="light")
+                    style="Custom_Status_Label.TLabel")
             else:
                 # Show that all today's files were already selected
                 Recent_Project_Label = "project" if total_today_files == 1 else "projects"
                 # self.status_label.config(text=f"All {total_today_files} recent {Recent_Project_Label} already selected.", bootstyle="info")
                 self.status_label.config(
                     text=f"{total_today_files} \nrecent {Recent_Project_Label} added",
-                    bootstyle="light")
+                    style="Custom_Status_Label.TLabel")
 
     def on_mousewheel(self, event):
         delta = -1 if event.delta > 0 else 1
@@ -2297,11 +2314,11 @@ class FLPExporterUI:
             file_label = "file" if files_selected == 1 else "files"
             self.status_label.config(
                 text=f"Added\n{files_selected} {file_label} from folder",
-                bootstyle="light")
+                style="Custom_Status_Label.TLabel")
         else:
             self.status_label.config(
                 text="No new files found in folder",
-                bootstyle="info")
+                style="Custom_Status_Label.TLabel")
 
     def get_all_children(self, parent_item_id):
         """Recursively get all children of a tree item"""
@@ -2450,14 +2467,14 @@ class FLPExporterUI:
 
             self.refresh_cart()
             self.status_label.config(text="Project tree synced",
-                                     bootstyle="light")
+                                     style="Custom_Status_Label.TLabel")
 
             # Reapply the current search filter after syncing
             self.filter_tree()  # This line is added
 
         except Exception as e:
             self.status_label.config(text=f"Sync failed: {str(e)}",
-                                     bootstyle="danger")
+                                     style="Custom_Status_Label.TLabel")
 
     def flash_refresh(self):
         """Visual effect to show refresh is happening"""
@@ -2553,10 +2570,10 @@ class FLPExporterUI:
 
         if self.zip_selected:
             self.status_label.config(text="zip mode activated\nExport as zip file",
-                               bootstyle="light")
+                               style="Custom_Status_Label.TLabel")
         else:
             self.status_label.config(text="zip mode deactivated\nExport as MP3",
-                               bootstyle="light")
+                               style="Custom_Status_Label.TLabel")
 
     def export_flp_to_mp3(self, file_path):
         global Output_Folder_Path, Processor_Type, FL_Studio_Path
@@ -2966,7 +2983,7 @@ class FLPExporterUI:
             fl_path = os.path.dirname(fl_studio_full_location)
             self.status_label.config(
                 text=f"FL Studio found at: {fl_path}\nProcessor: {processor}",
-                bootstyle="success")
+                style="Custom_Status_Label.TLabel")
             return fl_path, processor
 
         self.status_label.config(text="FL Studio process not found",
