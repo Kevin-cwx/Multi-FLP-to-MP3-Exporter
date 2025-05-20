@@ -16,7 +16,7 @@ VSVersionInfo(
       StringTable(
         '040904B0',
         [
-          StringStruct('CompanyName', 'Your Company Name'),
+          StringStruct('CompanyName', 'FLP Exporter'),
           StringStruct('FileDescription', 'Export multiple fl studio projects (FLP) to mp3. Provides tree view of all projects.'),
           StringStruct('FileVersion', '1.1'),
           StringStruct('InternalName', 'MultiFLPExporter'),
