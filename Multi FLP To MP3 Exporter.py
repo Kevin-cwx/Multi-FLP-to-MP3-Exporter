@@ -964,7 +964,7 @@ class FLPExporterUI:
                                           command=self.open_settings,
                                           style="PrimaryAction.TButton",
                                           padding=8)
-        self.settings_button.pack(side=tk.RIGHT, padx=(0, 10))
+        self.settings_button.pack(side=tk.RIGHT, padx=(0, 0))
         self.settings_tip = Hovertip(self.settings_button, 'Open Settings')
 
         self.toggle_icon = self.minus_icon
