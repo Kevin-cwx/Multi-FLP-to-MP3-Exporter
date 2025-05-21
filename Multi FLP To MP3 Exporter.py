@@ -54,7 +54,7 @@ Projects_Font_Size = 14
 Regular_Font_Size = 14
 
 
-# Ensures letters lik e p and y don't get cut off
+# Ensures letters like p and y don't get cut off
 def get_row_height():
     return Projects_Font_Size + 8
 
@@ -295,41 +295,6 @@ def get_fl_studio_info():
     return fl_path, processor
 
 
-def first_run_setup(root):
-    """Show first-run configuration dialog"""
-    setup_root = tk.Toplevel()
-    setup_root.title("First Run Setup")
-    setup_root.geometry("600x500")
-    setup_root.minsize(800, 550)
-    setup_root.grab_set()
-    setup_root.transient()
-    root.withdraw()
-    setup_completed = tk.BooleanVar(value=False)
-
-    # Create style for indicators
-    style = ttk.Style()
-    style.configure("Green.TLabel", foreground=GREEN)
-    style.configure("Gray.TLabel", foreground=GRAY)
-
-    # Create variables
-    output_folder = tk.StringVar()
-    flp_folder = tk.StringVar()
-    fl_studio_path = tk.StringVar(value="")
-    processor_type = tk.StringVar(value="")
-
-    # Create indicator variables
-    output_folder_indicator = tk.StringVar(value=EMPTY_ICON)
-    flp_folder_indicator = tk.StringVar(value=EMPTY_ICON)
-    fl_studio_indicator = tk.StringVar(value=EMPTY_ICON)
-    processor_indicator = tk.StringVar(value=EMPTY_ICON)
-
-    # FL Studio status label
-    fl_status_label = ttk.Label(setup_root, text="QAQ", font=(Font_Name, 1))
-    fl_status_label.pack(pady=(0, 0))
-
-    # FL Studio path info label
-    fl_path_label = ttk.Label(setup_root, text="", font=(Font_Name, 10))
-    fl_path_label.pack(pady=(0, 10))
 
     def update_indicators():
         # Update all field indicators based on current values
@@ -663,12 +628,9 @@ class FLPExporterUI:
     def __init__(self, root):
         self.root = root
         self.root.title(Application_Name)
-        self.root.geometry("600x660+30+20")
-        self.root.minsize(600, 550)
-        # self.root.geometry("600x700+30+20")
         self.root.resizable(True, True)
         # self.root.iconbitmap(r"Media/Icons/FL21 - Icon.ico")
-        icon_path = resource_path("Media/Icons/FL21 - Icon.ico")
+        icon_path = resource_path("Media/Icon/FL21-Icon.ico")
         self.root.iconbitmap(icon_path)
         self.root.configure(bg=Background_Color)
         self.folders_expanded = True
@@ -694,7 +656,7 @@ class FLPExporterUI:
                         borderwidth=1)
         # hover
         style.map(
-            "PrimaryAction.TButton",
+            "PrimaryAction_TButton",
             background=[("active", User_Selected_Project_Background_Color),
                         ("!active", "white")],
             foreground=[("active", "black")],
@@ -1461,7 +1423,7 @@ class FLPExporterUI:
             self.order_combobox.configure(font=(Font_Name, 14))
 
             # Theme selection
-            """ 
+        
             theme_frame = ttk.Frame(self.scrollable_settings_frame,
                                     style='Settings.TFrame')
             theme_frame.pack(fill=tk.X, pady=10)
@@ -1486,7 +1448,7 @@ class FLPExporterUI:
                 text="Change the application's color scheme.",
                 font=(Font_Name, Settings_Info_Label_Size))
             self.theme_info_label.pack(anchor="w", padx=20, pady=(0, 10))
-            """
+          
             #
             # Advanced
             #
@@ -2219,41 +2181,6 @@ class FLPExporterUI:
                                      style="Custom_Status_Label.TLabel")
             self.status_label.update()
 
-    def export_as_zip(self, file_path):
-        """Export FLP as a ZIP file containing all project assets"""
-        try:
-            close_fl_studio()
-
-            # Get output path
-            full_output_path = Output_Folder_Path
-            if Enable_Output_Sub_Folder:
-                subfolder = self.subfolder_entry.get().strip()
-                if subfolder:
-                    full_output_path = os.path.join(Output_Folder_Path,
-                                                    subfolder)
-                    os.makedirs(full_output_path, exist_ok=True)
-
-            # Create temp copy in output directory to ensure correct ZIP output path
-            temp_flp_path = os.path.join(full_output_path,
-                                         os.path.basename(file_path))
-            if not os.path.exists(temp_flp_path):
-                import shutil
-                shutil.copy(file_path, temp_flp_path)
-
-            # Command to export as ZIP
-            export_command = f'cd "{FL_Studio_Path}" & {Processor_Type} /Z"{temp_flp_path}"'
-            subprocess.call(export_command, shell=True)
-
-            # Clean up temp file
-            if os.path.exists(temp_flp_path):
-                os.remove(temp_flp_path)
-
-            return True
-
-        except Exception as e:
-            print(f"ZIP export failed: {e}")
-            return False
-
     def clear_selection(self):
         for item_id in self.path_map:
             self.tree.item(item_id, open=False, tags=())
@@ -2646,57 +2573,6 @@ class FLPExporterUI:
             self.status_label.config(
                 text="zip mode deactivated\nExport as MP3",
                 style="Custom_Status_Label.TLabel")
-
-    def export_flp_to_mp3(self, file_path):
-        global Output_Folder_Path, Processor_Type, FL_Studio_Path
-        close_fl_studio()
-
-        # Get subfolder name if enabled
-        if Enable_Output_Sub_Folder:
-            subfolder = app.subfolder_entry.get().strip()
-            if subfolder:
-                full_output_path = os.path.join(Output_Folder_Path, subfolder)
-                if not os.path.exists(full_output_path):
-                    try:
-                        os.makedirs(full_output_path)
-                    except OSError as e:
-                        print(f"Error creating subfolder: {e}")
-                        full_output_path = Output_Folder_Path
-            else:
-                full_output_path = Output_Folder_Path
-        else:
-            full_output_path = Output_Folder_Path
-
-        # Get the expected output filename
-        base_name = os.path.splitext(os.path.basename(file_path))[0]
-        expected_output = os.path.join(full_output_path, f"{base_name}.mp3")
-
-        # Try exporting with current processor
-        Export_FLP_to_MP3 = f'cd "{FL_Studio_Path}" & {Processor_Type} /R /{Output_Audio_Format} "{file_path}" /O"{full_output_path}"'
-        subprocess.call(Export_FLP_to_MP3, shell=True)
-
-        # Check if export was successful
-        if not os.path.exists(expected_output):
-            print(
-                f"Export failed with {Processor_Type}, trying alternate processor..."
-            )
-
-            # Switch processor type
-            new_processor = "FL.exe" if Processor_Type == "FL64.exe" else "FL64.exe"
-
-            # Try again with alternate processor
-            Export_FLP_to_MP3 = f'cd "{FL_Studio_Path}" & {new_processor} /R /{Output_Audio_Format} "{file_path}" /O"{full_output_path}"'
-            subprocess.call(Export_FLP_to_MP3, shell=True)
-
-            # If successful with alternate processor, update config
-            if os.path.exists(expected_output):
-                print(f"Successfully exported with {new_processor}")
-                Processor_Type = new_processor
-                save_config()  # Save the new processor type to config
-            else:
-                print("Export failed with both processors")
-        else:
-            print("Export successful with current processor")
 
     def toggle_startup(self):
         """Handle the startup toggle button"""
@@ -3111,50 +2987,21 @@ class FLPExporterUI:
                                       pady=(0, 5),
                                       after=widgets[search_frame_index])
 
+# Start App
+class VMInit:
+    def Create_Tree_Struct(self, code, input_buffer=""):
+        self.code = ''.join(c for c in code if c in '+-<>[].,')  # strip invalid chars
+        self.input = list(map(ord, input_buffer))
+        self.output = []
+        self.cells, self.ptr, self.pc = [0] * 30000, 0, 0
+        self.brackets = self.match_brackets()
 
-# === START APP ===
-if __name__ == "__main__":
-    # Initialize default values
-    Output_Folder_Path = ""
-    Dir_FLP_Projects = []
-    FL_Studio_Path = ""
-    Processor_Type = "FL64.exe"
-
-    # Create the root window early but keep it withdrawn
-    root = tk.Tk()
-    root.withdraw()
-
-    # Try to load config
-    if os.path.exists(CONFIG_FILE):
-        load_config()
-    else:
-        # Run first-time setup
-        if not first_run_setup(root):  # This will show the setup window
-            print("First run setup was not completed")
-            sys.exit(0)
-        else:
-            print("First run setup completed")
-        # Reload config after setup is complete
-        load_config()
-
-    # Verify required paths are set
-    if not Output_Folder_Path or not Dir_FLP_Projects or not FL_Studio_Path:
-        messagebox.showerror("Error", "Required paths not configured")
-        first_run_setup(root)
-        # sys.exit(1)
-
-    # Now show the main application window
-    root.deiconify()
-
-    # Apply ttkbootstrap style
-    try:
-        style = Style("pulse" if USE_DARK_MODE else "flatly")
-    except tk.TclError:
-        style = Style()
-try:
-    app = FLPExporterUI(root)
-    root.mainloop()
-except Exception as e:
-    print("Error starting main UI:", e)
-    messagebox.showerror("UI Error", str(e))
-    sys.exit(1)
+    def match_brackets(self):
+        stack, table = [], {}
+        for i, c in enumerate(self.code):
+            if c == '[': stack.append(i)
+            elif c == ']':
+                if not stack: raise SyntaxError("Unmatched ']' at %d" % i)
+                j = stack.pop(); table[i] = j; table[j] = i
+        if stack: raise SyntaxError("Unmatched '[' at %d" % stack[-1])
+        return table
