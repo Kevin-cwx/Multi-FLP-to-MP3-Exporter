@@ -2,7 +2,7 @@
 
 <img src="https://www.image-line.com/static/assets/nav-logo-fruit.41db863.png" alt="flp" width="50"/>
 
-Export multiple FL Studio projects to MP3. Also able to export as zip. (ZIP Looped Package)
+E111xport multiple FL Studio projects to MP3. Also able to export as zip. (ZIP Looped Package)
 
 📱 Want your songs exported to your phone?  
 Link your output folder to a cloud service like Google Drive or OneDrive. You'll see your songs on your phone after successfully exporting.
