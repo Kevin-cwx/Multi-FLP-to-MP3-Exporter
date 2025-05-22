@@ -24,7 +24,7 @@ Link your output folder to a cloud service like Google Drive or OneDrive. You'll
 - ⚡ Batch export to MP3
 - 📦 Export as ZIP (loop packages)
 - 🎛️ GUI with tree view of all FLP projects
-- 📅 Auto selects files you worked on today
+- 📅 Auto select all files you worked on today
 - 🔍 Search projects across different subfolders
 
 ---
@@ -59,12 +59,13 @@ Link your output folder to a cloud service like Google Drive or OneDrive. You'll
 
 ## ⚙️ Settings Highlights
 
+- Enable launch at Windows startup
 - Configure export format: MP3, WAV, OGG
-- Enable output subfolders for album-style structure
+- Enable output subfolders for grouping songs
+- Order projects by name or date last modified
 - Set custom scroll speed, font size, and theme
 - Toggle FL Studio processor (FL.exe or FL64.exe)
-- Enable launch at Windows startup
-- Order projects by name or date last modified
+
 
 ---
 ## 🧠 Pro Tips
