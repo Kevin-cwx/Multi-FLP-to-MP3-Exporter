@@ -15,6 +15,9 @@ Link your output folder to a cloud service like Google Drive or OneDrive. You'll
 
 ![Demo](https://raw.githubusercontent.com/Kevin-cwx/Multi-FLP-to-MP3-Exporter/main/Media/Images/Gif%20Demo%202.gif)
 
+<br>
+
+---
 ## 🧩 Features
 
 - 🎶 Batch export to MP3
