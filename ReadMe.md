@@ -88,12 +88,12 @@ Link your output folder to a cloud service like Google Drive or OneDrive. You'll
 
 For support, feedback, or feature requests, reach out via:
 
-- **Instagram:** [@Kevin._.cwx](https://www.instagram.com/Kevin._.cwx)
+<!-- - **Instagram:** [@Kevin._.cwx](https://www.instagram.com/Kevin._.cwx)
 - **Email:**     FLPexporter@gmail.com
-- **Youtube:**   https://www.youtube.com/@Multi_FLP_Exporter
+- **Youtube:**   https://www.youtube.com/@Multi_FLP_Exporter -->
 
 <p><strong>Instagram:</strong> &nbsp;&nbsp;<a href="https://www.instagram.com/Kevin._.cwx">@Kevin._.cwx</a></p>
-<p><strong>Email:</strong> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FLPexporter@gmail.com</p>
+<p><strong>Email:</strong> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="mailto:FLPexporter@gmail.com">FLPexporter@gmail.com</a></p>
 <p><strong>YouTube:</strong> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://www.youtube.com/@Multi_FLP_Exporter">https://www.youtube.com/@Multi_FLP_Exporter</a></p>
 
 ---
