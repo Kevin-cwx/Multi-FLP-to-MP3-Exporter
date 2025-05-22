@@ -49,7 +49,7 @@ Link your output folder to a cloud service like Google Drive or OneDrive. You'll
      - Where all your FLP files are stored. Add the top folder.  
    - Set **output folder**  
      - Where you want your songs to be exported to.  
-   - Locate **FL Studio installation**  
+   - Locate **FL Studio installation folder**  
      Example: `"C:\Program Files\Image-Line\FL Studio 21\"`  
 3. Select desired projects from the left panel  
 4. Click `Export` — your MP3s will be rendered to your output folder  
@@ -64,7 +64,6 @@ Link your output folder to a cloud service like Google Drive or OneDrive. You'll
 - Enable output subfolders for grouping songs
 - Order projects by name or date last modified
 - Set custom scroll speed, font size, and theme
-- Toggle FL Studio processor (FL.exe or FL64.exe)
 
 
 ---
