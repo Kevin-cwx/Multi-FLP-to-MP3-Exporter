@@ -10,10 +10,8 @@ Link your output folder to a cloud service like Google Drive or OneDrive. You'll
 ---
 ## 🎥 Demo Video
 
-<a href="https://youtu.be/J0iidtn3s28" style="color:black; text-decoration:none;" target="_blank">
-  Click to watch<br>
   <img src="https://raw.githubusercontent.com/Kevin-cwx/Multi-FLP-to-MP3-Exporter/main/Media/Images/FLP%20Exporter%20Main%20Window.jpg" alt="FLP Exporter Demo" style="max-width:100%; height:auto; margin-top:8px;" />
-</a>
+
 <br>
 <br>
 
@@ -46,7 +44,8 @@ Link your output folder to a cloud service like Google Drive or OneDrive. You'll
 1. Launch the app  
 2. On first run:  
    - Set your **FLP folder**  
-     - Where all your FLP files are stored. Add the top folder.  
+     - Where all your FLP files are stored. Add the top folder.
+     - You can add multiple folders. 
    - Set **output folder**  
      - Where you want your songs to be exported to.  
    - Locate **FL Studio installation folder**  
@@ -61,7 +60,7 @@ Link your output folder to a cloud service like Google Drive or OneDrive. You'll
 
 - Enable launch at Windows startup
 - Configure export format: MP3, WAV, OGG
-- Enable output subfolders for grouping songs
+- Enable output subfolders, for grouping songs
 - Order projects by name or date last modified
 - Set custom scroll speed, font size, and theme
 
