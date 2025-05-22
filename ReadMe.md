@@ -21,7 +21,7 @@ Link your output folder to a cloud service like Google Drive or OneDrive. You'll
 
 ## 🧩 Features
 
-- ⚡ Batch export to MP3
+- 🎶 Batch export to MP3
 - 📦 Export as ZIP (loop packages)
 - 🎛️ GUI with tree view of all FLP projects
 - 📅 Auto select all files you worked on today
