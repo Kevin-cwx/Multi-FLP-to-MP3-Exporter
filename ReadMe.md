@@ -1,6 +1,6 @@
 # 🎵 Multi FLP to MP3 Exporter
 
-<img src="https://www.image-line.com/static/assets/nav-logo-fruit.41db863.png" alt="flp" width="100"/>
+<img src="https://www.image-line.com/static/assets/nav-logo-fruit.41db863.png" alt="flp" width="70"/>
 
 Export multiple FL Studio projects to MP3. Also able to export as zip. (ZIP Looped Package)
 
