@@ -55,6 +55,7 @@ Link your output folder to a cloud service like Google Drive or OneDrive. You'll
 4. Click `Export` — your MP3s will be rendered to your output folder  
 
 </details>
+
 ---
 
 ## ⚙️ Settings Highlights
@@ -90,4 +91,9 @@ For support, feedback, or feature requests, reach out via:
 - **Instagram:** [@Kevin._.cwx](https://www.instagram.com/Kevin._.cwx)
 - **Email:**     FLPexporter@gmail.com
 - **Youtube:**   https://www.youtube.com/@Multi_FLP_Exporter
+
+<p><strong>Instagram:</strong> &nbsp;&nbsp;<a href="https://www.instagram.com/Kevin._.cwx">@Kevin._.cwx</a></p>
+<p><strong>Email:</strong> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FLPexporter@gmail.com</p>
+<p><strong>YouTube:</strong> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://www.youtube.com/@Multi_FLP_Exporter">https://www.youtube.com/@Multi_FLP_Exporter</a></p>
+
 ---
