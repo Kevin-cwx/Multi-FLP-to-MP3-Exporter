@@ -61,9 +61,10 @@ Link your output folder to a cloud service like Google Drive or OneDrive. You'll
 
 - Enable launch at Windows startup
 - Configure export format: MP3, WAV, OGG
-- Enable output subfolders, for grouping songs
 - Order projects by name or date last modified
 - Set custom scroll speed, font size, and theme
+- Enable output subfolders, for grouping songs
+
 
 
 ---
@@ -86,7 +87,7 @@ Link your output folder to a cloud service like Google Drive or OneDrive. You'll
 
 For support, feedback, or feature requests, reach out via:
 
-- **Email:** FLPexporter@gmail.com
 - **Instagram:** [@Kevin._.cwx](https://www.instagram.com/Kevin._.cwx)
+- **Email:** FLPexporter@gmail.com
 - **Youtube:** https://www.youtube.com/@Multi_FLP_Exporter
 ---
