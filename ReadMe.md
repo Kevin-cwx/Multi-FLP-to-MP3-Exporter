@@ -1,6 +1,6 @@
 # 🎵 Multi FLP to MP3 Exporter
 
-<img src="https://www.image-line.com/static/assets/nav-logo-fruit.41db863.png" alt="flp" width="50"/>
+<img src="https://www.image-line.com/static/assets/nav-logo-fruit.41db863.png" alt="flp" width="70"/>
 
 Export multiple FL Studio projects to MP3. Also able to export as zip. (ZIP Looped Package)
 
@@ -8,17 +8,16 @@ Export multiple FL Studio projects to MP3. Also able to export as zip. (ZIP Loop
 Link your output folder to a cloud service like Google Drive or OneDrive. You'll see your songs on your phone after successfully exporting.
 
 ---
-## 🎥 Demo Video
+## 🎥 Demo 
 
-<a href="https://youtu.be/J0iidtn3s28" style="color:black; text-decoration:none;" target="_blank">
-  Click to watch<br>
-  <img src="https://raw.githubusercontent.com/Kevin-cwx/Multi-FLP-to-MP3-Exporter/main/Media/Images/FLP%20Exporter%20Main%20Window.jpg" alt="FLP Exporter Demo" style="max-width:100%; height:auto; margin-top:8px;" />
-</a>
-<br>
-<br>
+  <img src="https://raw.githubusercontent.com/Kevin-cwx/Multi-FLP-to-MP3-Exporter/main/Media/Images/_FLP%20Exporter%20Main%20Window.jpg" alt="FLP Exporter Demo" style="max-width:100%; height:auto; margin-top:8px;" />
+
 
 ![Demo](https://raw.githubusercontent.com/Kevin-cwx/Multi-FLP-to-MP3-Exporter/main/Media/Images/Gif%20Demo%202.gif)
 
+<br>
+
+---
 ## 🧩 Features
 
 - 🎶 Batch export to MP3
@@ -46,25 +45,27 @@ Link your output folder to a cloud service like Google Drive or OneDrive. You'll
 1. Launch the app  
 2. On first run:  
    - Set your **FLP folder**  
-     - Where all your FLP files are stored. Add the top folder.  
+     - Where all your FLP files are stored. Add the top folder.
+     - You can add multiple folders. 
    - Set **output folder**  
      - Where you want your songs to be exported to.  
-   - Locate **FL Studio installation**  
+   - Locate **FL Studio installation folder**  
      Example: `"C:\Program Files\Image-Line\FL Studio 21\"`  
 3. Select desired projects from the left panel  
 4. Click `Export` — your MP3s will be rendered to your output folder  
 
 </details>
+
 ---
 
 ## ⚙️ Settings Highlights
 
 - Enable launch at Windows startup
 - Configure export format: MP3, WAV, OGG
-- Enable output subfolders for grouping songs
 - Order projects by name or date last modified
 - Set custom scroll speed, font size, and theme
-- Toggle FL Studio processor (FL.exe or FL64.exe)
+- Enable output subfolders, for grouping songs
+
 
 
 ---
@@ -87,7 +88,12 @@ Link your output folder to a cloud service like Google Drive or OneDrive. You'll
 
 For support, feedback, or feature requests, reach out via:
 
-- **Email:** FLPexporter@gmail.com
-- **Instagram:** [@Kevin._.cwx](https://www.instagram.com/Kevin._.cwx)
-- **Youtube:** https://www.youtube.com/@Multi_FLP_Exporter
+<!-- - **Instagram:** [@Kevin._.cwx](https://www.instagram.com/Kevin._.cwx)
+- **Email:**     FLPexporter@gmail.com
+- **Youtube:**   https://www.youtube.com/@Multi_FLP_Exporter -->
+
+<p><strong>Instagram:</strong> &nbsp;&nbsp;<a href="https://www.instagram.com/Kevin._.cwx">@Kevin._.cwx</a></p>
+<p><strong>Email:</strong> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="mailto:FLPexporter@gmail.com">FLPexporter@gmail.com</a></p>
+<p><strong>YouTube:</strong> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://www.youtube.com/@Multi_FLP_Exporter">https://www.youtube.com/@Multi_FLP_Exporter</a></p>
+
 ---
