@@ -30,7 +30,7 @@ Link your output folder to a cloud service like Google Drive or OneDrive. You'll
 
 ## 🚀 Installation
 
-1. **Download** the latest release: [FLP Exporter.exe](https://github.com/Kevin-cwx/Multi-FLP-to-MP3-Exporter/raw/main/dist/Download/FLP%20Exporter.exe)  
+1. **Download** the latest release: [FLP Exporter.exe](https://github.com/Kevin-cwx/Multi-FLP-to-MP3-Exporter/releases/download/V2/FLP.Exporter.exe)  
 2. DONE
 
 
